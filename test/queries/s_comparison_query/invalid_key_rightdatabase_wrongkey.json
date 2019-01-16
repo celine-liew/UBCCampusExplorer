@@ -1,0 +1,22 @@
+{
+    "title": "SELECT dept, id, avg WHERE string compare an wrong key but a right database",
+    "query": {
+        "WHERE": {
+            "NOT": {
+                "IS": {
+                    "courses_wrong": "wrong"
+                }
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

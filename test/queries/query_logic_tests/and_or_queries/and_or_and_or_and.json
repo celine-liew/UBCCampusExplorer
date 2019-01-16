@@ -1,0 +1,35 @@
+{
+    "title": "SELECT dept, id, avg WHERE avg > 99 && avg > 80 && avg > 80 ORDER BY avg",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "GT": {
+                        "courses_avg": 99
+                    }
+                },
+                {
+                    "GT": {
+                        "courses_fail": 80
+                    }
+                },
+                {
+                    "GT": {
+                        "courses_year": 1999
+                    }
+                }
+            ]
+
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg",
+                "courses_fail"
+            ],
+            "ORDER": "courses_fail"
+        }
+    },
+    "isQueryValid": true,
+    "result":[{"courses_dept":"biol","courses_id":"200","courses_avg":73.7,"courses_fail":95},{"courses_dept":"chem","courses_id":"233","courses_avg":56.89,"courses_fail":96},{"courses_dept":"biol","courses_id":"200","courses_avg":70.48,"courses_fail":106},{"courses_dept":"biol","courses_id":"200","courses_avg":69.09,"courses_fail":122},{"courses_dept":"biol","courses_id":"200","courses_avg":68.58,"courses_fail":128},{"courses_dept":"biol","courses_id":"200","courses_avg":64.98,"courses_fail":196}]}

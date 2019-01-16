@@ -1,0 +1,58 @@
+{
+    "title": "another valid query",
+    "query": {
+        "WHERE": {
+        "OR":[{"NOT": [
+            {
+                "IS": {
+                    "courses_id": "301"
+                }
+            },
+            "AND",
+            {
+                "EQ": {
+                    "courses_year": 2000
+                }
+            }
+        ]},{"AND": [
+            {
+                "IS": {
+                    "courses_id": "301"
+                }
+            },
+            {
+                "IS": {
+                    "courses_instructor": "engfl"
+                }
+            }
+        ]},{"OR": [
+            {
+                "IS": {
+                    "courses_id": "301fd"
+                }
+            },
+            {
+                "GT": {
+                    "courses_avg": 99
+                }
+            }
+        ]}
+        ]},
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg",
+                "courses_instructor",
+                "courses_title",
+                "courses_pass",
+                "courses_fail",
+                "courses_audit",
+                "courses_uuid",
+                "courses_year"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"}

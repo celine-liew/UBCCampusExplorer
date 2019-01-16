@@ -1,0 +1,17 @@
+{
+    "title": "SELECT a wrong column that doesn't exist WHERE avg > 97",
+    "query": { "WHERE": {
+        "GT": {
+            "courses_avg":97
+        }
+    },
+        "OPTIONS": {"COLUMNS": [
+            "courses_dept",
+            "courses_avg",
+            "courses_blah"
+        ],
+            "ORDER": "courses_avg"} ,
+    "wrongkey": 1},
+    "isQueryValid": false,
+    "result": "InsightError"
+}

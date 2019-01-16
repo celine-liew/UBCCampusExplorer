@@ -1,0 +1,20 @@
+{
+    "title": "SELECT dept, id, avg WHERE one OR branch avg > 99 ORDER BY avg",
+    "query": {
+        "WHERE": {
+            "OR": [
+                {
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": false,
+"result":"InsightError"}
