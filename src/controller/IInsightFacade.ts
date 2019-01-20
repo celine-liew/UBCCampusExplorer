@@ -59,7 +59,10 @@ export interface IInsightFacade {
      * queries.
      *
      * Ultimately, a dataset must be added or loaded from disk before queries can
-     * be successfully answered.
+     * be successfully answered.  loaded from disk refers to how when you call addDataset,
+     * your system should store a copy of the data (already parsed) on disk.
+     * This doesn't mean loading from your test zip files.
+     * You'll still need to load the zip files in your tests so you can use them as arguments to addDataset.
      */
     addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]>;
 

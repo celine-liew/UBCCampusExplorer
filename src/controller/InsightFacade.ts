@@ -1,6 +1,8 @@
 import Log from "../Util";
 import {IInsightFacade, InsightDataset, InsightDatasetKind} from "./IInsightFacade";
 import {InsightError, NotFoundError} from "./IInsightFacade";
+import * as JSZip from "jszip";
+import { PassThrough } from "stream";
 
 /**
  * This is the main programmatic entry point for the project.
@@ -14,6 +16,14 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
+        const dataZip = new JSZip (content);
+        if (dataZip.folder(kind)) {
+            // tslint:disable-next-line
+
+        }
+
+        // { [key: string]: Type; }
+
         return Promise.reject("Not implemented.");
     }
 
