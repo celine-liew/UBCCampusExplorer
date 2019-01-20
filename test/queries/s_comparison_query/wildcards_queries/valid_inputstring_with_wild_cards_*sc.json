@@ -1,0 +1,32 @@
+{
+    "title": "SELECT dept, id, avg WHERE phi || phi && avg > 90 && dept == '*sc' ORDER BY avg in valid query string",
+    "query": {
+        "WHERE": {
+            "OR": [
+                {
+                    "AND": [
+                        {
+                            "GT": {
+                                "courses_avg": 90
+                            }
+                        },
+                        {
+                            "IS": {
+                                "courses_dept": "*sc"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result":[{"courses_dept":"musc","courses_id":"559","courses_avg":96.5},{"courses_dept":"musc","courses_id":"559","courses_avg":96.5}]}

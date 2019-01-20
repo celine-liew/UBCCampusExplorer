@@ -1,0 +1,22 @@
+{
+    "title": "SELECT dept, id, avg valid key with IS but result is too large",
+    "query": {
+        "WHERE": {
+            "NOT": {
+                "IS": {
+                "courses_dept": "adhe"
+                }
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": false,
+    "result": "ResultTooLargeError"
+}
