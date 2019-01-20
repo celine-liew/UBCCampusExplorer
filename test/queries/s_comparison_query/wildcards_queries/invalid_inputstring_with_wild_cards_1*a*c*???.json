@@ -1,0 +1,29 @@
+{
+    "title": "SELECT dept, id, avg WHERE avg > 83 && dept == '1*a*c*???' ORDER BY avg should not work since Asterisks (*) can only be the first or last characters of input strings",
+    "query": {
+        "WHERE": {
+            "AND":[
+                {
+                    "GT": {
+                        "courses_avg": 83
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_dept": "1*a*c*???"
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}
