@@ -1,14 +1,19 @@
 import Log from "../Util";
 import {IInsightFacade, InsightDataset, InsightDatasetKind} from "./IInsightFacade";
 import {InsightError, NotFoundError} from "./IInsightFacade";
+import { AssertionError } from "assert";
 
 /**
  * This is the main programmatic entry point for the project.
  * Method documentation is in IInsightFacade
  *
  */
-export default class InsightFacade implements IInsightFacade {
 
+export default class InsightFacade implements IInsightFacade {
+    private ast: IFilter;
+    private rowsbeforeoption: object[] = [];
+    private finalresult: string[] = [];
+    private data: InsightDataset;
     constructor() {
         Log.trace("InsightFacadeImpl::init()");
     }
@@ -28,23 +33,20 @@ export default class InsightFacade implements IInsightFacade {
             } catch (e) {
                 reject(e);
             }
-            let rowsbeforeoption: object[] = [];
             try {
-                rowsbeforeoption = this.traversewherevalue(query,dataset);
-            } catch (e) {
-                reject(e);
-            }
-            let finalresult: string[] = [];
-            try {
-                finalresult = this.applyoptions(rowsbeforeoption,query["OPTIONS"]);
+                let queryobj = JSON.parse(query);
+                this.validateWhere(queryobj["WHERE"]);
+                this.validateOptions(queryobj["OPTIONS"]);
+                this.validateDatabase(query);
+                this.traverseFilter(queryobj["WHERE"]);
+                this.applyOptions(queryobj["OPTIONS"]);
             } catch (e) {
                 reject (e);
             }
-            resolve(finalresult);
+            resolve(this.finalresult);
         });
         return promise;
     }
-
     public validatequery(query: any) {
         let queryobj: object;
         try {
@@ -68,36 +70,45 @@ export default class InsightFacade implements IInsightFacade {
             } else if (query["OPTIONS"]["COLUMNS"].length <= 0) {
                 throw new InsightError("Columns must be an un-empty array");
             } else {
-                this.validateWhere(queryobj["WHERE"]);
-                this.validataOptions(queryobj["OPTIONS"]);
+                return;
             }
         }
-
     }
-    public validateWhere(wherepart:any){
-        if (typeof wherepart !== "object"){
+    public validateWhere(wherepart: any) {
+        if (typeof wherepart !== "object") {
             throw new InsightError("Where must be an object");
-        } else if (wherepart.length === 0){
+        } else if (wherepart.length === 0) {
             throw new InsightError("Where must be non-empty");
-        } else if (Object.keys(wherepart).length > 1){
+        } else if (Object.keys(wherepart).length > 1) {
             throw new InsightError("Excess keys in where");
         } else {
             return;
         }
     }
-    public validataOptions(optionpart:any){
+    public validateOptions(optionpart: any) {
         if (typeof optionpart !== "object") {
             throw new InsightError("Options must be an object");
         } else {
             let keys = Object.keys(optionpart);
-            if (keys.length > 3) {
+            if (keys.length >= 3) {
                 throw new InsightError("Excess keys in options");
             } else if (!optionpart.hasOwnProperty("COLUMNS")) {
                 throw new InsightError("Missing Columns");
-            } else if (keys.length === 2 && !optionpart.hasOwnProperty("ORDER")){
+            } else if (keys.length === 2 && !optionpart.hasOwnProperty("ORDER")) {
                 throw new InsightError("Invalid keys in OPTIONS");
+            } else {
+                return;
             }
         }
+    }
+    public validateDatabase(query: any) {
+        return;
+    }
+    public traverseFilter(filter: IFilter) {
+        this.ast = null;
+    }
+    public applyOptions(optionpart: any) {
+        this.finalresult = null;
     }
     public listDatasets(): Promise<InsightDataset[]> {
         return Promise.reject("Not implemented.");
