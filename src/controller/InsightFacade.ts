@@ -13,7 +13,8 @@ export default class InsightFacade implements IInsightFacade {
     private ast: IFilter;
     private rowsbeforeoption: object[] = [];
     private finalresult: string[] = [];
-    private data: InsightDataset;
+    private data: InsightDataset[];
+    private currentdatabasename: string = undefined;
     constructor() {
         Log.trace("InsightFacadeImpl::init()");
     }
@@ -37,9 +38,13 @@ export default class InsightFacade implements IInsightFacade {
                 let queryobj = JSON.parse(query);
                 this.validateWhere(queryobj["WHERE"]);
                 this.validateOptions(queryobj["OPTIONS"]);
-                this.validateDatabase(query);
-                this.traverseFilter(queryobj["WHERE"]);
+                this.traverseFilterGenAst(queryobj["WHERE"], this.ast);
+                this.astGenLogicFormula(this.ast, this.currentdatabasename);
                 this.applyOptions(queryobj["OPTIONS"]);
+                this.currentdatabasename = undefined;
+                this.ast = null;
+                this.rowsbeforeoption = null;
+                this.finalresult = null;
             } catch (e) {
                 reject (e);
             }
@@ -101,11 +106,98 @@ export default class InsightFacade implements IInsightFacade {
             }
         }
     }
-    public validateDatabase(query: any) {
-        return;
+    public traverseFilterGenAst(filter: any, ast: IFilter) {
+        let element = Object.keys(filter)[0];
+        switch (element) {
+            case LogicOperator.AND:
+            case LogicOperator.OR:
+                this.logicSymbolTraverse(filter[element], ast, element);
+            case MathOperator.LT:
+            case MathOperator.GT:
+            case MathOperator.EQ:
+            case "IS": // TODO wild cards!!
+                this.MSSymbolTraverse(filter[element], ast, element);
+            case "NOT":
+                if (typeof filter[element] !== "object" || Array.isArray(filter[element])) {
+                    throw new InsightError("Invalid query string");
+                } else {
+                    ast.FilterKey.keytype = "NOT";
+                    ast.nodes.length = 1;
+                    ast.nodes.push(filter[element]);
+                    this.traverseFilterGenAst(filter[element], ast.nodes[0]);
+                }
+            default:
+                throw new InsightError("Invalid query string");
+        }
     }
-    public traverseFilter(filter: IFilter) {
-        this.ast = null;
+    public logicSymbolTraverse(filtervalue: any, ast: IFilter, element: string) {
+        if (!Array.isArray(filtervalue) || filtervalue.length === 0) {
+            throw new InsightError(element + " must be a non-empty array.");
+        }
+        let key: LogicOperator = LogicOperator[element];
+        ast.FilterKey.keytype = key; // ast.nodes.length = filter[element].length;
+        for (let eachfilter of filtervalue) {
+            if (typeof eachfilter !== "object") {
+                throw new InsightError(element + " must be object.");
+            }
+            // ast.FilterKey.value.push(eachfilter);
+            ast.nodes.push(eachfilter);
+            this.traverseFilterGenAst(eachfilter, ast.nodes[ast.nodes.length - 1]);
+        }
+    }
+    public MSSymbolTraverse(filtervalue: any, ast: IFilter, element: string) {
+        if (typeof filtervalue !== "object" || Array.isArray(filtervalue)) {
+            throw new InsightError(element + " must be an object.");
+        } else if (Object.keys(filtervalue).length !== 1) {
+            throw new InsightError(element + " should only have 1 key, has " + Object.keys(filtervalue).length + " .");
+        } else {
+            this.getStringToFrst_(Object.keys(filtervalue)[0], element);
+            let s: string[] = Object.keys(filtervalue)[0].split("_");
+            if (this.currentdatabasename === undefined) {
+                this.currentdatabasename = s[0];
+            } else if (this.currentdatabasename !== s[0]) {
+                throw new InsightError("Cannot query more than one dataset");
+            } else {
+                ast.nodes.length = 0;
+                if (element === MathOperator.LT || MathOperator.GT || MathOperator.EQ) {
+                    ast.FilterKey.keytype = MathOperator[element];
+                    if (typeof filtervalue(Object.keys(filtervalue)[0]) !== "number") {
+                        throw new InsightError("Invalid value type in " + element + " , should be number");
+                    } else {
+                        ast.FilterKey.value = [s[0], s[1], filtervalue(Object.keys(filtervalue)[0])];
+                    }
+                } else {
+                    ast.FilterKey.keytype = "IS";
+                    if (typeof filtervalue(Object.keys(filtervalue)[0]) !== "string") {
+                        throw new InsightError("Invalid value type in IS , should be string");
+                    } else {
+                        ast.FilterKey.value = [s[0], s[1], filtervalue(Object.keys(filtervalue)[0])];
+                    }
+                }
+            }
+        }
+    }
+    public getStringToFrst_(key: string, element: string) {
+        let re;
+        if (element === MathOperator.LT || MathOperator.GT || MathOperator.EQ) {
+            re = new RegExp(/[^_]+_(avg|pass|fail|audit|year)$/g);
+        } else {
+            re = new RegExp(/[^_]+_(dept|id|instructor|title|uuid)$/g);
+        }
+        let s = key.match(re);
+        if (s.length !== 1) {
+            throw new InsightError("key doesn't match");
+        } else if (s[0] !== key) {
+            throw new InsightError("key doesn't match");
+        } else {
+            return;
+        }
+    }
+    public astGenLogicFormula(ast: IFilter, currentdatabasename: string) {
+        if (!Object.keys(this.data).includes(currentdatabasename)) {
+            throw new InsightError("Referenced dataset " + currentdatabasename + " not added yet");
+        }
+        this.rowsbeforeoption = null;
     }
     public applyOptions(optionpart: any) {
         this.finalresult = null;
