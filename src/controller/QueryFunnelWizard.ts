@@ -3,27 +3,27 @@ interface IFilter {
     nodes?: IFilter[];
 }
 interface ILogicComparison {
-    keytype: LogicOperator;
-    value: Array<ILogicComparison|IMathComparison|IStringComparison|INegation>; /*length>=1*/
+    keytype: string;
+    value: null; /*length>=1*/
 }
-enum LogicOperator {
-    AND = "AND",
-    OR = "OR",
-}
+// enum LogicOperator {
+//     "AND",
+//     "OR",
+// }
 interface IMathComparison {
-    keytype: MathOperator;
+    keytype: string;
     value: [string, string, number]; // databasename, attributename, atrribute value
 }
-enum MathOperator {
-    LT = "LT",
-    GT = "GT",
-    EQ = "EQ"
-}
+// enum MathOperator {
+//     "LT",
+//     "GT",
+//     "EQ"
+// }
 interface IStringComparison {
-    keytype: "IS";
+    keytype: string; // IS
     value: [string, string, string]; // databasename, attributename, atrribute value
 }
 interface INegation {
-    keytype: "NOT";
-    value: ILogicComparison|IMathComparison|IStringComparison|INegation;
+    keytype: string; // NOT
+    value: null;
 }

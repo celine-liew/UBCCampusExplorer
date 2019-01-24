@@ -1,7 +1,9 @@
 import Log from "../Util";
-import {IInsightFacade, InsightDataset, InsightDatasetKind} from "./IInsightFacade";
+import {IInsightFacade, InsightDataset, InsightDatasetKind, ResultTooLargeError} from "./IInsightFacade";
 import {InsightError, NotFoundError} from "./IInsightFacade";
 import { AssertionError } from "assert";
+import Queryparser from "./queryparser";
+import { acceptParser } from "restify";
 
 /**
  * This is the main programmatic entry point for the project.
@@ -10,11 +12,6 @@ import { AssertionError } from "assert";
  */
 
 export default class InsightFacade implements IInsightFacade {
-    private ast: IFilter;
-    private rowsbeforeoption: object[] = [];
-    private finalresult: string[] = [];
-    private data: InsightDataset[];
-    private currentdatabasename: string = undefined;
     constructor() {
         Log.trace("InsightFacadeImpl::init()");
     }
@@ -38,13 +35,11 @@ export default class InsightFacade implements IInsightFacade {
                 let queryobj = JSON.parse(query);
                 this.validateWhere(queryobj["WHERE"]);
                 this.validateOptions(queryobj["OPTIONS"]);
-                this.traverseFilterGenAst(queryobj["WHERE"], this.ast);
-                this.astGenLogicFormula(this.ast, this.currentdatabasename);
-                this.applyOptions(queryobj["OPTIONS"]);
-                this.currentdatabasename = undefined;
-                this.ast = null;
-                this.rowsbeforeoption = null;
-                this.finalresult = null;
+                let parser = new Queryparser();
+                parser.traverseFilterGenAst(queryobj["WHERE"], this.ast);
+                parser.astApplyToRow(this.ast, this.currentdatabasename);
+                parser.applyOptions();
+                let finalresult = parser.getresult();
             } catch (e) {
                 reject (e);
             }
@@ -101,107 +96,53 @@ export default class InsightFacade implements IInsightFacade {
                 throw new InsightError("Missing Columns");
             } else if (keys.length === 2 && !optionpart.hasOwnProperty("ORDER")) {
                 throw new InsightError("Invalid keys in OPTIONS");
+            } else if (optionpart.hasOwnProperty("ORDER") && typeof optionpart["ORDER"] !== "string") {
+                throw new InsightError("Invalid ORDER type");
+            } else if (!Array.isArray(optionpart["COLUMNS"])) {
+                throw new InsightError("Invalid query string");
             } else {
+                optionpart["COLUMNS"].forEach((element: any) => {
+                    if (typeof element !== "string") {
+                        throw new InsightError("Invalid query string");
+                    }
+                });
+                this.checkcolumns(optionpart["COLUMNS"]);
+                if (optionpart["ORDER"]) {
+                    this.checkorder(optionpart["COLUMNS"], optionpart["ORDER"]);
+                }
                 return;
             }
         }
     }
-    public traverseFilterGenAst(filter: any, ast: IFilter) {
-        let element = Object.keys(filter)[0];
-        switch (element) {
-            case LogicOperator.AND:
-            case LogicOperator.OR:
-                this.logicSymbolTraverse(filter[element], ast, element);
-            case MathOperator.LT:
-            case MathOperator.GT:
-            case MathOperator.EQ:
-            case "IS": // TODO wild cards!!
-                this.MSSymbolTraverse(filter[element], ast, element);
-            case "NOT":
-                if (typeof filter[element] !== "object" || Array.isArray(filter[element])) {
-                    throw new InsightError("Invalid query string");
-                } else {
-                    ast.FilterKey.keytype = "NOT";
-                    ast.nodes.length = 1;
-                    ast.nodes.push(filter[element]);
-                    this.traverseFilterGenAst(filter[element], ast.nodes[0]);
-                }
-            default:
-                throw new InsightError("Invalid query string");
-        }
-    }
-    public logicSymbolTraverse(filtervalue: any, ast: IFilter, element: string) {
-        if (!Array.isArray(filtervalue) || filtervalue.length === 0) {
-            throw new InsightError(element + " must be a non-empty array.");
-        }
-        let key: LogicOperator = LogicOperator[element];
-        ast.FilterKey.keytype = key; // ast.nodes.length = filter[element].length;
-        for (let eachfilter of filtervalue) {
-            if (typeof eachfilter !== "object") {
-                throw new InsightError(element + " must be object.");
-            }
-            // ast.FilterKey.value.push(eachfilter);
-            ast.nodes.push(eachfilter);
-            this.traverseFilterGenAst(eachfilter, ast.nodes[ast.nodes.length - 1]);
-        }
-    }
-    public MSSymbolTraverse(filtervalue: any, ast: IFilter, element: string) {
-        if (typeof filtervalue !== "object" || Array.isArray(filtervalue)) {
-            throw new InsightError(element + " must be an object.");
-        } else if (Object.keys(filtervalue).length !== 1) {
-            throw new InsightError(element + " should only have 1 key, has " + Object.keys(filtervalue).length + " .");
-        } else {
-            this.getStringToFrst_(Object.keys(filtervalue)[0], element);
-            let s: string[] = Object.keys(filtervalue)[0].split("_");
-            if (this.currentdatabasename === undefined) {
-                this.currentdatabasename = s[0];
-            } else if (this.currentdatabasename !== s[0]) {
-                throw new InsightError("Cannot query more than one dataset");
+    public checkcolumns(columns: string[]) {
+        columns.forEach((element) => {
+            let re = new RegExp(/[^_]+_(avg|pass|fail|audit|year|dept|id|instructor|title|uuid)$/g);
+            let s = element.match(re);
+            if (s.length !== 1) {
+                throw new InsightError("key doesn't match");
+            } else if (s[0] !== element) {
+                throw new InsightError("key doesn't match");
             } else {
-                ast.nodes.length = 0;
-                if (element === MathOperator.LT || MathOperator.GT || MathOperator.EQ) {
-                    ast.FilterKey.keytype = MathOperator[element];
-                    if (typeof filtervalue(Object.keys(filtervalue)[0]) !== "number") {
-                        throw new InsightError("Invalid value type in " + element + " , should be number");
-                    } else {
-                        ast.FilterKey.value = [s[0], s[1], filtervalue(Object.keys(filtervalue)[0])];
-                    }
+                if ( Queryparser.getcurrentdataset() === undefined) {
+                    Queryparser.setcurrentdataset(s[0]);
+                } else if (Queryparser.getcurrentdataset() !== s[0]) {
+                    throw new InsightError("Cannot query more than one dataset");
                 } else {
-                    ast.FilterKey.keytype = "IS";
-                    if (typeof filtervalue(Object.keys(filtervalue)[0]) !== "string") {
-                        throw new InsightError("Invalid value type in IS , should be string");
-                    } else {
-                        ast.FilterKey.value = [s[0], s[1], filtervalue(Object.keys(filtervalue)[0])];
-                    }
+                    Queryparser.columnstoshowpush(element);
                 }
+                return;
             }
-        }
+        });
     }
-    public getStringToFrst_(key: string, element: string) {
-        let re;
-        if (element === MathOperator.LT || MathOperator.GT || MathOperator.EQ) {
-            re = new RegExp(/[^_]+_(avg|pass|fail|audit|year)$/g);
-        } else {
-            re = new RegExp(/[^_]+_(dept|id|instructor|title|uuid)$/g);
-        }
-        let s = key.match(re);
-        if (s.length !== 1) {
-            throw new InsightError("key doesn't match");
-        } else if (s[0] !== key) {
-            throw new InsightError("key doesn't match");
-        } else {
-            return;
-        }
+    public checkorder(columns: any[], order: string) {
+        columns.forEach((element) => {
+            if (element === order) {
+                return;
+            }
+        });
+        throw new InsightError("ORDER key must be in COLUMNS");
     }
-    public astGenLogicFormula(ast: IFilter, currentdatabasename: string) {
-        if (!Object.keys(this.data).includes(currentdatabasename)) {
-            throw new InsightError("Referenced dataset " + currentdatabasename + " not added yet");
-        }
-        this.rowsbeforeoption = null;
-    }
-    public applyOptions(optionpart: any) {
-        this.finalresult = null;
-    }
+
     public listDatasets(): Promise<InsightDataset[]> {
         return Promise.reject("Not implemented.");
     }
