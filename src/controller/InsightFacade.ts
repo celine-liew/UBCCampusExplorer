@@ -28,10 +28,6 @@ export default class InsightFacade implements IInsightFacade {
         const promise: Promise<string[]> = new Promise(function (resolve, reject) {
             try {
                 this.validatequery(query);
-            } catch (e) {
-                reject(e);
-            }
-            try {
                 let queryobj = JSON.parse(query);
                 this.validateWhere(queryobj["WHERE"]);
                 this.validateOptions(queryobj["OPTIONS"]);
@@ -40,8 +36,12 @@ export default class InsightFacade implements IInsightFacade {
                 parser.astApplyToRow(this.ast, this.currentdatabasename);
                 parser.applyOptions();
                 let finalresult = parser.getresult();
-            } catch (e) {
-                reject (e);
+            } catch (error) {
+                if (error instanceof InsightError) {
+                    reject(error);
+                } else {
+                    reject (new InsightError(error));
+                }
             }
             resolve(this.finalresult);
         });
