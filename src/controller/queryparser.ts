@@ -7,6 +7,7 @@ export default class Queryparser {
     private allrows: any[];
     private static currentdatabasename: string = undefined;
     private static columnstoshow = new Set<string>();
+    private static order: string = undefined;
     public traverseFilterGenAst(filter: any, ast: IFilter) {
         let element = Object.keys(filter)[0];
         switch (element) {
@@ -24,8 +25,7 @@ export default class Queryparser {
                 this.NegationTraverse(filter[element], ast);
                 break;
             default:
-                throw new InsightError("Invalid query string");
-        }
+                throw new InsightError("Invalid query string"); }
     }
     public logicSymbolTraverse(filtervalue: any, ast: IFilter, element: string) {
         if (!Array.isArray(filtervalue) || filtervalue.length === 0) {
@@ -107,45 +107,45 @@ export default class Queryparser {
             throw new InsightError("Referenced dataset " + currentdatabasename + " not added yet");
         }
         // get all rows from the database corresponding to currentdatabasename
-        this.rowsbeforeoption = this.traverseAst(this.ast, this.ast, currentdatabasename);
+        this.rowsbeforeoption = this.traverseAst(this.ast, currentdatabasename);
     }
-    public traverseAst(ast: IFilter, visitor: IFilter, databasename: string): any[] {
-        function traverseArray(nodes: IFilter[], parentnode: IFilter, identifier: string): any[] {
+    public traverseAst(ast: IFilter, databasename: string): any[] {
+        this.allrows = this.addHash.get(databasename);
+        function traverseArray(nodes: IFilter[], identifier: string): any[] {
             let midresult: any[] = [];
             if (identifier === "AND") {
                 nodes.forEach((child) => {
-                    midresult = this.keepcommon(midresult, traverseNode(child, parentnode));
+                    midresult = this.keepcommon(midresult, traverseNode(child));
                 });
             } else if (identifier === "OR") {
                 nodes.forEach((child) => {
-                    midresult = this.keepboth(midresult, traverseNode(child, parentnode));
+                    midresult = this.keepboth(midresult, traverseNode(child));
                 });
             } else if (identifier === "NOT") {
                 nodes.forEach((child) => {
-                    midresult = this.reverse(midresult);
+                    midresult = this.reverse(traverseNode(child));
                 });
             }
-            visitor = parentnode;
             return midresult;
         }
-        function traverseNode(child: IFilter, parentnode: IFilter): any[] {
+        function traverseNode(current: IFilter): any[] {
             let midresult: any[] = [];
-            let identifier = visitor.FilterKey.keytype;
+            let identifier = current.FilterKey.keytype;
             if (identifier === "AND" || "OR" || "NOT") {
-                midresult = traverseArray(child.nodes, child, identifier);
+                midresult = traverseArray(current.nodes, identifier);
             } else if (identifier === "EQ" || "GT" || "LT" || "IS") {
-                let value = child.FilterKey.value;
+                let value = current.FilterKey.value;
                 let assert = require("assert");
                 assert(value[0] === Queryparser.currentdatabasename);
                 switch (identifier) {
                     case "EQ":
-                        midresult = this.selectrowM(value[1], value[2], "EQ");
+                        midresult = this.selectrowM(value[1], value[2], "EQ", databasename);
                         break;
                     case "GT":
-                        midresult = this.selectrowM(value[1], value[2], "GT");
+                        midresult = this.selectrowM(value[1], value[2], "GT", databasename);
                         break;
                     case "LT":
-                        midresult = this.selectrowM(value[1], value[2], "LT");
+                        midresult = this.selectrowM(value[1], value[2], "LT", databasename);
                         break;
                     case "IS":
                         midresult = this.selectrowS(value[1], value[2]);
@@ -154,7 +154,7 @@ export default class Queryparser {
             }
             return midresult;
         }
-        let result = traverseNode(ast, null);
+        let result = traverseNode(ast);
         return result;
     }
     public keepcommon(array1: any[], array2: any[]): any[] {
@@ -229,8 +229,7 @@ export default class Queryparser {
                 }
             });
             break;
-            default:
-            break;
+            default: break;
         }
         return ret;
     }
@@ -260,26 +259,33 @@ export default class Queryparser {
                 }
             });
         });
+        this.sortrows();
+    }
+    public sortrows() {
+        if (Queryparser.order !== undefined) {
+            this.rowsbeforeoption.sort(function (a, b) {
+                let A = a[this.order];
+                let B = b[this.order];
+                if (A < B) {return -1; }
+                if (A > B) {return 1; }
+                return 0;
+            });
+        } else {
+            return;
+        }
+    }
+    public getresult(): any[] {return this.rowsbeforeoption; }
+    public static getcolumnstoshow(): Set<string> {return Queryparser.columnstoshow; }
+    public static columnstoshowpush(column: string) {Queryparser.columnstoshow.add(column); }
+    public static getcurrentdataset(): string {return Queryparser.currentdatabasename; }
+    public static setcurrentdataset(name: string) {Queryparser.currentdatabasename = name; }
+    public static setOrder(order: string) {Queryparser.order = order; }
+    public clean() {
         Queryparser.currentdatabasename = undefined;
         this.ast = null;
         this.rowsbeforeoption = null;
         Queryparser.columnstoshow.forEach((element) => {
             Queryparser.columnstoshow.delete(element);
         });
-    }
-    public getresult(): any[] {
-        return this.rowsbeforeoption;
-    }
-    public static getcolumnstoshow(): Set<string> {
-        return Queryparser.columnstoshow;
-    }
-    public static columnstoshowpush(column: string) {
-        Queryparser.columnstoshow.add(column);
-    }
-    public static getcurrentdataset(): string {
-        return Queryparser.currentdatabasename;
-    }
-    public static setcurrentdataset(name: string) {
-        Queryparser.currentdatabasename = name;
     }
 }

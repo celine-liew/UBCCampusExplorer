@@ -36,11 +36,12 @@ export default class InsightFacade implements IInsightFacade {
                 parser.astApplyToRow(this.ast, this.currentdatabasename);
                 parser.applyOptions();
                 let finalresult = parser.getresult();
+                parser.clean();
             } catch (error) {
                 if (error instanceof InsightError) {
                     reject(error);
                 } else {
-                    reject (new InsightError(error));
+                    reject (new InsightError("Invalid query string"));
                 }
             }
             resolve(this.finalresult);
@@ -137,6 +138,7 @@ export default class InsightFacade implements IInsightFacade {
     public checkorder(columns: any[], order: string) {
         columns.forEach((element) => {
             if (element === order) {
+                Queryparser.setOrder(order);
                 return;
             }
         });
