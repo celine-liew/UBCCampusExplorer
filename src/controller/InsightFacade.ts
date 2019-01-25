@@ -19,7 +19,6 @@ export default class InsightFacade implements IInsightFacade {
 public addHash: IHash = {};
 public unzipContent: string[] = [];
 public validCourseSections: any[] = [];
-public addedDatabase: string[] = [];
 
 
     constructor() {
@@ -27,6 +26,7 @@ public addedDatabase: string[] = [];
     }
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
+        const addedDatabase: string[] = [];
         const coursesKeys: string[] = ['Subject', 'Course', 'Avg', 'Professor', 'Title', 'Pass', 'Fail','Audit','id','Year'];
         const coursesTranKeys: string[] = ['dept', 'id', 'avg', 'instructor', 'title', 'pass', 'fail','audit','uuid','year'];
         return JSZip.loadAsync(content, {base64: true}).then(zip => {
@@ -62,14 +62,14 @@ public addedDatabase: string[] = [];
                             const courseSection = {
                                 'dept': cSection['Subject'],
                                 'id': cSection['Course'],
-                                 'avg': cSection['Avg'],
-                                 'instructor': cSection['Professor'],
-                                 'title': cSection['Title'],
-                                 'pass': cSection['Pass'],
-                                 'fail': cSection['Fail'],
-                                 'audit': cSection['Audit'],
-                                 'uuid': uuid,
-                                 'year': year
+                                'avg': cSection['Avg'],
+                                'instructor': cSection['Professor'],
+                                'title': cSection['Title'],
+                                'pass': cSection['Pass'],
+                                'fail': cSection['Fail'],
+                                'audit': cSection['Audit'],
+                                'uuid': uuid,
+                                'year': year
                             }
                             this.validCourseSections.push(courseSection);
                             //console.log(this.validCourseSections[0]);
@@ -81,8 +81,9 @@ public addedDatabase: string[] = [];
                 Promise.reject("no valid course sections in dataset.")
             } else {
                 this.addHash[id] = this.validCourseSections;
-                this.addedDatabase.push(id);
-                return Promise.resolve(this.addedDatabase);
+                addedDatabase.push(id);
+                Promise.resolve;
+                return (addedDatabase);
             }
         })
         .catch(err => {
