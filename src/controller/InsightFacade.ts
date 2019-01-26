@@ -22,7 +22,8 @@ export default class InsightFacade implements IInsightFacade {
 public addHash: IHash = {};
 public unzipContent: string[] = [];
 public validCourseSections: any[] = [];
-
+public databasename: string = undefined;
+public parser: Queryparser = new Queryparser();
 
     constructor() {
         Log.trace("InsightFacadeImpl::init()");
@@ -32,6 +33,9 @@ public validCourseSections: any[] = [];
         const addedDatabase: string[] = [];
         const coursesKeys: string[] = ['Subject', 'Course', 'Avg', 'Professor', 'Title', 'Pass', 'Fail','Audit','id','Year'];
         const coursesTranKeys: string[] = ['dept', 'id', 'avg', 'instructor', 'title', 'pass', 'fail','audit','uuid','year'];
+        if (addedDatabase.includes(id)){
+            Promise.reject(new InsightError("duplicate dataset id."));
+        }
         return JSZip.loadAsync(content, {base64: true}).then(zip => {
             const files: Promise<string>[] = [];
 
@@ -113,9 +117,8 @@ public validCourseSections: any[] = [];
                 self.validatequery(query);
                 self.validateWhere(query["WHERE"]);
                 self.validateOptions(query["OPTIONS"]);
-                let parser = new Queryparser();
-                finalresult = parser.excutequery(query, self.addHash);
-                parser.clean();
+                finalresult = self.parser.excutequery(query, self.addHash, self.databasename);
+                self.parser.clean();
             } catch (error) {
                 if (error instanceof InsightError) {
                     reject(error);
@@ -195,20 +198,24 @@ public validCourseSections: any[] = [];
         columns.forEach((element) => {
             let re = new RegExp(/[^_]+_(avg|pass|fail|audit|year|dept|id|instructor|title|uuid)$/g);
             let s = element.match(re);
+            // console.log(s[0]);
+            // console.log(s.length);
             if (s.length !== 1) {
                 throw new InsightError("key doesn't match");
             } else if (s[0] !== element) {
                 // console.log(s[0]);
                 throw new InsightError("key doesn't match");
             } else {
-                let re = new RegExp(/(?:(?!_).)*/g);
-                let s = element.match(re);
-                if ( Queryparser.getcurrentdataset() === undefined) {
-                    Queryparser.setcurrentdataset(s[0]);
-                } else if (Queryparser.getcurrentdataset() !== s[0]) {
-                    throw new InsightError("Cannot query more than one dataset");
+                let re2 = new RegExp(/(?:(?!_).)*/g);
+                let s2 = element.match(re2);
+                // console.log(s2[0]);
+                // console.log(s2.length);
+                if ( this.databasename === undefined) {
+                    this.databasename = s2[0];
+                } else if ( this.databasename !== s2[0]) {
+                    throw new InsightError("Cannot query more than one dataset 1");
                 } else {
-                    Queryparser.columnstoshowpush(element);
+                    this.parser.columnstoshow.add(element);
                 }
                 return;
             }
@@ -218,7 +225,7 @@ public validCourseSections: any[] = [];
         let flag = false;
         columns.forEach((element) => {
             if (element === order) {
-                Queryparser.setOrder(order);
+                this.parser.order = element;
                 flag = true;
             }
         });

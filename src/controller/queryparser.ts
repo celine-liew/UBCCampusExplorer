@@ -2,30 +2,32 @@ import {IInsightFacade, InsightDataset, InsightDatasetKind, ResultTooLargeError}
 import {InsightError, NotFoundError} from "./IInsightFacade";
 import InsightFacade, { IHash } from "./InsightFacade";
 export default class Queryparser {
-    private ast: IFilter;
+    private AST: IFilter = { FilterKey : "", value : [], nodes : []};
     private rowsbeforeoption: any[] = [];
-    private data: InsightDataset[] = [];
     private allrows: any[];
-    private static currentdatabasename: string = undefined;
-    private static columnstoshow = new Set<string>();
-    private static order: string = undefined;
-    public excutequery(query: any, addHash: IHash): any[] {
-        this.traverseFilterGenAst(query["WHERE"], this.ast);
-        this.astApplyToRow(this.ast, Queryparser.getcurrentdataset(), addHash);
+    private currentdatabasename: string = "";
+    public columnstoshow = new Set<string>();
+    public order: string = "";
+    constructor() {
+        // tslint:disable-next-line:no-console
+        console.log("query parser");
+    }
+    public excutequery(query: any, addHash: IHash, databasename: string): any[] {
+        this.traverseFilterGenAst(query["WHERE"], this.AST);
+        if ( this.currentdatabasename !== databasename) {
+            throw new InsightError("Cannot query more than one dataset 2");
+        }
+        this.astApplyToRow(this.currentdatabasename, addHash);
         this.applyOptions();
         return this.rowsbeforeoption;
     }
     public traverseFilterGenAst(filter: any, ast: IFilter) {
         let element = Object.keys(filter)[0];
         switch (element) {
-            case "AND":
-            case "OR":
+            case "AND": case "OR":
                 this.logicSymbolTraverse(filter[element], ast, element);
                 break;
-            case "LT":
-            case "GT":
-            case "EQ":
-            case "IS":
+            case "LT": case "GT": case "EQ": case "IS":
                 this.MSSymbolTraverse(filter[element], ast, element);
                 break;
             case "NOT":
@@ -38,12 +40,11 @@ export default class Queryparser {
         if (!Array.isArray(filtervalue) || filtervalue.length === 0) {
             throw new InsightError(element + " must be a non-empty array.");
         }
-        ast.FilterKey.keytype = element; // ast.nodes.length = filter[element].length;
+        ast.FilterKey = element; // ast.nodes.length = filter[element].length;
         for (let eachfilter of filtervalue) {
             if (typeof eachfilter !== "object") {
                 throw new InsightError(element + " must be object.");
-            }
-            // ast.FilterKey.value = eachfilter;
+            } // ast.FilterKey.value = eachfilter;
             ast.nodes.push(eachfilter);
             this.traverseFilterGenAst(eachfilter, ast.nodes[ast.nodes.length - 1]);
         }
@@ -56,25 +57,25 @@ export default class Queryparser {
         } else {
             this.getStringToFrst_(Object.keys(filtervalue)[0], element);
             let s: string[] = Object.keys(filtervalue)[0].split("_");
-            if (Queryparser.currentdatabasename === undefined) {
-                Queryparser.currentdatabasename = s[0];
-            } else if (Queryparser.currentdatabasename !== s[0]) {
-                throw new InsightError("Cannot query more than one dataset");
+            if (this.currentdatabasename === undefined) {
+                this.currentdatabasename = s[0];
+            } else if (this.currentdatabasename !== s[0]) {
+                throw new InsightError("Cannot query more than one dataset 3");
             } else {
                 ast.nodes.length = 0;
                 if (element === "LT" || "GT" || "EQ") {
-                    ast.FilterKey.keytype = element;
+                    ast.FilterKey = element;
                     if (typeof filtervalue(Object.keys(filtervalue)[0]) !== "number") {
                         throw new InsightError("Invalid value type in " + element + " , should be number");
                     } else {
-                        ast.FilterKey.value = [s[0], s[1], filtervalue(Object.keys(filtervalue)[0])];
+                        ast.value = [s[0], s[1], filtervalue(Object.keys(filtervalue)[0])];
                     }
                 } else {
-                    ast.FilterKey.keytype = "IS";
+                    ast.FilterKey = "IS";
                     if (typeof filtervalue(Object.keys(filtervalue)[0]) !== "string") {
                         throw new InsightError("Invalid value type in IS , should be string");
                     } else {
-                        ast.FilterKey.value = [s[0], s[1], filtervalue(Object.keys(filtervalue)[0])];
+                        ast.value = [s[0], s[1], filtervalue(Object.keys(filtervalue)[0])];
                     }
                 }
             }
@@ -86,9 +87,8 @@ export default class Queryparser {
         } else if (Object.keys(filtervalue).length !== 1) {
             throw new InsightError("NOT should only have 1 key, has " + Object.keys(filtervalue).length + " .");
         } else {
-            ast.FilterKey.keytype = "NOT";
-            ast.nodes.length = 1;
-            // ast.FilterKey.value = filtervalue;
+            ast.FilterKey = "NOT";
+            ast.nodes.length = 1; // ast.FilterKey.value = filtervalue;
             ast.nodes.push(filtervalue);
             this.traverseFilterGenAst(filtervalue, ast.nodes[0]);
         }
@@ -109,12 +109,11 @@ export default class Queryparser {
             return;
         }
     }
-    public astApplyToRow(ast: IFilter, currentdatabasename: string, addHash: IHash) {
-        if (!Object.keys(this.data).includes(currentdatabasename)) {
+    public astApplyToRow(currentdatabasename: string, addHash: IHash) {
+        if (!addHash[currentdatabasename]) {
             throw new InsightError("Referenced dataset " + currentdatabasename + " not added yet");
         }
-        // get all rows from the database corresponding to currentdatabasename
-        this.rowsbeforeoption = this.traverseAst(this.ast, currentdatabasename, addHash);
+        this.rowsbeforeoption = this.traverseAst(this.AST, currentdatabasename, addHash);
     }
     public traverseAst(ast: IFilter, databasename: string, addHash: IHash): any[] {
         this.allrows = addHash[databasename];
@@ -137,13 +136,13 @@ export default class Queryparser {
         }
         function traverseNode(current: IFilter): any[] {
             let midresult: any[] = [];
-            let identifier = current.FilterKey.keytype;
+            let identifier = current.FilterKey;
             if (identifier === "AND" || "OR" || "NOT") {
                 midresult = traverseArray(current.nodes, identifier);
             } else if (identifier === "EQ" || "GT" || "LT" || "IS") {
-                let value = current.FilterKey.value;
+                let value = current.value;
                 let assert = require("assert");
-                assert(value[0] === Queryparser.currentdatabasename);
+                assert(value[0] === this.currentdatabasename);
                 switch (identifier) {
                     case "EQ":
                         midresult = this.selectrowM(value[1], value[2], "EQ", databasename);
@@ -261,7 +260,7 @@ export default class Queryparser {
     public applyOptions() {
         this.rowsbeforeoption.forEach((element) => {
             Object.keys(element).forEach((keytoexamine) => {
-                if (!Queryparser.columnstoshow.has(keytoexamine)) {
+                if (!this.columnstoshow.has(keytoexamine)) {
                     delete element.keytoexamine;
                 }
             });
@@ -269,7 +268,7 @@ export default class Queryparser {
         this.sortrows();
     }
     public sortrows() {
-        if (Queryparser.order !== undefined) {
+        if (this.order !== undefined) {
             this.rowsbeforeoption.sort(function (a, b) {
                 let A = a[this.order];
                 let B = b[this.order];
@@ -281,17 +280,12 @@ export default class Queryparser {
             return;
         }
     }
-    public static getcolumnstoshow(): Set<string> {return Queryparser.columnstoshow; }
-    public static columnstoshowpush(column: string) {Queryparser.columnstoshow.add(column); }
-    public static getcurrentdataset(): string {return Queryparser.currentdatabasename; }
-    public static setcurrentdataset(name: string) {Queryparser.currentdatabasename = name; }
-    public static setOrder(order: string) {Queryparser.order = order; }
     public clean() {
-        Queryparser.currentdatabasename = undefined;
-        this.ast = null;
+        this.currentdatabasename = undefined;
+        this.AST = null;
         this.rowsbeforeoption = null;
-        Queryparser.columnstoshow.forEach((element) => {
-            Queryparser.columnstoshow.delete(element);
+        this.columnstoshow.forEach((element) => {
+            this.columnstoshow.delete(element);
         });
     }
 }
