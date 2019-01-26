@@ -114,7 +114,7 @@ public validCourseSections: any[] = [];
                 this.validateOptions(queryobj["OPTIONS"]);
                 let parser = new Queryparser();
                 parser.traverseFilterGenAst(queryobj["WHERE"], this.ast);
-                parser.astApplyToRow(this.ast, this.currentdatabasename);
+                parser.astApplyToRow(this.ast, this.currentdatabasename, this.addHash);
                 parser.applyOptions();
                 let finalresult = parser.getresult();
                 parser.clean();

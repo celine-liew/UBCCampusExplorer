@@ -1,5 +1,6 @@
 import {IInsightFacade, InsightDataset, InsightDatasetKind, ResultTooLargeError} from "./IInsightFacade";
 import {InsightError, NotFoundError} from "./IInsightFacade";
+import InsightFacade, { IHash } from "./InsightFacade";
 export default class Queryparser {
     private ast: IFilter = undefined;
     private rowsbeforeoption: any[] = [];
@@ -102,15 +103,15 @@ export default class Queryparser {
             return;
         }
     }
-    public astApplyToRow(ast: IFilter, currentdatabasename: string) {
+    public astApplyToRow(ast: IFilter, currentdatabasename: string, addHash: IHash) {
         if (!Object.keys(this.data).includes(currentdatabasename)) {
             throw new InsightError("Referenced dataset " + currentdatabasename + " not added yet");
         }
         // get all rows from the database corresponding to currentdatabasename
-        this.rowsbeforeoption = this.traverseAst(this.ast, currentdatabasename);
+        this.rowsbeforeoption = this.traverseAst(this.ast, currentdatabasename, addHash);
     }
-    public traverseAst(ast: IFilter, databasename: string): any[] {
-        this.allrows = this.addHash.get(databasename);
+    public traverseAst(ast: IFilter, databasename: string, addHash: IHash): any[] {
+        this.allrows = addHash[databasename];
         function traverseArray(nodes: IFilter[], identifier: string): any[] {
             let midresult: any[] = [];
             if (identifier === "AND") {
