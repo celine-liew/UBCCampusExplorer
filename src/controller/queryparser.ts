@@ -59,7 +59,7 @@ export default class Queryparser {
             } else if (this.currentdatabasename !== s[0]) {
                 throw new InsightError("Cannot query more than one dataset 3");
             } else {
-                ast.nodes = null;
+                ast.nodes = [];
                 // ast.nodes.length = 0;
                 if (element === "LT" || "GT" || "EQ") {
                     ast.FilterKey = element;
@@ -281,8 +281,8 @@ export default class Queryparser {
     }
     public clean() {
         this.currentdatabasename = undefined;
-        this.AST = null;
-        this.rowsbeforeoption = null;
+        this.AST = undefined;
+        this.rowsbeforeoption = undefined;
         this.columnstoshow.forEach((element) => {
             this.columnstoshow.delete(element);
         });
