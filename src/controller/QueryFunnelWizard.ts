@@ -1,7 +1,7 @@
 interface IFilter {
     FilterKey: string;
     value: any[];
-    nodes: IFilter[];
+    nodes: any[];
 }
 // interface ILogicComparison {
 //     keytype: string;

@@ -4,14 +4,10 @@ import InsightFacade, { IHash } from "./InsightFacade";
 export default class Queryparser {
     private AST: IFilter = { FilterKey : "", value : [], nodes : []};
     private rowsbeforeoption: any[] = [];
-    private allrows: any[];
-    private currentdatabasename: string = "";
+    private allrows: any[] = [];
+    private currentdatabasename: string = undefined;
     public columnstoshow = new Set<string>();
-    public order: string = "";
-    constructor() {
-        // tslint:disable-next-line:no-console
-        console.log("query parser");
-    }
+    public order: string = undefined;
     public excutequery(query: any, addHash: IHash, databasename: string): any[] {
         this.traverseFilterGenAst(query["WHERE"], this.AST);
         if ( this.currentdatabasename !== databasename) {
