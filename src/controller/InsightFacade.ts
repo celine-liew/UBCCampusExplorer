@@ -29,6 +29,10 @@ public validCourseSections: any[] = [];
         const addedDatabase: string[] = [];
         const coursesKeys: string[] = ['Subject', 'Course', 'Avg', 'Professor', 'Title', 'Pass', 'Fail','Audit','id','Year'];
         const coursesTranKeys: string[] = ['dept', 'id', 'avg', 'instructor', 'title', 'pass', 'fail','audit','uuid','year'];
+        if (addedDatabase.includes(id)){
+            Promise.reject(new InsightError("duplicate dataset id."));
+        }
+
         return JSZip.loadAsync(content, {base64: true}).then(zip => {
             const files: Promise<string>[] = [];
 
