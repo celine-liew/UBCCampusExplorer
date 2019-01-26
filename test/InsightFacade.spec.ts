@@ -26,12 +26,12 @@ describe("InsightFacade Add/Remove Dataset", function () {
     // Reference any datasets you've added to test/data here and they will
     // automatically be loaded in the Before All hook.
     const datasetsToLoad: { [id: string]: string } = {
-        courses: "./test/data/textfile.txt",
-        cpsccourses: "./test/data/cpsccourses.zip",
+        courses: "./test/data/courses.zip",
+        cpsccourses2: "./test/data/cpsccourses2.zip",
         nocourses: "./test/data/nocourses.zip",
         noncoursedatabase: "./test/data/wrongfile.png",
         invalidJSON: "./test/data/invalidjson.zip",
-        onecoursewithsection: "./test/data/onecoursewithsections.zip",
+        onecoursewithsection2: "./test/data/onecoursewithsection2.zip",
         zerosection: "./test/data/zerosectionsdataset.zip"
     };
     let insightFacade: InsightFacade;
@@ -90,7 +90,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
         }
     });
     it("Should not add a invalid dataset with wrong InsightDatasetKind identifier", async function () {
-        const id: string = "cpsccourses";
+        const id: string = "cpsccourses2";
         let response: string[];
 
         try {
@@ -118,7 +118,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
     // 2-2
     it("Should be able to add a subdataset", async function () {
         const id: string = "courses";
-        const id2: string = "cpsccourses";
+        const id2: string = "cpsccourses2";
         let response: string[];
         let response2: string[];
 
@@ -162,7 +162,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
     // 5
     it("Should add a partial dataset", async function () {
         const id2: string = "courses";
-        const id: string = "onecoursewithsection";
+        const id: string = "onecoursewithsection2";
         let response2: string[];
         let response: string[];
 
@@ -319,7 +319,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
     });
     it("Should list 2 valid datasets and length be 2", async function () {
         const id: string = "courses";
-        const id2: string = "cpsccourses";
+        const id2: string = "cpsccourses2";
         let response: InsightDataset[];
         try {
             await insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
@@ -358,7 +358,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
 describe("InsightFacade PerformQuery", () => {
     const datasetsToQuery: { [id: string]: string } = {
         courses: "./test/data/courses.zip",
-        cpsccourses: "./test/data/cpsccourses.zip",
+        cpsccourses2: "./test/data/cpsccourses2.zip",
     };
     let insightFacade: InsightFacade;
 
