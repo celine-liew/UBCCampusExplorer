@@ -37,6 +37,7 @@ export default class Queryparser {
             throw new InsightError(element + " must be a non-empty array.");
         }
         ast.FilterKey = element; // ast.nodes.length = filter[element].length;
+        ast.nodes = [];
         for (let eachfilter of filtervalue) {
             if (typeof eachfilter !== "object") {
                 throw new InsightError(element + " must be object.");
@@ -58,17 +59,18 @@ export default class Queryparser {
             } else if (this.currentdatabasename !== s[0]) {
                 throw new InsightError("Cannot query more than one dataset 3");
             } else {
-                ast.nodes.length = 0;
+                ast.nodes = null;
+                // ast.nodes.length = 0;
                 if (element === "LT" || "GT" || "EQ") {
                     ast.FilterKey = element;
-                    if (typeof filtervalue(Object.keys(filtervalue)[0]) !== "number") {
+                    if (typeof filtervalue[Object.keys(filtervalue)[0]] !== "number") {
                         throw new InsightError("Invalid value type in " + element + " , should be number");
                     } else {
                         ast.value = [s[0], s[1], filtervalue(Object.keys(filtervalue)[0])];
                     }
                 } else {
                     ast.FilterKey = "IS";
-                    if (typeof filtervalue(Object.keys(filtervalue)[0]) !== "string") {
+                    if (typeof filtervalue[Object.keys(filtervalue)[0]] !== "string") {
                         throw new InsightError("Invalid value type in IS , should be string");
                     } else {
                         ast.value = [s[0], s[1], filtervalue(Object.keys(filtervalue)[0])];
@@ -84,7 +86,8 @@ export default class Queryparser {
             throw new InsightError("NOT should only have 1 key, has " + Object.keys(filtervalue).length + " .");
         } else {
             ast.FilterKey = "NOT";
-            ast.nodes.length = 1; // ast.FilterKey.value = filtervalue;
+            ast.nodes = [];
+            // ast.nodes.length = 1; // ast.FilterKey.value = filtervalue;
             ast.nodes.push(filtervalue);
             this.traverseFilterGenAst(filtervalue, ast.nodes[0]);
         }
