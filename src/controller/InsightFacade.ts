@@ -24,17 +24,20 @@ public unzipContent: string[] = [];
 public validCourseSections: any[] = [];
 public databasename: string = undefined;
 public parser: Queryparser = new Queryparser();
+public addedDatabase: string[] = [];
 
     constructor() {
         Log.trace("InsightFacadeImpl::init()");
     }
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
-        const addedDatabase: string[] = [];
         const coursesKeys: string[] = ['Subject', 'Course', 'Avg', 'Professor', 'Title', 'Pass', 'Fail','Audit','id','Year'];
         const coursesTranKeys: string[] = ['dept', 'id', 'avg', 'instructor', 'title', 'pass', 'fail','audit','uuid','year'];
-        if (addedDatabase.includes(id)){
-            Promise.reject(new InsightError("duplicate dataset id."));
+        if (this.addedDatabase.includes(id)){
+            throw new InsightError("duplicate dataset id.");
+        }
+        if (kind != InsightDatasetKind.Courses){
+            throw new InsightError("invalid InsightDatasetKind");
         }
         return JSZip.loadAsync(content, {base64: true}).then(zip => {
             const files: Promise<string>[] = [];
@@ -84,13 +87,13 @@ public parser: Queryparser = new Queryparser();
                     })
                 }
             })
-            if (this.validCourseSections.length = 0){
-                Promise.reject("no valid course sections in dataset.")
+            if (this.validCourseSections.length === 0){
+                throw new InsightError("no valid course sections in dataset.")
             } else {
                 this.addHash[id] = this.validCourseSections;
-                addedDatabase.push(id);
+                this.addedDatabase.push(id);
                 Promise.resolve;
-                return (addedDatabase);
+                return (this.addedDatabase);
             }
         })
         .catch(err => {
@@ -112,7 +115,7 @@ public parser: Queryparser = new Queryparser();
     public performQuery(query: any): Promise <any[]> {
         const self = this;
         let finalresult: any[];
-        const promise: Promise<string[]> = new Promise(function (resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 self.validatequery(query);
                 self.validateWhere(query["WHERE"]);
@@ -128,7 +131,6 @@ public parser: Queryparser = new Queryparser();
             }
             resolve(finalresult);
         });
-        return promise;
     }
     public validatequery(query: any) {
         // let queryobj = JSON.parse(JSON.stringify(query));
