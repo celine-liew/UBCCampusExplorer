@@ -2,13 +2,19 @@ import {IInsightFacade, InsightDataset, InsightDatasetKind, ResultTooLargeError}
 import {InsightError, NotFoundError} from "./IInsightFacade";
 import InsightFacade, { IHash } from "./InsightFacade";
 export default class Queryparser {
-    private ast: IFilter = undefined;
+    private ast: IFilter;
     private rowsbeforeoption: any[] = [];
     private data: InsightDataset[] = [];
     private allrows: any[];
     private static currentdatabasename: string = undefined;
     private static columnstoshow = new Set<string>();
     private static order: string = undefined;
+    public excutequery(query: any, addHash: IHash): any[] {
+        this.traverseFilterGenAst(query["WHERE"], this.ast);
+        this.astApplyToRow(this.ast, Queryparser.getcurrentdataset(), addHash);
+        this.applyOptions();
+        return this.rowsbeforeoption;
+    }
     public traverseFilterGenAst(filter: any, ast: IFilter) {
         let element = Object.keys(filter)[0];
         switch (element) {
@@ -275,7 +281,6 @@ export default class Queryparser {
             return;
         }
     }
-    public getresult(): any[] {return this.rowsbeforeoption; }
     public static getcolumnstoshow(): Set<string> {return Queryparser.columnstoshow; }
     public static columnstoshowpush(column: string) {Queryparser.columnstoshow.add(column); }
     public static getcurrentdataset(): string {return Queryparser.currentdatabasename; }

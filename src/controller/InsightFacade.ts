@@ -106,46 +106,41 @@ public validCourseSections: any[] = [];
     }
 
     public performQuery(query: any): Promise <any[]> {
+        const self = this;
+        let finalresult: any[];
         const promise: Promise<string[]> = new Promise(function (resolve, reject) {
             try {
-                this.validatequery(query);
-                let queryobj = JSON.parse(query);
-                this.validateWhere(queryobj["WHERE"]);
-                this.validateOptions(queryobj["OPTIONS"]);
+                self.validatequery(query);
+                self.validateWhere(query["WHERE"]);
+                self.validateOptions(query["OPTIONS"]);
                 let parser = new Queryparser();
-                parser.traverseFilterGenAst(queryobj["WHERE"], this.ast);
-                parser.astApplyToRow(this.ast, this.currentdatabasename, this.addHash);
-                parser.applyOptions();
-                let finalresult = parser.getresult();
+                finalresult = parser.excutequery(query, self.addHash);
                 parser.clean();
             } catch (error) {
                 if (error instanceof InsightError) {
                     reject(error);
                 } else {
-                    reject (new InsightError("Invalid query string"));
+                    reject (new InsightError(error.toString()));
                 }
             }
-            resolve(this.finalresult);
+            resolve(finalresult);
         });
         return promise;
     }
     public validatequery(query: any) {
-        let queryobj: object;
-        try {
-            queryobj = JSON.parse(query);
-        } catch (e) {
-            throw new InsightError("Invalid query string");
-        }
+        // let queryobj = JSON.parse(JSON.stringify(query));
+        // let queryobj = query;
         let keys: string[] = [];
         // this function gets all the keys as an array of queryobj
-        keys = Object.keys(queryobj);
+        keys = Object.keys(query);
         // if the queryobj has more than three keys, it must be invalid
         if (keys.length >= 3) {
             throw new InsightError("Excess keys in query");
         } else {
-            if (!queryobj.hasOwnProperty("WHERE")) {
+            if (!query.hasOwnProperty("WHERE")) {
+                // TODO for small database, may be valid
                 throw new InsightError("Missing Where");
-            } else if (!queryobj.hasOwnProperty("OPTIONS")) {
+            } else if (!query.hasOwnProperty("OPTIONS")) {
                 throw new InsightError("Missing Options");
             } else if (!(query["OPTIONS"].hasOwnProperty("COLUMNS"))) {
                 throw new InsightError("Options Missing Columns");
@@ -190,7 +185,7 @@ public validCourseSections: any[] = [];
                 });
                 this.checkcolumns(optionpart["COLUMNS"]);
                 if (optionpart["ORDER"]) {
-                    this.checkorder(optionpart["COLUMNS"], optionpart["ORDER"]);
+                    this.checkorder(optionpart["COLUMNS"], optionpart["ORDER"].toString());
                 }
                 return;
             }
@@ -203,8 +198,11 @@ public validCourseSections: any[] = [];
             if (s.length !== 1) {
                 throw new InsightError("key doesn't match");
             } else if (s[0] !== element) {
+                // console.log(s[0]);
                 throw new InsightError("key doesn't match");
             } else {
+                let re = new RegExp(/(?:(?!_).)*/g);
+                let s = element.match(re);
                 if ( Queryparser.getcurrentdataset() === undefined) {
                     Queryparser.setcurrentdataset(s[0]);
                 } else if (Queryparser.getcurrentdataset() !== s[0]) {
@@ -216,14 +214,18 @@ public validCourseSections: any[] = [];
             }
         });
     }
-    public checkorder(columns: any[], order: string) {
+    public checkorder(columns: string[], order: string) {
+        let flag = false;
         columns.forEach((element) => {
             if (element === order) {
                 Queryparser.setOrder(order);
-                return;
+                flag = true;
             }
         });
-        throw new InsightError("ORDER key must be in COLUMNS");
+        if (!flag) {
+            throw new InsightError("ORDER key must be in COLUMNS");
+        }
+        return;
     }
 
     public listDatasets(): Promise<InsightDataset[]> {
