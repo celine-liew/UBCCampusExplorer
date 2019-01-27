@@ -2,11 +2,13 @@
 import Log from "../Util";
 import {IInsightFacade, InsightDataset, InsightDatasetKind, ResultTooLargeError} from "./IInsightFacade";
 import {InsightError, NotFoundError} from "./IInsightFacade";
-import { AssertionError } from "assert";
+import { AssertionError, throws, deepStrictEqual } from "assert";
 import Queryparser from "./queryparser";
 import { acceptParser } from "restify";
 import * as JSZip from "jszip";
 import { PassThrough } from "stream";
+import * as fs from "fs-extra";
+import { addListener } from "cluster";
 
 /**
  * This is the main programmatic entry point for the project.
@@ -18,13 +20,12 @@ export interface IHash {
 }
 
 export default class InsightFacade implements IInsightFacade {
-
-public addHash: IHash = {};
-public unzipContent: string[] = [];
+public datasetsHash: IHash = {};
 public validCourseSections: any[] = [];
 public databasename: string = undefined;
 public parser: Queryparser = new Queryparser();
-public addedDatabase: string[] = [];
+public addedDatabase: InsightDataset[] = [];
+public addedArray: string[] = [];
 
     constructor() {
         Log.trace("InsightFacadeImpl::init()");
@@ -33,7 +34,13 @@ public addedDatabase: string[] = [];
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
         const coursesKeys: string[] = ['Subject', 'Course', 'Avg', 'Professor', 'Title', 'Pass', 'Fail','Audit','id','Year'];
         const coursesTranKeys: string[] = ['dept', 'id', 'avg', 'instructor', 'title', 'pass', 'fail','audit','uuid','year'];
-        if (this.addedDatabase.includes(id)){
+        if (!id || id === ""){
+            throw new InsightError( "null input");
+        }
+        if (!content) {
+            throw new InsightError( "Can't find database");
+        }
+        if (this.datasetsHash[id]){
             throw new InsightError("duplicate dataset id.");
         }
         if (kind != InsightDatasetKind.Courses){
@@ -57,7 +64,11 @@ public addedDatabase: string[] = [];
             let courseFile;
 
             files.forEach(file => {
-                courseFile = JSON.parse(file); // if valid Json
+                try {
+                courseFile = JSON.parse(file) // if valid Json
+                } catch (err) {
+                    throw new InsightError("Error with JSON parsing");
+                }
                 if (courseFile['result'].length >= 1){
                     courseFile['result'].forEach((cSection : any) => {
                         const validSection = coursesKeys.every((key) => {
@@ -90,26 +101,65 @@ public addedDatabase: string[] = [];
             if (this.validCourseSections.length === 0){
                 throw new InsightError("no valid course sections in dataset.")
             } else {
-                this.addHash[id] = this.validCourseSections;
-                this.addedDatabase.push(id);
-                Promise.resolve;
-                return (this.addedDatabase);
+                this.datasetsHash[id] = this.validCourseSections;
+                const dataset: InsightDataset = {
+                    'id': id,
+                    'kind': kind,
+                    'numRows': this.validCourseSections.length,
+                }
+                this.addedDatabase.push(dataset);
+                return this.saveDatasetList(this.datasetsHash);
             }
+        }).then(() => {
+            this.addedArray.push(id);
+            return this.addedArray;
         })
         .catch(err => {
-            if (err instanceof Error){
-                throw new InsightError(err)
+            if (err !instanceof InsightError || err !instanceof NotFoundError){
+                throw new InsightError(err);
             }
             return err;
         }).catch(err => {
-            return Promise.reject(err);
+            return err;
         })
     }
-        // tslint:disable-next-line:align
-
-        // { [key: string]: Type; }
     public removeDataset(id: string): Promise<string> {
-        return Promise.reject("Not implemented.");
+        if (!id){
+            throw new InsightError ("null input")
+        } if (!this.datasetsHash[id]){
+            throw new InsightError("dataset not in list.");
+        } else {
+            try {
+            delete this.datasetsHash[id];
+            this.addedDatabase = this.addedDatabase.filter(name => id != id);
+
+            return Promise.resolve(id);
+            } catch (err) {
+                    if (err instanceof Error) {
+                        throw new InsightError(err);
+                    }
+                    return err;
+            }
+        }
+    }
+
+    public async saveDatasetList(data: IHash) {
+        const outputFile = Object.keys(data).map(function(key) {
+            return {id: key, validFiles: data[key]};
+        });
+        const dir = "./data"
+        const filePath = "./data/savedDatasets.json"
+        try {
+            await fs.ensureDir(dir);
+            await fs.writeJSON(filePath, outputFile)
+        } catch (err) {
+            console.error(err);
+            throw err;
+        }
+    }
+
+    public listDatasets(): Promise<InsightDataset[]> {
+        return Promise.resolve(this.addedDatabase);
     }
 
     public performQuery(query: any): Promise <any[]> {
@@ -120,7 +170,7 @@ public addedDatabase: string[] = [];
                 self.validatequery(query);
                 self.validateWhere(query["WHERE"]);
                 self.validateOptions(query["OPTIONS"]);
-                finalresult = self.parser.excutequery(query, self.addHash, self.databasename);
+                finalresult = self.parser.excutequery(query, self.datasetsHash, self.databasename);
                 self.parser.clean();
             } catch (error) {
                 if (error instanceof InsightError) {
@@ -237,7 +287,7 @@ public addedDatabase: string[] = [];
         return;
     }
 
-    public listDatasets(): Promise<InsightDataset[]> {
-        return Promise.reject("Not implemented.");
-    }
+
+
+
 }
