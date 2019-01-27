@@ -30,7 +30,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
         cpsccourses2: "./test/data/cpsccourses2.zip",
         nocourses: "./test/data/nocourses.zip",
         noncoursedatabase: "./test/data/wrongfile.png",
-        invalidJSON: "./test/data/invalidjson.zip",
+        invalidjson2: "./test/data/invalidjson2.zip",
         onecoursewithsection2: "./test/data/onecoursewithsection2.zip",
         zerosection: "./test/data/zerosectionsdataset.zip"
     };
@@ -160,7 +160,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
         }
     });
     // 5
-    it.only("Should add a partial dataset", async function () {
+    it("Should add a partial dataset", async function () {
         const id2: string = "courses";
         const id: string = "onecoursewithsection2";
         let response2: string[];
@@ -185,12 +185,12 @@ describe("InsightFacade Add/Remove Dataset", function () {
         } catch (err) {
             response = err;
         } finally {
-            expect(response).to.be.instanceOf(NotFoundError);
+            expect(response).to.be.instanceOf(InsightError);
         }
     });
     // 7
     it("Shouldn't add a dataset with invalidJSON format", async function () {
-        const id: string = "invalidJSON";
+        const id: string = "invalidjson2";
         let response: string[];
 
         try {
@@ -228,7 +228,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
         }
     });
     // This is an example of a pending test. Add a callback function to make the test run.
-    it.only("Should remove the courses dataset", async function () {
+    it("Should remove the courses dataset", async function () {
         const id: string = "courses";
         let response: string;
 
@@ -243,7 +243,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
 
     });
 
-    it.only("Shouldn't remove the same existing courses dataset more than once", async function () {
+    it("Shouldn't remove the same existing courses dataset more than once", async function () {
         const id: string = "courses";
         let response: string;
 
@@ -297,7 +297,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
         } catch (err) {
             response = err;
         } finally {
-            expect(response).to.be.instanceOf(NotFoundError);
+            expect(response).to.be.instanceOf(InsightError);
         }
 
     });
