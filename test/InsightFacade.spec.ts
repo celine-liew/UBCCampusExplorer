@@ -160,7 +160,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
         }
     });
     // 5
-    it("Should add a partial dataset", async function () {
+    it.only("Should add a partial dataset", async function () {
         const id2: string = "courses";
         const id: string = "onecoursewithsection2";
         let response2: string[];
@@ -185,7 +185,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
         } catch (err) {
             response = err;
         } finally {
-            expect(response).to.be.instanceOf(InsightError);
+            expect(response).to.be.instanceOf(NotFoundError);
         }
     });
     // 7
@@ -228,7 +228,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
         }
     });
     // This is an example of a pending test. Add a callback function to make the test run.
-    it("Should remove the courses dataset", async function () {
+    it.only("Should remove the courses dataset", async function () {
         const id: string = "courses";
         let response: string;
 
@@ -243,7 +243,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
 
     });
 
-    it("Shouldn't remove the same existing courses dataset more than once", async function () {
+    it.only("Shouldn't remove the same existing courses dataset more than once", async function () {
         const id: string = "courses";
         let response: string;
 
@@ -282,7 +282,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
         } catch (err) {
             response = err;
         } finally {
-            expect(response).to.be.instanceOf(NotFoundError);
+            expect(response).to.be.instanceOf(InsightError);
         }
 
     });
@@ -297,7 +297,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
         } catch (err) {
             response = err;
         } finally {
-            expect(response).to.be.instanceOf(InsightError);
+            expect(response).to.be.instanceOf(NotFoundError);
         }
 
     });

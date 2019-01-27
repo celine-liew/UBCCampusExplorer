@@ -2,7 +2,7 @@
 import Log from "../Util";
 import {IInsightFacade, InsightDataset, InsightDatasetKind, ResultTooLargeError} from "./IInsightFacade";
 import {InsightError, NotFoundError} from "./IInsightFacade";
-import { AssertionError } from "assert";
+import { AssertionError, throws } from "assert";
 import Queryparser from "./queryparser";
 import { acceptParser } from "restify";
 import * as JSZip from "jszip";
@@ -33,7 +33,13 @@ public addedDatabase: string[] = [];
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
         const coursesKeys: string[] = ['Subject', 'Course', 'Avg', 'Professor', 'Title', 'Pass', 'Fail','Audit','id','Year'];
         const coursesTranKeys: string[] = ['dept', 'id', 'avg', 'instructor', 'title', 'pass', 'fail','audit','uuid','year'];
-        if (this.addedDatabase.includes(id)){
+        if (!id){
+            throw new NotFoundError( "null input");
+        }
+        if (!content) {
+            throw new InsightError( "Can't find database");
+        }
+        if (this.addHash[id]){
             throw new InsightError("duplicate dataset id.");
         }
         if (kind != InsightDatasetKind.Courses){
@@ -97,8 +103,8 @@ public addedDatabase: string[] = [];
             }
         })
         .catch(err => {
-            if (err instanceof Error){
-                throw new InsightError(err)
+            if (err !instanceof InsightError || err !instanceof NotFoundError){
+                throw new InsightError(err);
             }
             return err;
         }).catch(err => {
@@ -109,7 +115,21 @@ public addedDatabase: string[] = [];
 
         // { [key: string]: Type; }
     public removeDataset(id: string): Promise<string> {
-        return Promise.reject("Not implemented.");
+        if (!this.addHash[id]){
+            throw new InsightError("dataset not in list.");
+        } else {
+            try {
+            delete this.addHash[id];
+            this.addedDatabase = this.addedDatabase.filter(name => name != id);
+            console.log(this.addedDatabase);
+            return Promise.resolve(id);
+            } catch (err) {
+                    if (err instanceof Error) {
+                        throw new InsightError(err);
+                    }
+                    return err;
+            }
+        }
     }
 
     public performQuery(query: any): Promise <any[]> {
