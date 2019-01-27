@@ -8,8 +8,12 @@ export default class Queryparser {
     private currentdatabasename: string = undefined;
     public columnstoshow = new Set<string>();
     public order: string = undefined;
+    private renum = new RegExp(/[^_]+_(avg|pass|fail|audit|year)$/g);
+    private res = new RegExp(/[^_]+_(dept|id|instructor|title|uuid)$/g);
     public excutequery(query: any, addHash: IHash, databasename: string): any[] {
-        this.traverseFilterGenAst(query["WHERE"], this.AST);
+        this.currentdatabasename = databasename;
+        if (Object.keys(query["WHERE"]).length >= 2) { throw new InsightError("More than one key"); }
+        this.AST = this.traverseFilterGenAst(query["WHERE"], null);
         if ( this.currentdatabasename !== databasename) {
             throw new InsightError("Cannot query more than one dataset 2");
         }
@@ -17,51 +21,51 @@ export default class Queryparser {
         this.applyOptions();
         return this.rowsbeforeoption;
     }
-    public traverseFilterGenAst(filter: any, ast: IFilter) {
+    public traverseFilterGenAst(filter: any, AST: IFilter): IFilter {
         let element = Object.keys(filter)[0];
+        AST = { FilterKey : "", value : [] , nodes : []};
+        AST.FilterKey = element;
         switch (element) {
             case "AND": case "OR":
-                this.logicSymbolTraverse(filter[element], ast, element);
+                AST.nodes = this.logicSymbolTraverse(filter[element], AST, element);
                 break;
             case "LT": case "GT": case "EQ": case "IS":
-                this.MSSymbolTraverse(filter[element], ast, element);
+                AST = this.MSSymbolTraverse(filter[element], AST, element);
                 break;
             case "NOT":
-                this.NegationTraverse(filter[element], ast);
+                AST = this.NegationTraverse(filter[element], AST);
                 break;
             default:
                 throw new InsightError("Invalid query string 2"); }
+        return AST;
     }
-    public logicSymbolTraverse(filtervalue: any, ast: IFilter, element: string) {
+    public logicSymbolTraverse(filtervalue: any, ast: IFilter, element: string): IFilter[] {
         if (!Array.isArray(filtervalue) /* || filtervalue.length === 0 */) {
             throw new InsightError(element + " must be a non-empty array.");
         }
-        ast.FilterKey = element; // ast.nodes.length = filter[element].length;
-        ast.nodes = [];
         for (let eachfilter of filtervalue) {
             if (typeof eachfilter !== "object") {
                 throw new InsightError(element + " must be object.");
             } // ast.FilterKey.value = eachfilter;
-            ast.nodes.push(eachfilter);
-            this.traverseFilterGenAst(eachfilter, ast.nodes[ast.nodes.length - 1]);
+            let newnode: IFilter = { FilterKey : "", value : [] , nodes : []};
+            ast.nodes.push(newnode);
+            ast.nodes[ast.nodes.length - 1] = this.traverseFilterGenAst(eachfilter, ast.nodes[ast.nodes.length - 1]);
         }
+        return ast.nodes;
     }
-    public MSSymbolTraverse(filtervalue: any, ast: IFilter, element: string) {
+    public MSSymbolTraverse(filtervalue: any, ast: IFilter, element: string): IFilter {
         if (typeof filtervalue !== "object" || Array.isArray(filtervalue)) {
             throw new InsightError(element + " must be an object.");
         } else if (Object.keys(filtervalue).length !== 1) {
             throw new InsightError(element + " should only have 1 key, has " + Object.keys(filtervalue).length + " .");
         } else {
-            this.getStringToFrst_(Object.keys(filtervalue)[0], element);
+            this.keyMatchCheck(Object.keys(filtervalue)[0], element);
             let s: string[] = Object.keys(filtervalue)[0].split("_");
-            if (this.currentdatabasename === undefined) {
-                this.currentdatabasename = s[0];
-            } else if (this.currentdatabasename !== s[0]) {
+            if (this.currentdatabasename !== s[0]) {
                 throw new InsightError("Cannot query more than one dataset 3");
             } else {
-                ast.nodes = [];
-                // ast.nodes.length = 0;
-                if (element === "LT" || "GT" || "EQ") {
+                ast = { FilterKey : "", value : [], nodes : []}; // ast.nodes.length = 0;
+                if (element === "LT" || element === "GT" || element === "EQ") {
                     ast.FilterKey = element;
                     if (typeof filtervalue[Object.keys(filtervalue)[0]] !== "number") {
                         throw new InsightError("Invalid value type in " + element + " , should be number");
@@ -76,30 +80,32 @@ export default class Queryparser {
                         ast.value = [s[0], s[1], filtervalue[Object.keys(filtervalue)[0]]];
                     }
                 }
+                return ast;
             }
         }
     }
-    public NegationTraverse(filtervalue: any, ast: IFilter) {
+    public NegationTraverse(filtervalue: any, ast: IFilter): IFilter {
         if (typeof filtervalue !== "object" || Array.isArray(filtervalue)) {
             throw new InsightError("Invalid query string 3");
         } else if (Object.keys(filtervalue).length !== 1) {
             throw new InsightError("NOT should only have 1 key, has " + Object.keys(filtervalue).length + " .");
         } else {
+            ast = { FilterKey : "", value : [], nodes : []};
             ast.FilterKey = "NOT";
-            ast.nodes = [];
-            // ast.nodes.length = 1; // ast.FilterKey.value = filtervalue;
-            ast.nodes.push(filtervalue);
-            this.traverseFilterGenAst(filtervalue, ast.nodes[0]);
+            let newnode: IFilter = { FilterKey : "", value : [] , nodes : []};
+            ast.nodes.push(newnode);
+            ast.nodes[0] = this.traverseFilterGenAst(filtervalue, ast.nodes[0]);
         }
+        return ast;
     }
-    public getStringToFrst_(key: string, element: string) {
-        let re;
-        if (element === "LT" || "GT" || "EQ") {
-            re = new RegExp(/[^_]+_(avg|pass|fail|audit|year)$/g);
-        } else {
-            re = new RegExp(/[^_]+_(dept|id|instructor|title|uuid)$/g);
+    public keyMatchCheck(key: string, element: string) {
+        let s = null;
+        if (element === "IS") {
+            s = key.match(this.res);
+        } else if (element === "LT" || element === "GT" || element === "EQ") {
+            s = key.match(this.renum);
         }
-        let s = key.match(re);
+        if (s === null) { throw new InsightError("no _"); }
         if (s.length !== 1) {
             throw new InsightError("key doesn't match");
         } else if (s[0] !== key) {
@@ -135,10 +141,11 @@ export default class Queryparser {
         }
         function traverseNode(current: IFilter): any[] {
             let midresult: any[] = [];
+            if (current === undefined) {throw new InsightError("undefined node?!"); }
             let identifier = current.FilterKey;
-            if (identifier === "AND" || "OR" || "NOT") {
+            if (identifier === "AND" || identifier === "OR" || identifier === "NOT") {
                 midresult = traverseArray(current.nodes, identifier);
-            } else if (identifier === "EQ" || "GT" || "LT" || "IS") {
+            } else if (identifier === "EQ" || identifier === "GT" || identifier === "LT" || identifier === "IS") {
                 let value = current.value;
                 let assert = require("assert");
                 assert(value[0] === this.currentdatabasename);
@@ -163,7 +170,11 @@ export default class Queryparser {
         return result;
     }
     public keepcommon(array1: any[], array2: any[]): any[] {
-        if (array1.length !== 0 && array2.length !== 0) {
+        if (array1 === null ) {
+            return array2;
+        } else if (array2 === null ) {
+            return array1;
+        } else {
             let set = new Set();
             let ret: any[] = [];
             array1.forEach((element) => {
@@ -176,12 +187,11 @@ export default class Queryparser {
             });
             return ret;
         }
-        return [];
     }
     public keepboth(array1: any[], array2: any[]) {
-        if (array1.length === 0) {
+        if (array1 === null) {
             return array2;
-        } else if (array2.length === 0) {
+        } else if (array2 === null) {
             return array1;
         } else {
             let ret = array1;
@@ -194,7 +204,7 @@ export default class Queryparser {
         }
     }
     public reverse(array1: any[]) {
-        if (array1.length === 0) {
+        if (array1 === null) {
             return this.allrows;
         } else {
             let set = new Set();
@@ -242,13 +252,13 @@ export default class Queryparser {
         let ret: any[] = [];
         this.allrows.forEach((element) => {
             let regexp = new RegExp(/^[*]?[^*]*[*]?$/g);
-            let s = value.match(regexp);
+            let s = value.match(regexp); if (s === null) { throw new InsightError("IS no match"); }
             if (s.length !== 1) {
                 throw new InsightError("key doesn't match");
             } else if (s[0] !== value) {
                 throw new InsightError("key doesn't match");
             } else {
-                let s2 = element[key].match(regexp);
+                let s2 = element[key].match(regexp); if (s2 === null) { throw new InsightError("IS no match"); }
                 if (s2.length === 1 && s2[0] === element[key]) {
                     ret.push(element);
                 }
@@ -275,8 +285,7 @@ export default class Queryparser {
                 if (A > B) {return 1; }
                 return 0;
             });
-        } else {
-            return;
+        } else {return;
         }
     }
     public clean() {
