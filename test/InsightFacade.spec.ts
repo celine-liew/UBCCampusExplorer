@@ -30,7 +30,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
         cpsccourses2: "./test/data/cpsccourses2.zip",
         nocourses: "./test/data/nocourses.zip",
         noncoursedatabase: "./test/data/wrongfile.png",
-        invalidJSON: "./test/data/invalidjson.zip",
+        invalidjson2: "./test/data/invalidjson2.zip",
         onecoursewithsection2: "./test/data/onecoursewithsection2.zip",
         zerosection: "./test/data/zerosectionsdataset.zip"
     };
@@ -190,7 +190,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
     });
     // 7
     it("Shouldn't add a dataset with invalidJSON format", async function () {
-        const id: string = "invalidJSON";
+        const id: string = "invalidjson2";
         let response: string[];
 
         try {
@@ -282,7 +282,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
         } catch (err) {
             response = err;
         } finally {
-            expect(response).to.be.instanceOf(NotFoundError);
+            expect(response).to.be.instanceOf(InsightError);
         }
 
     });
