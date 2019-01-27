@@ -181,11 +181,11 @@ public addedDatabase: string[] = [];
             } else if (optionpart.hasOwnProperty("ORDER") && typeof optionpart["ORDER"] !== "string") {
                 throw new InsightError("Invalid ORDER type");
             } else if (!Array.isArray(optionpart["COLUMNS"])) {
-                throw new InsightError("Invalid query string");
+                throw new InsightError("Invalid query string 0");
             } else {
                 optionpart["COLUMNS"].forEach((element: any) => {
                     if (typeof element !== "string") {
-                        throw new InsightError("Invalid query string");
+                        throw new InsightError("Invalid query string 1");
                     }
                 });
                 this.checkcolumns(optionpart["COLUMNS"]);

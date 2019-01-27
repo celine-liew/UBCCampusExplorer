@@ -30,10 +30,10 @@ export default class Queryparser {
                 this.NegationTraverse(filter[element], ast);
                 break;
             default:
-                throw new InsightError("Invalid query string"); }
+                throw new InsightError("Invalid query string 2"); }
     }
     public logicSymbolTraverse(filtervalue: any, ast: IFilter, element: string) {
-        if (!Array.isArray(filtervalue) || filtervalue.length === 0) {
+        if (!Array.isArray(filtervalue) /* || filtervalue.length === 0 */) {
             throw new InsightError(element + " must be a non-empty array.");
         }
         ast.FilterKey = element; // ast.nodes.length = filter[element].length;
@@ -66,14 +66,14 @@ export default class Queryparser {
                     if (typeof filtervalue[Object.keys(filtervalue)[0]] !== "number") {
                         throw new InsightError("Invalid value type in " + element + " , should be number");
                     } else {
-                        ast.value = [s[0], s[1], filtervalue(Object.keys(filtervalue)[0])];
+                        ast.value = [s[0], s[1], filtervalue[Object.keys(filtervalue)[0]]];
                     }
                 } else {
                     ast.FilterKey = "IS";
                     if (typeof filtervalue[Object.keys(filtervalue)[0]] !== "string") {
                         throw new InsightError("Invalid value type in IS , should be string");
                     } else {
-                        ast.value = [s[0], s[1], filtervalue(Object.keys(filtervalue)[0])];
+                        ast.value = [s[0], s[1], filtervalue[Object.keys(filtervalue)[0]]];
                     }
                 }
             }
@@ -81,7 +81,7 @@ export default class Queryparser {
     }
     public NegationTraverse(filtervalue: any, ast: IFilter) {
         if (typeof filtervalue !== "object" || Array.isArray(filtervalue)) {
-            throw new InsightError("Invalid query string");
+            throw new InsightError("Invalid query string 3");
         } else if (Object.keys(filtervalue).length !== 1) {
             throw new InsightError("NOT should only have 1 key, has " + Object.keys(filtervalue).length + " .");
         } else {
