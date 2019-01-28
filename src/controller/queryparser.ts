@@ -1,6 +1,7 @@
 import {IInsightFacade, InsightDataset, InsightDatasetKind, ResultTooLargeError} from "./IInsightFacade";
 import {InsightError, NotFoundError} from "./IInsightFacade";
 import InsightFacade, { IHash } from "./InsightFacade";
+import Helper from "./Helper";
 export default class Queryparser {
     private AST: IFilter = { FilterKey : "", value : [], nodes : []};
     private rowsbeforeoption: any[] = [];
@@ -111,8 +112,7 @@ export default class Queryparser {
         } else if (s[0] !== key) {
             throw new InsightError("key doesn't match");
         } else {
-            return;
-        }
+            return; }
     }
     public astApplyToRow(currentdatabasename: string, addHash: IHash) {
         if (!addHash[currentdatabasename]) {
@@ -127,6 +127,9 @@ export default class Queryparser {
             let midresult: any[] = [];
             if (identifier === "AND") {
                 nodes.forEach((child) => {
+                    if (nodes.indexOf(child) === 0) {
+                        midresult = self.keepboth(midresult, traverseNode(child));
+                    }
                     midresult = self.keepcommon(midresult, traverseNode(child));
                 });
             } else if (identifier === "OR") {
@@ -166,13 +169,14 @@ export default class Queryparser {
             return midresult;
         }
         let result = traverseNode(ast);
+        if (result.length >= 5000) {throw new ResultTooLargeError(); }
         return result;
     }
     public keepcommon(array1: any[], array2: any[]): any[] {
         if (array1 === null ) {
-            return array2;
-        } else if (array2 === null ) {
             return array1;
+        } else if (array2 === null ) {
+            return array2;
         } else {
             let set = new Set();
             let ret: any[] = [];
@@ -180,7 +184,7 @@ export default class Queryparser {
                 set.add(element);
             });
             array2.forEach((element) => {
-                if (!set.has(element)) {
+                if (set.has(element)) {
                     ret.push(element);
                 }
             });
@@ -256,8 +260,7 @@ export default class Queryparser {
             } else if (s[0] !== value) {
                 throw new InsightError("key doesn't match");
             } else {
-                let s2 = element[key].match(regexp); if (s2 === null) { throw new InsightError("IS no match"); }
-                if (s2.length === 1 && s2[0] === element[key]) {
+                if (Helper.helper(element[key], value)) {
                     ret.push(element);
                 }
             }
@@ -268,8 +271,7 @@ export default class Queryparser {
         this.rowsbeforeoption.forEach((element) => {
             Object.keys(element).forEach((keytoexamine) => {
                 if (!this.columnstoshow.has(keytoexamine)) {
-                    delete element.keytoexamine;
-                }
+                    delete element.keytoexamine; }
             });
         });
         this.sortrows();
@@ -284,8 +286,7 @@ export default class Queryparser {
                 if (A > B) {return 1; }
                 return 0;
             });
-        } else {return;
-        }
+        } else {return; }
     }
     public clean() {
         this.currentdatabasename = undefined;
