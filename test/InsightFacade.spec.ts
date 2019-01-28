@@ -249,12 +249,12 @@ describe("InsightFacade Add/Remove Dataset", function () {
 
         try {
             await insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
-            response = await insightFacade.removeDataset(id);
+            await insightFacade.removeDataset(id);
             response = await insightFacade.removeDataset(id);
         } catch (err) {
             response = err;
         } finally {
-            expect(response).to.be.instanceOf(InsightError);
+            expect(response).to.be.instanceOf(NotFoundError);
         }
 
     });
@@ -267,7 +267,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
         } catch (err) {
             response = err;
         } finally {
-            expect(response).to.be.instanceOf(InsightError);
+            expect(response).to.be.instanceOf(NotFoundError);
         }
 
     });
