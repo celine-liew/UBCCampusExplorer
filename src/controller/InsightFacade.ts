@@ -19,32 +19,41 @@ export interface IHash {
     [id: string]: any[];
 }
 
+interface EHash {
+    [kind: string]: IHash;
+}
+
+// type EHash ={
+//     [kind in InsightDatasetKind]: IHash;
+// }
+
 export default class InsightFacade implements IInsightFacade {
-public datasetsHash: IHash = {};
+
+public datasetsHash: EHash = {};
 public validCourseSections: any[] = [];
 public databasename: string = undefined;
 public parser: Queryparser = new Queryparser();
 public addedDatabase: InsightDataset[] = [];
-public addedArray: string[] = [];
 
     constructor() {
         Log.trace("InsightFacadeImpl::init()");
     }
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
+        const datasetToAdd: IHash = {};
         const coursesKeys: string[] = ['Subject', 'Course', 'Avg', 'Professor', 'Title', 'Pass', 'Fail','Audit','id','Year'];
-        const coursesTranKeys: string[] = ['dept', 'id', 'avg', 'instructor', 'title', 'pass', 'fail','audit','uuid','year'];
+        // const coursesTranKeys: string[] = ['dept', 'id', 'avg', 'instructor', 'title', 'pass', 'fail','audit','uuid','year'];
         if (!id || id === ""){
             throw new InsightError( "null input");
         }
         if (!content) {
             throw new InsightError( "Can't find database");
         }
-        if (this.datasetsHash[id]){
-            throw new InsightError("duplicate dataset id.");
-        }
         if (kind != InsightDatasetKind.Courses){
             throw new InsightError("invalid InsightDatasetKind");
+        }
+        if (this.datasetsHash && this.datasetsHash[kind] && this.datasetsHash[kind][id]){
+            throw new InsightError("duplicate dataset id.");
         }
         return JSZip.loadAsync(content, {base64: true}).then(zip => {
             const files: Promise<string>[] = [];
@@ -101,18 +110,14 @@ public addedArray: string[] = [];
             if (this.validCourseSections.length === 0){
                 throw new InsightError("no valid course sections in dataset.")
             } else {
-                this.datasetsHash[id] = this.validCourseSections;
-                const dataset: InsightDataset = {
-                    'id': id,
-                    'kind': kind,
-                    'numRows': this.validCourseSections.length,
+                if (!this.datasetsHash[kind]) {
+                    this.datasetsHash[kind] = {}
                 }
-                this.addedDatabase.push(dataset);
-                return this.saveDatasetList(this.datasetsHash);
+                this.datasetsHash[kind][id] = this.validCourseSections;
+                return this.saveDatasetList();
             }
-        }).then(() => {
-            this.addedArray.push(id);
-            return this.addedArray;
+        }).then ( () => {
+            return Object.keys(this.datasetsHash[kind]);
         })
         .catch(err => {
             if (err !instanceof InsightError || err !instanceof NotFoundError){
@@ -125,12 +130,12 @@ public addedArray: string[] = [];
     }
     public removeDataset(id: string): Promise<string> {
         if (!id){
-            throw new InsightError ("null input")
-        } if (!this.datasetsHash[id]){
-            throw new InsightError("dataset not in list.");
+            throw new InsightError ("null input");
+        } if (!this.datasetsHash.courses || this.datasetsHash.courses && !this.datasetsHash.courses[id]){
+            throw new NotFoundError ("dataset not in list.");
         } else {
             try {
-            delete this.datasetsHash[id];
+            delete this.datasetsHash.courses[id];
             this.addedDatabase = this.addedDatabase.filter(name => id != id);
 
             return Promise.resolve(id);
@@ -143,10 +148,10 @@ public addedArray: string[] = [];
         }
     }
 
-    public async saveDatasetList(data: IHash) {
-        const outputFile = Object.keys(data).map(function(key) {
-            return {id: key, validFiles: data[key]};
-        });
+    public async saveDatasetList() {
+        const data = this.datasetsHash;
+        const outputFile = Object.keys(data).map((kind) => {
+            return {kind: kind, id: data[kind]}});
         const dir = "./data"
         const filePath = "./data/savedDatasets.json"
         try {
@@ -159,7 +164,22 @@ public addedArray: string[] = [];
     }
 
     public listDatasets(): Promise<InsightDataset[]> {
-        return Promise.resolve(this.addedDatabase);
+
+        // this.addedDatabase.push(dataset);
+        const outputList: InsightDataset[] = [];
+        Object.keys(this.datasetsHash).forEach( courseOrRm => {
+            const setIds = Object.keys(this.datasetsHash[courseOrRm]);
+            setIds.forEach ((id) => {
+                const dataset: InsightDataset = {
+                    'id': id,
+                    "kind": courseOrRm === 'courses' ? InsightDatasetKind.Courses : InsightDatasetKind.Rooms,
+                    'numRows': setIds.length,
+                }
+                outputList.push(dataset);
+            })
+
+        })
+        return Promise.resolve(outputList);
     }
 
     public performQuery(query: any): Promise <any[]> {
@@ -170,7 +190,7 @@ public addedArray: string[] = [];
                 self.validatequery(query);
                 self.validateWhere(query["WHERE"]);
                 self.validateOptions(query["OPTIONS"]);
-                finalresult = self.parser.excutequery(query, self.datasetsHash, self.databasename);
+                finalresult = self.parser.excutequery(query, self.datasetsHash['courses'], self.databasename);
                 self.parser.clean();
             } catch (error) {
                 if (error instanceof InsightError) {
