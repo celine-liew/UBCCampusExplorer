@@ -153,17 +153,13 @@ export default class Queryparser {
                 let value = current.value;
                 switch (identifier) {
                     case "EQ":
-                        midresult = self.selectrowM(value[1], value[2], "EQ");
-                        break;
+                        midresult = self.selectrowM(value[1], value[2], "EQ"); break;
                     case "GT":
-                        midresult = self.selectrowM(value[1], value[2], "GT");
-                        break;
+                        midresult = self.selectrowM(value[1], value[2], "GT"); break;
                     case "LT":
-                        midresult = self.selectrowM(value[1], value[2], "LT");
-                        break;
+                        midresult = self.selectrowM(value[1], value[2], "LT"); break;
                     case "IS":
-                        midresult = self.selectrowS(value[1], value[2]);
-                        break;
+                        midresult = self.selectrowS(value[1], value[2]); break;
                 }
             }
             return midresult;
