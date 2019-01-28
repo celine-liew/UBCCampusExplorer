@@ -13,7 +13,14 @@ export default class Queryparser {
     private res = new RegExp(/[^_]+_(dept|id|instructor|title|uuid)$/g);
     public excutequery(query: any, addHash: IHash, databasename: string): any[] {
         this.currentdatabasename = databasename;
-        if (Object.keys(query["WHERE"]).length >= 2) { throw new InsightError("More than one key"); }
+        if (Object.keys(query["WHERE"]).length === 0) {
+            if (addHash[databasename].length >= 5000) {
+                throw new ResultTooLargeError();
+            }
+        }
+        if (Object.keys(query["WHERE"]).length >= 2) {
+            throw new InsightError("More than one key");
+        }
         this.AST = this.traverseFilterGenAst(query["WHERE"], null);
         if ( this.currentdatabasename !== databasename) {
             throw new InsightError("Cannot query more than one dataset 2");
@@ -37,7 +44,8 @@ export default class Queryparser {
                 AST = this.NegationTraverse(filter[element], AST);
                 break;
             default:
-                throw new InsightError("Invalid query string 2"); }
+                throw new InsightError("Invalid query string 2");
+        }
         return AST;
     }
     public logicSymbolTraverse(filtervalue: any, ast: IFilter, element: string): IFilter[] {
@@ -100,11 +108,12 @@ export default class Queryparser {
         return ast;
     }
     public keyMatchCheck(key: string, element: string) {
+        let self = this;
         let s = null;
         if (element === "IS") {
-            s = key.match(this.res);
+            s = key.match(self.res);
         } else if (element === "LT" || element === "GT" || element === "EQ") {
-            s = key.match(this.renum);
+            s = key.match(self.renum);
         }
         if (s === null) { throw new InsightError("no _"); }
         if (s.length !== 1) {
@@ -165,7 +174,7 @@ export default class Queryparser {
             return midresult;
         }
         let result = traverseNode(ast);
-        if (result.length >= 5000) {throw new ResultTooLargeError(); }
+        if (result !== undefined && result.length >= 5000) {throw new ResultTooLargeError(); }
         return result;
     }
     public keepcommon(array1: any[], array2: any[]): any[] {
@@ -188,14 +197,18 @@ export default class Queryparser {
         }
     }
     public keepboth(array1: any[], array2: any[]) {
-        if (array1 === null) {
+        if (array1 === undefined) {
             return array2;
-        } else if (array2 === null) {
+        } else if (array2 === undefined) {
             return array1;
         } else {
+            let set = new Set();
             let ret = array1;
+            array1.forEach((element) => {
+                set.add(element);
+            });
             array2.forEach((element) => {
-                if (!ret.includes(element)) {
+                if (!set.has(element)) {
                     ret.push(element);
                 }
             });
@@ -203,15 +216,16 @@ export default class Queryparser {
         }
     }
     public reverse(array1: any[]) {
+        let self = this;
         if (array1 === null) {
-            return this.allrows;
+            return self.allrows;
         } else {
             let set = new Set();
             let ret: any[] = [];
             array1.forEach((element) => {
                 set.add(element);
             });
-            this.allrows.forEach((element) => {
+            self.allrows.forEach((element) => {
                 if (!set.has(element)) {
                     ret.push(element);
                 }
@@ -225,42 +239,40 @@ export default class Queryparser {
             case "EQ":
             this.allrows.forEach((element) => {
                 if (/*element.hasOwnProperty(key) && */element[key] === value) {
-                    ret.push(element);
-                }
+                    ret.push(element); }
             });
             break;
             case "GT":
             this.allrows.forEach((element) => {
                 if (/*element.hasOwnProperty(key) && */element[key] > value) {
-                    ret.push(element);
-                }
+                    ret.push(element); }
             });
             break;
             case "LT":
             this.allrows.forEach((element) => {
                 if (/*element.hasOwnProperty(key) && */element[key] < value) {
-                    ret.push(element);
-                }
+                    ret.push(element); }
             });
             break;
             default: break; }
         return ret;
     }
     public selectrowS(key: string, value: string): any[] {
+        let self = this;
+        if (value === "*" || value === "**") { return this.allrows; }
         let ret: any[] = [];
-        this.allrows.forEach((element) => {
-            let regexp = new RegExp(/^[*]?[^*]*[*]?$/g);
-            let s = value.match(regexp); if (s === null) { throw new InsightError("IS no match"); }
-            if (s.length !== 1) {
-                throw new InsightError("key doesn't match");
-            } else if (s[0] !== value) {
-                throw new InsightError("key doesn't match");
-            } else {
+        let regexp = new RegExp(/^[*]?[^*]*[*]?$/g);
+        let s = value.match(regexp); if (s === null) { throw new InsightError("IS no match"); }
+        if (s.length !== 1) {
+            throw new InsightError("key doesn't match");
+        } else if (s[0] !== value) {
+            throw new InsightError("key doesn't match");
+        } else {
+            self.allrows.forEach((element) => {
                 if (Helper.helper(element[key], value)) {
-                    ret.push(element);
-                }
-            }
-        });
+                    ret.push(element); }
+            });
+        }
         return ret;
     }
     public applyOptions() {
@@ -278,7 +290,7 @@ export default class Queryparser {
     public sortrows() {
         let self = this;
         if (self.order !== undefined) {
-            this.rowsbeforeoption.sort(function (a, b) {
+            self.rowsbeforeoption.sort(function (a, b) {
                 let A = a[self.order];
                 let B = b[self.order];
                 if (A < B) {return -1; }
@@ -289,8 +301,8 @@ export default class Queryparser {
     }
     public clean() {
         this.currentdatabasename = undefined;
-        this.AST = undefined;
-        this.rowsbeforeoption = undefined;
+        this.AST = { FilterKey : "", value : [], nodes : []};
+        this.rowsbeforeoption = [];
         this.columnstoshow.forEach((element) => {
             this.columnstoshow.delete(element);
         });

@@ -190,10 +190,13 @@ public addedDatabase: InsightDataset[] = [];
                 self.validatequery(query);
                 self.validateWhere(query["WHERE"]);
                 self.validateOptions(query["OPTIONS"]);
+                // name of dataset??
                 finalresult = self.parser.excutequery(query, self.datasetsHash['courses'], self.databasename);
                 self.parser.clean();
             } catch (error) {
                 if (error instanceof InsightError) {
+                    reject(error);
+                } else if (error instanceof ResultTooLargeError) {
                     reject(error);
                 } else {
                     reject (new InsightError(error.toString()));
@@ -230,7 +233,7 @@ public addedDatabase: InsightDataset[] = [];
         if (typeof wherepart !== "object") {
             throw new InsightError("Where must be an object");
         } else if (wherepart.length === 0) {
-            throw new InsightError("Where must be non-empty");
+            // throw new InsightError("Where must be non-empty");
         } else if (Object.keys(wherepart).length > 1) {
             throw new InsightError("Excess keys in where");
         } else {
@@ -267,8 +270,8 @@ public addedDatabase: InsightDataset[] = [];
         }
     }
     public checkcolumns(columns: string[]) {
-        this.parser.columnstoshow = new Set<string>();
         let self = this;
+        self.parser.columnstoshow = new Set<string>();
         let re = new RegExp(/[^_]+_(avg|pass|fail|audit|year|dept|id|instructor|title|uuid)$/g);
         // let regExp = new RegExp(/^.*?(?=_)/g);
         columns.forEach((element) => {
