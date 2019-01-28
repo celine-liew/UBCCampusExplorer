@@ -55,7 +55,9 @@ export default class Queryparser {
         for (let eachfilter of filtervalue) {
             if (typeof eachfilter !== "object") {
                 throw new InsightError(element + " must be object.");
-            } // ast.FilterKey.value = eachfilter;
+            } else if (eachfilter === {}) {
+                throw new InsightError(element + " should have one key, have 0");
+            }
             let newnode: IFilter = { FilterKey : "", value : [] , nodes : []};
             ast.nodes.push(newnode);
             ast.nodes[ast.nodes.length - 1] = this.traverseFilterGenAst(eachfilter, ast.nodes[ast.nodes.length - 1]);
@@ -251,6 +253,10 @@ export default class Queryparser {
     }
     public sortrows() {
         let self = this;
+        // self.rowsbeforeoption.forEach((Element) => {
+        //     // tslint:disable
+        //     console.log(Element[self.order]);
+        // });
         if (self.order !== undefined) {
             self.rowsbeforeoption.sort(function (a, b) {
                 let A = a[self.order];
