@@ -7,7 +7,7 @@ export default class Queryparser {
     private rowsbeforeoption: any[] = [];
     private allrows: any[] = [];
     private currentdatabasename: string = undefined;
-    public columnstoshow = new Set<string>();
+    public columnstoshow: Set<string>;
     public order: string = undefined;
     private renum = new RegExp(/[^_]+_(avg|pass|fail|audit|year)$/g);
     private res = new RegExp(/[^_]+_(dept|id|instructor|title|uuid)$/g);
@@ -224,21 +224,21 @@ export default class Queryparser {
         switch (identifier) {
             case "EQ":
             this.allrows.forEach((element) => {
-                if (element.hasOwnProperty(key) && element.key === value) {
+                if (/*element.hasOwnProperty(key) && */element[key] === value) {
                     ret.push(element);
                 }
             });
             break;
             case "GT":
             this.allrows.forEach((element) => {
-                if (element.hasOwnProperty(key) && element.key > value) {
+                if (/*element.hasOwnProperty(key) && */element[key] > value) {
                     ret.push(element);
                 }
             });
             break;
             case "LT":
             this.allrows.forEach((element) => {
-                if (element.hasOwnProperty(key) && element.key < value) {
+                if (/*element.hasOwnProperty(key) && */element[key] < value) {
                     ret.push(element);
                 }
             });
@@ -266,8 +266,11 @@ export default class Queryparser {
     public applyOptions() {
         this.rowsbeforeoption.forEach((element) => {
             Object.keys(element).forEach((keytoexamine) => {
-                if (!this.columnstoshow.has(keytoexamine)) {
-                    delete element.keytoexamine; }
+                let keytoexaminefull = this.currentdatabasename + "_" + keytoexamine;
+                if (this.columnstoshow.has(keytoexaminefull)) {
+                    element[keytoexaminefull] = element[keytoexamine];
+                }
+                delete element[keytoexamine];
             });
         });
         this.sortrows();

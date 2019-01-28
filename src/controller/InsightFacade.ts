@@ -267,27 +267,25 @@ public addedDatabase: InsightDataset[] = [];
         }
     }
     public checkcolumns(columns: string[]) {
+        this.parser.columnstoshow = new Set<string>();
+        let self = this;
+        let re = new RegExp(/[^_]+_(avg|pass|fail|audit|year|dept|id|instructor|title|uuid)$/g);
+        // let regExp = new RegExp(/^.*?(?=_)/g);
         columns.forEach((element) => {
-            let re = new RegExp(/[^_]+_(avg|pass|fail|audit|year|dept|id|instructor|title|uuid)$/g);
             let s = element.match(re);
-            // console.log(s[0]);
-            // console.log(s.length);
             if (s.length !== 1) {
                 throw new InsightError("key doesn't match");
             } else if (s[0] !== element) {
-                // console.log(s[0]);
                 throw new InsightError("key doesn't match");
             } else {
-                let re2 = new RegExp(/(?:(?!_).)*/g);
-                let s2 = element.match(re2);
-                // console.log(s2[0]);
-                // console.log(s2.length);
-                if ( this.databasename === undefined) {
-                    this.databasename = s2[0];
+                let s2 = s[0].split("_");
+                if ( self.databasename === undefined) {
+                    self.parser.columnstoshow.add(element);
+                    self.databasename = s2[0];
                 } else if ( this.databasename !== s2[0]) {
                     throw new InsightError("Cannot query more than one dataset 1");
                 } else {
-                    this.parser.columnstoshow.add(element);
+                    self.parser.columnstoshow.add(element);
                 }
                 return;
             }
