@@ -286,8 +286,4 @@ public addedArray: string[] = [];
         }
         return;
     }
-
-
-
-
 }

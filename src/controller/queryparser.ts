@@ -121,20 +121,21 @@ export default class Queryparser {
         this.rowsbeforeoption = this.traverseAst(this.AST, currentdatabasename, addHash);
     }
     public traverseAst(ast: IFilter, databasename: string, addHash: IHash): any[] {
+        let self = this;
         this.allrows = addHash[databasename];
         function traverseArray(nodes: IFilter[], identifier: string): any[] {
             let midresult: any[] = [];
             if (identifier === "AND") {
                 nodes.forEach((child) => {
-                    midresult = this.keepcommon(midresult, traverseNode(child));
+                    midresult = self.keepcommon(midresult, traverseNode(child));
                 });
             } else if (identifier === "OR") {
                 nodes.forEach((child) => {
-                    midresult = this.keepboth(midresult, traverseNode(child));
+                    midresult = self.keepboth(midresult, traverseNode(child));
                 });
             } else if (identifier === "NOT") {
                 nodes.forEach((child) => {
-                    midresult = this.reverse(traverseNode(child));
+                    midresult = self.reverse(traverseNode(child));
                 });
             }
             return midresult;
@@ -147,20 +148,18 @@ export default class Queryparser {
                 midresult = traverseArray(current.nodes, identifier);
             } else if (identifier === "EQ" || identifier === "GT" || identifier === "LT" || identifier === "IS") {
                 let value = current.value;
-                let assert = require("assert");
-                assert(value[0] === this.currentdatabasename);
                 switch (identifier) {
                     case "EQ":
-                        midresult = this.selectrowM(value[1], value[2], "EQ", databasename);
+                        midresult = self.selectrowM(value[1], value[2], "EQ");
                         break;
                     case "GT":
-                        midresult = this.selectrowM(value[1], value[2], "GT", databasename);
+                        midresult = self.selectrowM(value[1], value[2], "GT");
                         break;
                     case "LT":
-                        midresult = this.selectrowM(value[1], value[2], "LT", databasename);
+                        midresult = self.selectrowM(value[1], value[2], "LT");
                         break;
                     case "IS":
-                        midresult = this.selectrowS(value[1], value[2]);
+                        midresult = self.selectrowS(value[1], value[2]);
                         break;
                 }
             }
@@ -244,8 +243,7 @@ export default class Queryparser {
                 }
             });
             break;
-            default: break;
-        }
+            default: break; }
         return ret;
     }
     public selectrowS(key: string, value: string): any[] {
@@ -277,10 +275,11 @@ export default class Queryparser {
         this.sortrows();
     }
     public sortrows() {
-        if (this.order !== undefined) {
+        let self = this;
+        if (self.order !== undefined) {
             this.rowsbeforeoption.sort(function (a, b) {
-                let A = a[this.order];
-                let B = b[this.order];
+                let A = a[self.order];
+                let B = b[self.order];
                 if (A < B) {return -1; }
                 if (A > B) {return 1; }
                 return 0;
