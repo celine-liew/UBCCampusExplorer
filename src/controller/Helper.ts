@@ -38,4 +38,42 @@ export default class Helper {
            return databaseinfo === userinput;
        }
     }
+    public static keepcommon(array1: any[], array2: any[]): any[] {
+        if (array1 === null ) {
+            return array1;
+        } else if (array2 === null ) {
+            return array2;
+        } else {
+            let set = new Set();
+            let ret: any[] = [];
+            array1.forEach((element) => {
+                set.add(element);
+            });
+            array2.forEach((element) => {
+                if (set.has(element)) {
+                    ret.push(element);
+                }
+            });
+            return ret;
+        }
+    }
+    public static keepboth(array1: any[], array2: any[]) {
+        if (array1 === undefined) {
+            return array2;
+        } else if (array2 === undefined) {
+            return array1;
+        } else {
+            let set = new Set();
+            let ret = array1;
+            array1.forEach((element) => {
+                set.add(element);
+            });
+            array2.forEach((element) => {
+                if (!set.has(element)) {
+                    ret.push(element);
+                }
+            });
+            return ret;
+        }
+    }
 }

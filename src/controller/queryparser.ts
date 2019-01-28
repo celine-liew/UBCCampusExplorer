@@ -137,13 +137,13 @@ export default class Queryparser {
             if (identifier === "AND") {
                 nodes.forEach((child) => {
                     if (nodes.indexOf(child) === 0) {
-                        midresult = self.keepboth(midresult, traverseNode(child));
+                        midresult = Helper.keepboth(midresult, traverseNode(child));
                     }
-                    midresult = self.keepcommon(midresult, traverseNode(child));
+                    midresult = Helper.keepcommon(midresult, traverseNode(child));
                 });
             } else if (identifier === "OR") {
                 nodes.forEach((child) => {
-                    midresult = self.keepboth(midresult, traverseNode(child));
+                    midresult = Helper.keepboth(midresult, traverseNode(child));
                 });
             } else if (identifier === "NOT") {
                 nodes.forEach((child) => {
@@ -176,44 +176,6 @@ export default class Queryparser {
         let result = traverseNode(ast);
         if (result !== undefined && result.length >= 5000) {throw new ResultTooLargeError(); }
         return result;
-    }
-    public keepcommon(array1: any[], array2: any[]): any[] {
-        if (array1 === null ) {
-            return array1;
-        } else if (array2 === null ) {
-            return array2;
-        } else {
-            let set = new Set();
-            let ret: any[] = [];
-            array1.forEach((element) => {
-                set.add(element);
-            });
-            array2.forEach((element) => {
-                if (set.has(element)) {
-                    ret.push(element);
-                }
-            });
-            return ret;
-        }
-    }
-    public keepboth(array1: any[], array2: any[]) {
-        if (array1 === undefined) {
-            return array2;
-        } else if (array2 === undefined) {
-            return array1;
-        } else {
-            let set = new Set();
-            let ret = array1;
-            array1.forEach((element) => {
-                set.add(element);
-            });
-            array2.forEach((element) => {
-                if (!set.has(element)) {
-                    ret.push(element);
-                }
-            });
-            return ret;
-        }
     }
     public reverse(array1: any[]) {
         let self = this;
