@@ -201,21 +201,22 @@ export default class Queryparser {
     }
     public selectrowM(key: string, value: number, identifier: string): any[] {
         let ret: any[] = [];
+        let self = this;
         switch (identifier) {
             case "EQ":
-            this.allrows.forEach((element) => {
+            self.allrows.forEach((element) => {
                 if (/*element.hasOwnProperty(key) && */element[key] === value) {
                     ret.push(element); }
             });
             break;
             case "GT":
-            this.allrows.forEach((element) => {
+            self.allrows.forEach((element) => {
                 if (/*element.hasOwnProperty(key) && */element[key] > value) {
                     ret.push(element); }
             });
             break;
             case "LT":
-            this.allrows.forEach((element) => {
+            self.allrows.forEach((element) => {
                 if (/*element.hasOwnProperty(key) && */element[key] < value) {
                     ret.push(element); }
             });
@@ -225,7 +226,7 @@ export default class Queryparser {
     }
     public selectrowS(key: string, value: string): any[] {
         let self = this;
-        if (value === "*" || value === "**") { return this.allrows; }
+        if (value === "*" || value === "**") { return self.allrows; }
         let ret: any[] = [];
         let regexp = new RegExp(/^[*]?[^*]*[*]?$/g);
         let s = value.match(regexp); if (s === null) { throw new InsightError("IS no match"); }
@@ -242,10 +243,11 @@ export default class Queryparser {
         return ret;
     }
     public applyOptions() {
+        let self = this;
         this.rowsbeforeoption.forEach((element) => {
             Object.keys(element).forEach((keytoexamine) => {
-                let keytoexaminefull = this.currentdatabasename + "_" + keytoexamine;
-                if (this.columnstoshow.has(keytoexaminefull)) {
+                let keytoexaminefull = self.currentdatabasename + "_" + keytoexamine;
+                if (self.columnstoshow.has(keytoexaminefull)) {
                     element[keytoexaminefull] = element[keytoexamine];
                 }
                 delete element[keytoexamine];
@@ -269,8 +271,8 @@ export default class Queryparser {
         this.currentdatabasename = undefined;
         this.AST = { FilterKey : "", value : [], nodes : []};
         this.rowsbeforeoption = [];
-        this.columnstoshow.forEach((element) => {
-            this.columnstoshow.delete(element);
-        });
+        this.order = undefined;
+        this.allrows = [];
+        this.columnstoshow = new Set<string>();
     }
 }
