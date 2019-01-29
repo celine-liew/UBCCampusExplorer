@@ -192,13 +192,9 @@ public addedDatabase: InsightDataset[] = [];
                 self.validateWhere(query["WHERE"]);
                 self.validateOptions(query["OPTIONS"]);
                 // name of dataset??
-                finalresult = self.parser.excutequery(query, self.datasetsHash['courses'], self.databasename);
-                console.log("length should be");
-                console.log(self.datasetsHash['courses'][self.databasename].length);
-                self.databasename = undefined;
+                finalresult = self.parser.excutequery(query, self.datasetsHash['courses']);
                 self.parser.clean();
                 self.parser = new Queryparser();
-                self.databasename = undefined;
             } catch (error) {
                 if (error instanceof InsightError) {
                     reject(error);
@@ -285,6 +281,7 @@ public addedDatabase: InsightDataset[] = [];
     public checkcolumns(columns: string[]) {
         let self = this;
         self.parser.columnstoshow = new Set<string>();
+        let databasename : string;
         let re = new RegExp(/[^_]+_(avg|pass|fail|audit|year|dept|id|instructor|title|uuid)$/g);
         // let regExp = new RegExp(/^.*?(?=_)/g);
         columns.forEach((element) => {
@@ -295,10 +292,11 @@ public addedDatabase: InsightDataset[] = [];
                 throw new InsightError("key doesn't match");
             } else {
                 let s2 = s[0].split("_");
-                if ( self.databasename === undefined) {
+                if ( databasename === undefined) {
+                    databasename = s2[0];
                     self.parser.columnstoshow.add(element);
-                    self.databasename = s2[0];
-                } else if ( self.databasename !== s2[0]) {
+                    self.parser.currentdatabasename = s2[0];
+                } else if ( databasename !== s2[0]) {
                     throw new InsightError("Cannot query more than one dataset 1");
                 } else {
                     self.parser.columnstoshow.add(element);

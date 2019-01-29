@@ -6,15 +6,14 @@ export default class Queryparser {
     private AST: IFilter = { FilterKey : "", value : [], nodes : []};
     private rowsbeforeoption: any[] = [];
     private allrows: any[] = [];
-    private currentdatabasename: string = undefined;
+    public currentdatabasename: string = undefined;
     public columnstoshow: Set<string>;
     public order: string = undefined;
     private renum = new RegExp(/[^_]+_(avg|pass|fail|audit|year)$/g);
     private res = new RegExp(/[^_]+_(dept|id|instructor|title|uuid)$/g);
-    public excutequery(query: any, addHash: IHash, databasename: string): any[] {
-        this.currentdatabasename = databasename;
+    public excutequery(query: any, addHash: IHash): any[] {
         if (Object.keys(query["WHERE"]).length === 0) {
-            if (addHash[databasename].length >= 5000) {
+            if (addHash[this.currentdatabasename].length >= 5000) {
                 throw new ResultTooLargeError();
             }
         }
@@ -22,9 +21,9 @@ export default class Queryparser {
             throw new InsightError("More than one key");
         }
         this.AST = this.traverseFilterGenAst(query["WHERE"], null);
-        if ( this.currentdatabasename !== databasename) {
-            throw new InsightError("Cannot query more than one dataset 2");
-        }
+        // if ( this.currentdatabasename !== databasename) {
+        //     throw new InsightError("Cannot query more than one dataset 2");
+        // }
         this.astApplyToRow(this.currentdatabasename, addHash);
         this.applyOptions();
         return this.rowsbeforeoption;
