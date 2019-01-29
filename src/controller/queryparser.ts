@@ -27,8 +27,6 @@ export default class Queryparser {
         }
         this.astApplyToRow(this.currentdatabasename, addHash);
         this.applyOptions();
-        // tslint:disable-next-line:no-console
-        console.log(this.allrows.length);
         return this.rowsbeforeoption;
     }
     public traverseFilterGenAst(filter: any, AST: IFilter): IFilter {
@@ -138,8 +136,6 @@ export default class Queryparser {
     public traverseAst(ast: IFilter, databasename: string, addHash: IHash): any[] {
         let self = this;
         this.allrows = addHash[databasename];
-// tslint:disable-next-line:no-console
-        console.log(this.allrows.length);
         function traverseArray(nodes: IFilter[], identifier: string): any[] {
             let midresult: any[] = [];
             if (identifier === "AND") {
@@ -247,10 +243,11 @@ export default class Queryparser {
         return ret;
     }
     public applyOptions() {
+        let self = this;
         this.rowsbeforeoption.forEach((element) => {
             Object.keys(element).forEach((keytoexamine) => {
-                let keytoexaminefull = this.currentdatabasename + "_" + keytoexamine;
-                if (this.columnstoshow.has(keytoexaminefull)) {
+                let keytoexaminefull = self.currentdatabasename + "_" + keytoexamine;
+                if (self.columnstoshow.has(keytoexaminefull)) {
                     element[keytoexaminefull] = element[keytoexamine];
                 }
                 delete element[keytoexamine];
@@ -276,8 +273,6 @@ export default class Queryparser {
         this.rowsbeforeoption = [];
         this.order = undefined;
         this.allrows = [];
-        this.columnstoshow.forEach((element) => {
-            this.columnstoshow.delete(element);
-        });
+        this.columnstoshow = new Set<string>();
     }
 }

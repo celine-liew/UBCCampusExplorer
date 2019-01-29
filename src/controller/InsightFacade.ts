@@ -114,6 +114,7 @@ public addedDatabase: InsightDataset[] = [];
                     this.datasetsHash[kind] = {}
                 }
                 this.datasetsHash[kind][id] = this.validCourseSections;
+                this.validCourseSections = [];
                 return this.saveDatasetList();
             }
         }).then ( () => {
@@ -196,6 +197,8 @@ public addedDatabase: InsightDataset[] = [];
                 console.log(self.datasetsHash['courses'][self.databasename].length);
                 self.databasename = undefined;
                 self.parser.clean();
+                self.parser = new Queryparser();
+                self.databasename = undefined;
             } catch (error) {
                 if (error instanceof InsightError) {
                     reject(error);
@@ -295,7 +298,7 @@ public addedDatabase: InsightDataset[] = [];
                 if ( self.databasename === undefined) {
                     self.parser.columnstoshow.add(element);
                     self.databasename = s2[0];
-                } else if ( this.databasename !== s2[0]) {
+                } else if ( self.databasename !== s2[0]) {
                     throw new InsightError("Cannot query more than one dataset 1");
                 } else {
                     self.parser.columnstoshow.add(element);
