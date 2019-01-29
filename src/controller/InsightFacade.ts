@@ -76,7 +76,7 @@ public addedDatabase: InsightDataset[] = [];
                 try {
                 courseFile = JSON.parse(file) // if valid Json
                 } catch (err) {
-                    throw new InsightError("Error with JSON parsing");
+                    return; // skipping invalid "Error with JSON parsing";
                 }
                 if (courseFile['result'].length >= 1){
                     courseFile['result'].forEach((cSection : any) => {
