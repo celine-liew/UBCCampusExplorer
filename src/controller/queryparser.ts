@@ -49,7 +49,9 @@ export default class Queryparser {
         return AST;
     }
     public logicSymbolTraverse(filtervalue: any, ast: IFilter, element: string): IFilter[] {
-        if (!Array.isArray(filtervalue) /* || filtervalue.length === 0 */) {
+        if (!Array.isArray(filtervalue)) {
+            throw new InsightError(element + " must be a non-empty array.");
+        } else if (filtervalue.length === 0 ) {
             throw new InsightError(element + " must be a non-empty array.");
         }
         for (let eachfilter of filtervalue) {

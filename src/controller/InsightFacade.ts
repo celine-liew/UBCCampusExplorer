@@ -199,7 +199,7 @@ public addedDatabase: InsightDataset[] = [];
                 } else if (error instanceof ResultTooLargeError) {
                     reject(error);
                 } else {
-                    reject (new InsightError(error.toString()));
+                    reject (error);
                 }
             }
             resolve(finalresult);
@@ -259,6 +259,11 @@ public addedDatabase: InsightDataset[] = [];
                 optionpart["COLUMNS"].forEach((element: any) => {
                     if (typeof element !== "string") {
                         throw new InsightError("Invalid query string 1");
+                    } else {
+                        let renum = new RegExp(/[^_]+_(dept|id|instructor|title|uuid|avg|pass|fail|audit|year)$/g);
+                        if(! renum.test(element)) {
+                            throw new InsightError("Invalid key " + element + " in COLUMNS")
+                        }
                     }
                 });
                 this.checkcolumns(optionpart["COLUMNS"]);
