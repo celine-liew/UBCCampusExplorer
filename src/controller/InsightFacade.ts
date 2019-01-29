@@ -192,6 +192,9 @@ public addedDatabase: InsightDataset[] = [];
                 self.validateOptions(query["OPTIONS"]);
                 // name of dataset??
                 finalresult = self.parser.excutequery(query, self.datasetsHash['courses'], self.databasename);
+                console.log("length should be");
+                console.log(self.datasetsHash['courses'][self.databasename].length);
+                self.databasename = undefined;
                 self.parser.clean();
             } catch (error) {
                 if (error instanceof InsightError) {
@@ -199,7 +202,7 @@ public addedDatabase: InsightDataset[] = [];
                 } else if (error instanceof ResultTooLargeError) {
                     reject(error);
                 } else {
-                    reject (error);
+                    reject (new InsightError(error));
                 }
             }
             resolve(finalresult);

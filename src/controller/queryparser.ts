@@ -27,6 +27,8 @@ export default class Queryparser {
         }
         this.astApplyToRow(this.currentdatabasename, addHash);
         this.applyOptions();
+        // tslint:disable-next-line:no-console
+        console.log(this.allrows.length);
         return this.rowsbeforeoption;
     }
     public traverseFilterGenAst(filter: any, AST: IFilter): IFilter {
@@ -136,6 +138,8 @@ export default class Queryparser {
     public traverseAst(ast: IFilter, databasename: string, addHash: IHash): any[] {
         let self = this;
         this.allrows = addHash[databasename];
+// tslint:disable-next-line:no-console
+        console.log(this.allrows.length);
         function traverseArray(nodes: IFilter[], identifier: string): any[] {
             let midresult: any[] = [];
             if (identifier === "AND") {
@@ -201,21 +205,22 @@ export default class Queryparser {
     }
     public selectrowM(key: string, value: number, identifier: string): any[] {
         let ret: any[] = [];
+        let self = this;
         switch (identifier) {
             case "EQ":
-            this.allrows.forEach((element) => {
+            self.allrows.forEach((element) => {
                 if (/*element.hasOwnProperty(key) && */element[key] === value) {
                     ret.push(element); }
             });
             break;
             case "GT":
-            this.allrows.forEach((element) => {
+            self.allrows.forEach((element) => {
                 if (/*element.hasOwnProperty(key) && */element[key] > value) {
                     ret.push(element); }
             });
             break;
             case "LT":
-            this.allrows.forEach((element) => {
+            self.allrows.forEach((element) => {
                 if (/*element.hasOwnProperty(key) && */element[key] < value) {
                     ret.push(element); }
             });
@@ -225,7 +230,7 @@ export default class Queryparser {
     }
     public selectrowS(key: string, value: string): any[] {
         let self = this;
-        if (value === "*" || value === "**") { return this.allrows; }
+        if (value === "*" || value === "**") { return self.allrows; }
         let ret: any[] = [];
         let regexp = new RegExp(/^[*]?[^*]*[*]?$/g);
         let s = value.match(regexp); if (s === null) { throw new InsightError("IS no match"); }
@@ -269,6 +274,8 @@ export default class Queryparser {
         this.currentdatabasename = undefined;
         this.AST = { FilterKey : "", value : [], nodes : []};
         this.rowsbeforeoption = [];
+        this.order = undefined;
+        this.allrows = [];
         this.columnstoshow.forEach((element) => {
             this.columnstoshow.delete(element);
         });
