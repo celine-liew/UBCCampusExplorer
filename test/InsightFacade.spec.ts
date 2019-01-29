@@ -91,7 +91,6 @@ describe("InsightFacade Add/Remove Dataset", function () {
             response = err;
         } finally {
             expect(response).to.deep.equal([id]);
-            console.log(insightFacade.validCourseSections.length);
         }
     });
     it("Should not add a invalid dataset with wrong InsightDatasetKind identifier", async function () {
@@ -436,7 +435,7 @@ describe("InsightFacade PerformQuery", () => {
     });
 
     // Dynamically create and run a test for each query in testQueries
-    it.only("Should run test queries", function () {
+    it("Should run test queries", function () {
         describe("Dynamic InsightFacade PerformQuery tests", function () {
             for (const test of testQueries) {
                 it(`[${test.filename}] ${test.title}`, async function () {

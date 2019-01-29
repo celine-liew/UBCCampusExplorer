@@ -30,7 +30,6 @@ interface EHash {
 export default class InsightFacade implements IInsightFacade {
 
 public datasetsHash: EHash = {};
-public validCourseSections: any[] = [];
 public databasename: string = undefined;
 public parser: Queryparser = new Queryparser();
 public addedDatabase: InsightDataset[] = [];
@@ -40,6 +39,7 @@ public addedDatabase: InsightDataset[] = [];
     }
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
+        const validCourseSections: any[] = [];
         const datasetToAdd: IHash = {};
         const coursesKeys: string[] = ['Subject', 'Course', 'Avg', 'Professor', 'Title', 'Pass', 'Fail','Audit','id','Year'];
         // const coursesTranKeys: string[] = ['dept', 'id', 'avg', 'instructor', 'title', 'pass', 'fail','audit','uuid','year'];
@@ -101,20 +101,19 @@ public addedDatabase: InsightDataset[] = [];
                                 'uuid': uuid,
                                 'year': year
                             }
-                            this.validCourseSections.push(courseSection);
+                            validCourseSections.push(courseSection);
                             //console.log(this.validCourseSections[0]);
                         }
                     })
                 }
             })
-            if (this.validCourseSections.length === 0){
+            if (validCourseSections.length === 0){
                 throw new InsightError("no valid course sections in dataset.")
             } else {
                 if (!this.datasetsHash[kind]) {
                     this.datasetsHash[kind] = {}
                 }
-                this.datasetsHash[kind][id] = this.validCourseSections;
-                this.validCourseSections = [];
+                this.datasetsHash[kind][id] = validCourseSections;
                 return this.saveDatasetList();
             }
         }).then ( () => {
