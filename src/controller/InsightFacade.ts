@@ -170,10 +170,11 @@ public addedDatabase: InsightDataset[] = [];
         Object.keys(this.datasetsHash).forEach( courseOrRm => {
             const setIds = Object.keys(this.datasetsHash[courseOrRm]);
             setIds.forEach ((id) => {
+                const num = this.datasetsHash[courseOrRm][id].length;
                 const dataset: InsightDataset = {
                     'id': id,
                     "kind": courseOrRm === 'courses' ? InsightDatasetKind.Courses : InsightDatasetKind.Rooms,
-                    'numRows': setIds.length,
+                   'numRows': num,
                 }
                 outputList.push(dataset);
             })
