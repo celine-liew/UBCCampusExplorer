@@ -30,7 +30,6 @@ interface EHash {
 export default class InsightFacade implements IInsightFacade {
 
 public datasetsHash: EHash = {};
-public databasename: string = undefined;
 public parser: Queryparser = new Queryparser();
 public addedDatabase: InsightDataset[] = [];
 
@@ -162,7 +161,6 @@ public addedDatabase: InsightDataset[] = [];
             throw err;
         }
     }
-
     public listDatasets(): Promise<InsightDataset[]> {
 
         // this.addedDatabase.push(dataset);
@@ -181,10 +179,9 @@ public addedDatabase: InsightDataset[] = [];
         })
         return Promise.resolve(outputList);
     }
-
     public performQuery(query: any): Promise <any[]> {
         const self = this;
-        let finalresult: any[];
+        let finalresult: any[] = [];
         return new Promise(function (resolve, reject) {
             try {
                 self.validatequery(query);
@@ -193,7 +190,7 @@ public addedDatabase: InsightDataset[] = [];
                 // name of dataset??
                 finalresult = self.parser.excutequery(query, self.datasetsHash['courses']);
                 self.parser.clean();
-                self.parser = new Queryparser();
+                // self.parser = new Queryparser();
             } catch (error) {
                 if (error instanceof InsightError) {
                     reject(error);
@@ -269,9 +266,9 @@ public addedDatabase: InsightDataset[] = [];
                 });
                 this.checkcolumns(optionpart["COLUMNS"]);
                 if (typeof optionpart["ORDER"] !== "string") {
-                    throw new InsightError("Invalid ORDER type")
+                    throw new InsightError("Invalid ORDER type");
                 } else {
-                    this.checkorder(optionpart["COLUMNS"], optionpart["ORDER"].toString());
+                    this.checkorder(optionpart["COLUMNS"], optionpart["ORDER"]);
                 }
                 return;
             }
@@ -296,7 +293,7 @@ public addedDatabase: InsightDataset[] = [];
                     self.parser.columnstoshow.add(element);
                     self.parser.currentdatabasename = s2[0];
                 } else if ( databasename !== s2[0]) {
-                    throw new InsightError("Cannot query more than one dataset 1");
+                    throw new InsightError("Cannot query more than one dataset");
                 } else {
                     self.parser.columnstoshow.add(element);
                 }
@@ -306,9 +303,10 @@ public addedDatabase: InsightDataset[] = [];
     }
     public checkorder(columns: string[], order: string) {
         let flag = false;
+        let self = this;
         columns.forEach((element) => {
             if (element === order) {
-                this.parser.order = element;
+                self.parser.order = element;
                 flag = true;
             }
         });

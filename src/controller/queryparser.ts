@@ -4,7 +4,7 @@ import InsightFacade, { IHash } from "./InsightFacade";
 import Helper from "./Helper";
 export default class Queryparser {
     private AST: IFilter = { FilterKey : "", value : [], nodes : []};
-    private rowsbeforeoption: any[] = [];
+    // private rowsbeforeoption: any[] = [];
     private allrows: any[] = [];
     public currentdatabasename: string = undefined;
     public columnstoshow: Set<string>;
@@ -24,9 +24,7 @@ export default class Queryparser {
         // if ( this.currentdatabasename !== databasename) {
         //     throw new InsightError("Cannot query more than one dataset 2");
         // }
-        this.astApplyToRow(this.currentdatabasename, addHash);
-        this.applyOptions();
-        return this.rowsbeforeoption;
+        return this.applyOptions(this.astApplyToRow(this.currentdatabasename, addHash));
     }
     public traverseFilterGenAst(filter: any, AST: IFilter): IFilter {
         let element = Object.keys(filter)[0];
@@ -74,7 +72,7 @@ export default class Queryparser {
             this.keyMatchCheck(Object.keys(filtervalue)[0], element);
             let s: string[] = Object.keys(filtervalue)[0].split("_");
             if (this.currentdatabasename !== s[0]) {
-                throw new InsightError("Cannot query more than one dataset 3");
+                throw new InsightError("Cannot query more than one dataset");
             } else {
                 ast = { FilterKey : "", value : [], nodes : []}; // ast.nodes.length = 0;
                 if (element === "LT" || element === "GT" || element === "EQ") {
@@ -126,11 +124,11 @@ export default class Queryparser {
         } else {
             return; }
     }
-    public astApplyToRow(currentdatabasename: string, addHash: IHash) {
+    public astApplyToRow(currentdatabasename: string, addHash: IHash): any[] {
         if (!addHash[currentdatabasename]) {
             throw new InsightError("Referenced dataset " + currentdatabasename + " not added yet");
         }
-        this.rowsbeforeoption = this.traverseAst(this.AST, currentdatabasename, addHash);
+        return this.traverseAst(this.AST, currentdatabasename, addHash);
     }
     public traverseAst(ast: IFilter, databasename: string, addHash: IHash): any[] {
         let self = this;
@@ -204,19 +202,19 @@ export default class Queryparser {
         switch (identifier) {
             case "EQ":
             self.allrows.forEach((element) => {
-                if (/*element.hasOwnProperty(key) && */element[key] === value) {
+                if (element.hasOwnProperty(key) && element[key] === value) {
                     ret.push(element); }
             });
             break;
             case "GT":
             self.allrows.forEach((element) => {
-                if (/*element.hasOwnProperty(key) && */element[key] > value) {
+                if (element.hasOwnProperty(key) && element[key] > value) {
                     ret.push(element); }
             });
             break;
             case "LT":
             self.allrows.forEach((element) => {
-                if (/*element.hasOwnProperty(key) && */element[key] < value) {
+                if (element.hasOwnProperty(key) && element[key] < value) {
                     ret.push(element); }
             });
             break;
@@ -241,9 +239,9 @@ export default class Queryparser {
         }
         return ret;
     }
-    public applyOptions() {
+    public applyOptions(rowsbeforeoption: any[]): any[] {
         let self = this;
-        this.rowsbeforeoption.forEach((element) => {
+        rowsbeforeoption.forEach((element) => {
             Object.keys(element).forEach((keytoexamine) => {
                 let keytoexaminefull = self.currentdatabasename + "_" + keytoexamine;
                 if (self.columnstoshow.has(keytoexaminefull)) {
@@ -252,24 +250,25 @@ export default class Queryparser {
                 delete element[keytoexamine];
             });
         });
-        this.sortrows();
+        return this.sortrows(rowsbeforeoption);
     }
-    public sortrows() {
+    public sortrows(rowsbeforesorting: any[]): any[] {
         let self = this;
         if (self.order !== undefined) {
-            self.rowsbeforeoption.sort(function (a, b) {
+            rowsbeforesorting.sort(function (a, b) {
                 let A = a[self.order];
                 let B = b[self.order];
                 if (A < B) {return -1; }
                 if (A > B) {return 1; }
                 return 0;
             });
-        } else {return; }
+        }
+        return rowsbeforesorting;
     }
     public clean() {
         this.currentdatabasename = undefined;
         this.AST = { FilterKey : "", value : [], nodes : []};
-        this.rowsbeforeoption = [];
+        // this.rowsbeforeoption = [];
         this.order = undefined;
         this.allrows = [];
         this.columnstoshow = new Set<string>();

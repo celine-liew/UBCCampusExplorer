@@ -1,5 +1,8 @@
 export default class Helper {
     public static helper(databaseinfo: string, userinput: string): boolean {
+       if (databaseinfo === "" || userinput === "") {
+           return false;
+       }
        if (userinput.includes("*")) {
            if (userinput.indexOf("*") === 0 && userinput[userinput.length - 1] !== "*") {
                let userinputsub = userinput.substring(1, userinput.length);
