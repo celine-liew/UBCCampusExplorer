@@ -255,10 +255,6 @@ export default class Queryparser {
     }
     public sortrows() {
         let self = this;
-        // self.rowsbeforeoption.forEach((Element) => {
-        //     // tslint:disable
-        //     console.log(Element[self.order]);
-        // });
         if (self.order !== undefined) {
             self.rowsbeforeoption.sort(function (a, b) {
                 let A = a[self.order];

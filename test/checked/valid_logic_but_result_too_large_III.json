@@ -1,10 +1,12 @@
 {
-    "title": "SELECT dept, id, avg WHERE one AND branch avg > 99 ORDER BY avg",
+    "title": "SELECT dept, id, avg WHERE !dept=== nonexist ORDER BY avg should result in result too large",
     "query": {
         "WHERE": {
-            "AND": [
-                {}
-            ]
+            "NOT": {
+                "IS": {
+                    "courses_dept": "NonexistenceDept"
+                }
+            }
         },
         "OPTIONS": {
             "COLUMNS": [
@@ -16,5 +18,5 @@
         }
     },
     "isQueryValid": false,
-    "result": "InsightError"
+    "result": "ResultTooLarge"
 }

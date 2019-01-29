@@ -2,37 +2,24 @@ export default class Helper {
     public static helper(databaseinfo: string, userinput: string): boolean {
        if (userinput.includes("*")) {
            if (userinput.indexOf("*") === 0 && userinput[userinput.length - 1] !== "*") {
-               let j = userinput.length - 1;
-               let i = databaseinfo.length - 1;
-               while (j > 0) {
-                   if (j > 1 && i === 0) {return false; }
-                   if (databaseinfo[i] === userinput[j]) {
-                       j--;
-                       i--;
-                   } else {
-                       return false;
-                   }
+               let userinputsub = userinput.substring(1, userinput.length);
+               let startindex = databaseinfo.length - userinputsub.length;
+               if (startindex < 0) {
+                   return false;
                }
-               return true;
+               let databaseinfosub = databaseinfo.substring(startindex, databaseinfo.length);
+               return userinputsub === databaseinfosub;
            } else if (userinput.indexOf("*") === userinput.length - 1 ) {
-               let i = 0;
-               let j = 0;
-               while (j < userinput.length - 1) {
-                   if (j < userinput.length - 2 && i === databaseinfo.length - 1) {
-                       return false;
-                   }
-                   if (databaseinfo[i] === userinput[j]) {
-                       i++;
-                       j++;
-                   } else {
-                       return false;
-                   }
+               let userinputsub = userinput.substring(0, userinput.length - 1);
+               let endindex = userinputsub.length;
+               if (endindex > databaseinfo.length) {
+                   return false;
                }
-               return true;
-           } else if (userinput.length === 2) {
-               return true;
-           } else {
-               return databaseinfo.includes(userinput);
+               let databaseinfosub = databaseinfo.substring(0, endindex);
+               return userinputsub === databaseinfosub;
+           } else if (userinput.indexOf("*") === 0 && userinput[userinput.length - 1] === "*") {
+               let userinputsub = userinput.substring(1, userinput.length - 1);
+               return databaseinfo.includes(userinputsub);
            }
        } else {
            return databaseinfo === userinput;

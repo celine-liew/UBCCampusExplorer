@@ -6,14 +6,13 @@
                 {
                     "AND":[
                         {
-                            "GT": {
+                            "HT": {
                                 "courses_avg":90
                             }
                         },
                         {
                             "IS": {
-                                "courses_dept":"adhe",
-                                "courses_instructor":"cv"
+                                "courses_dept":"adhe"
                             }
                         }
                     ]
@@ -35,5 +34,4 @@
         }
     },
     "isQueryValid": false,
-    "result": "InsightError"
-}
+    "result": "InsightError"}

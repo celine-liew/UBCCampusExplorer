@@ -9,5 +9,5 @@
     ],
         "ORDER": "courses_avg"} },
     "isQueryValid": false,
-    "result": "ResultTooLargeError"
+    "result": "InsightError"
 }
