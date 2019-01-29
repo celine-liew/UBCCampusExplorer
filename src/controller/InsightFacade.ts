@@ -193,14 +193,19 @@ public addedDatabase: InsightDataset[] = [];
                 self.validateOptions(query["OPTIONS"]);
                 // name of dataset??
                 finalresult = self.parser.excutequery(query, self.datasetsHash['courses'], self.databasename);
+                console.log("length should be");
+                console.log(self.datasetsHash['courses'][self.databasename].length);
+                self.databasename = undefined;
                 self.parser.clean();
+                self.parser = new Queryparser();
+                self.databasename = undefined;
             } catch (error) {
                 if (error instanceof InsightError) {
                     reject(error);
                 } else if (error instanceof ResultTooLargeError) {
                     reject(error);
                 } else {
-                    reject (error);
+                    reject (new InsightError(error));
                 }
             }
             resolve(finalresult);
@@ -293,7 +298,7 @@ public addedDatabase: InsightDataset[] = [];
                 if ( self.databasename === undefined) {
                     self.parser.columnstoshow.add(element);
                     self.databasename = s2[0];
-                } else if ( this.databasename !== s2[0]) {
+                } else if ( self.databasename !== s2[0]) {
                     throw new InsightError("Cannot query more than one dataset 1");
                 } else {
                     self.parser.columnstoshow.add(element);
