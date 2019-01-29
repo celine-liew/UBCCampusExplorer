@@ -30,7 +30,7 @@ interface EHash {
 export default class InsightFacade implements IInsightFacade {
 
 public datasetsHash: EHash = {};
-public parser: Queryparser = new Queryparser();
+public parser: Queryparser;
 public addedDatabase: InsightDataset[] = [];
 
     constructor() {
@@ -184,12 +184,13 @@ public addedDatabase: InsightDataset[] = [];
         let finalresult: any[] = [];
         return new Promise(function (resolve, reject) {
             try {
+                self.parser = new Queryparser()
                 self.validatequery(query);
                 self.validateWhere(query["WHERE"]);
                 self.validateOptions(query["OPTIONS"]);
                 // name of dataset??
                 finalresult = self.parser.excutequery(query, self.datasetsHash['courses']);
-                self.parser.clean();
+                // self.parser.clean();
                 // self.parser = new Queryparser();
             } catch (error) {
                 if (error instanceof InsightError) {
