@@ -1,3 +1,4 @@
+// tslint:disable
 import { expect } from "chai";
 import * as fs from "fs-extra";
 
@@ -79,7 +80,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
     });
 
     // 1
-    it("Should add a valid dataset", async function () {
+    it.only("Should add a valid dataset", async function () {
         const id: string = "courses";
         let response: string[];
 
@@ -89,6 +90,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
             response = err;
         } finally {
             expect(response).to.deep.equal([id]);
+            console.log(insightFacade.validCourseSections.length);
         }
     });
     it("Should not add a invalid dataset with wrong InsightDatasetKind identifier", async function () {
@@ -359,7 +361,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
 describe("InsightFacade PerformQuery", () => {
     const datasetsToQuery: { [id: string]: string } = {
         courses: "./test/data/courses.zip",
-        // cpsccourses2: "./test/data/cpsccourses2.zip",
+        cpsccourses2: "./test/data/cpsccourses2.zip",
     };
     let insightFacade: InsightFacade;
 
