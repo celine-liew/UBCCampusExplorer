@@ -82,7 +82,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
     });
 
     // 1
-    it.only("Should add a valid dataset", async function () {
+    it("Should add a valid dataset", async function () {
         const id: string = "smalldataset";
         let response: string[];
 
@@ -436,9 +436,9 @@ describe("InsightFacade PerformQuery", () => {
     });
 
     // Dynamically create and run a test for each query in testQueries
-    it("Should run test queries", function () {
+    it.only("Should run test queries", function () {
         describe("Dynamic InsightFacade PerformQuery tests", function () {
-            for (const test of testQueries) {
+            for (const test of testQueries.slice(2,4)) {
                 it(`[${test.filename}] ${test.title}`, async function () {
                     let response: any[];
 
