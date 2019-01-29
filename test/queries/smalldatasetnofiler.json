@@ -1,0 +1,52 @@
+{
+    "title": "small dataset no filer, all columns",
+    "query":{
+    "WHERE": {
+    },
+    "OPTIONS": {
+        "COLUMNS": [
+            "smalldataset_dept",
+            "smalldataset_id",
+            "smalldataset_avg",
+            "smalldataset_instructor",
+            "smalldataset_title",
+            "smalldataset_pass",
+            "smalldataset_fail",
+            "smalldataset_audit",
+            "smalldataset_uuid",
+            "smalldataset_year"
+        ],
+        "ORDER": "smalldataset_dept"
+    }
+},
+"isQueryValid": true,
+    "result":
+[ { "smalldataset_dept": "adhe", "smalldataset_id": "330",
+    "smalldataset_avg": 83,
+    "smalldataset_instructor": "",
+    "smalldataset_title": "com adult educ",
+    "smalldataset_pass": 9,
+    "smalldataset_fail": 0,
+    "smalldataset_audit": 0,
+    "smalldataset_uuid": "8679",
+    "smalldataset_year": 2008 },
+    { "smalldataset_dept": "adhe",
+    "smalldataset_id": "330",
+    "smalldataset_avg": 90.72,
+    "smalldataset_instructor": "bishundayal, deonarine",
+    "smalldataset_title": "com adult educ",
+    "smalldataset_pass": 25,
+    "smalldataset_fail": 0,
+    "smalldataset_audit": 0,
+    "smalldataset_uuid": "91932",
+    "smalldataset_year": 2014 },
+    { "smalldataset_dept": "adhe",
+        "smalldataset_id": "330",
+        "smalldataset_avg": 85.2,
+        "smalldataset_instructor":  "",
+        "smalldataset_title": "com adult educ",
+        "smalldataset_pass": 83,
+        "smalldataset_fail": 0,
+        "smalldataset_audit": 0,
+        "smalldataset_uuid": "91933",
+        "smalldataset_year": 1900 } ]}

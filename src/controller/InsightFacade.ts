@@ -39,7 +39,7 @@ public addedDatabase: InsightDataset[] = [];
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
         const validCourseSections: any[] = [];
-        const datasetToAdd: IHash = {};
+        // const datasetToAdd: IHash = {};
         const coursesKeys: string[] = ['Subject', 'Course', 'Avg', 'Professor', 'Title', 'Pass', 'Fail','Audit','id','Year'];
         // const coursesTranKeys: string[] = ['dept', 'id', 'avg', 'instructor', 'title', 'pass', 'fail','audit','uuid','year'];
         if (!id || id === ""){
@@ -101,7 +101,7 @@ public addedDatabase: InsightDataset[] = [];
                                 'year': year
                             }
                             validCourseSections.push(courseSection);
-                            //console.log(this.validCourseSections[0]);
+
                         }
                     })
                 }
@@ -113,6 +113,7 @@ public addedDatabase: InsightDataset[] = [];
                     this.datasetsHash[kind] = {}
                 }
                 this.datasetsHash[kind][id] = validCourseSections;
+                // console.log(validCourseSections);
                 return this.saveDatasetList();
             }
         }).then ( () => {
@@ -168,10 +169,11 @@ public addedDatabase: InsightDataset[] = [];
         Object.keys(this.datasetsHash).forEach( courseOrRm => {
             const setIds = Object.keys(this.datasetsHash[courseOrRm]);
             setIds.forEach ((id) => {
+                const num = this.datasetsHash[courseOrRm][id].length;
                 const dataset: InsightDataset = {
                     'id': id,
                     "kind": courseOrRm === 'courses' ? InsightDatasetKind.Courses : InsightDatasetKind.Rooms,
-                    'numRows': setIds.length,
+                   'numRows': num,
                 }
                 outputList.push(dataset);
             })
