@@ -32,7 +32,9 @@ describe("InsightFacade Add/Remove Dataset", function () {
         noncoursedatabase: "./test/data/wrongfile.png",
         invalidjson2: "./test/data/invalidjson2.zip",
         onecoursewithsection2: "./test/data/onecoursewithsection2.zip",
-        zerosection: "./test/data/zerosectionsdataset.zip"
+        zerosection: "./test/data/zerosectionsdataset.zip",
+        notZIP: "./test/data/notZIP.txt",
+        wrongfile: "./test/data/wrongfile.png"
     };
     let insightFacade: InsightFacade;
     let datasets: { [id: string]: string };
@@ -148,7 +150,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
     });
     // 4
     it("Shouldn't add a invalid dataset", async function () {
-        const id: string = "noncoursedatabase";
+        const id: string = "notZIP";
         let response: string[];
 
         try {

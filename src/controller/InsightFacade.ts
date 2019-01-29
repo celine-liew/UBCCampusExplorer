@@ -120,7 +120,7 @@ public addedDatabase: InsightDataset[] = [];
             return Object.keys(this.datasetsHash[kind]);
         })
         .catch(err => {
-            if (err !instanceof InsightError || err !instanceof NotFoundError){
+            if (!(err instanceof InsightError)){
                 throw new InsightError(err);
             }
             return err;
