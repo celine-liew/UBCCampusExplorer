@@ -23,10 +23,6 @@ interface EHash {
     [kind: string]: IHash;
 }
 
-// type EHash ={
-//     [kind in InsightDatasetKind]: IHash;
-// }
-
 export default class InsightFacade implements IInsightFacade {
 
 public datasetsHash: EHash = {};
@@ -62,7 +58,6 @@ public addedDatabase: InsightDataset[] = [];
                     files.push(object.async("text")); // take files from courses folder only
                 }
             })
-
             if (!files.length){ // empty lists of files
                 throw new InsightError("No Valid File");
             }
@@ -70,7 +65,6 @@ public addedDatabase: InsightDataset[] = [];
         })
         .then(files => {
             let courseFile;
-
             files.forEach(file => {
                 try {
                 courseFile = JSON.parse(file) // if valid Json
@@ -101,7 +95,6 @@ public addedDatabase: InsightDataset[] = [];
                                 'year': year
                             }
                             validCourseSections.push(courseSection);
-
                         }
                     })
                 }
@@ -113,7 +106,6 @@ public addedDatabase: InsightDataset[] = [];
                     this.datasetsHash[kind] = {}
                 }
                 this.datasetsHash[kind][id] = validCourseSections;
-                // console.log(validCourseSections);
                 return this.saveDatasetList();
             }
         }).then ( () => {
@@ -147,7 +139,6 @@ public addedDatabase: InsightDataset[] = [];
             }
         }
     }
-
     public async saveDatasetList() {
         const data = this.datasetsHash;
         const outputFile = Object.keys(data).map((kind) => {
@@ -163,7 +154,6 @@ public addedDatabase: InsightDataset[] = [];
         }
     }
     public listDatasets(): Promise<InsightDataset[]> {
-
         // this.addedDatabase.push(dataset);
         const outputList: InsightDataset[] = [];
         Object.keys(this.datasetsHash).forEach( courseOrRm => {
@@ -190,10 +180,7 @@ public addedDatabase: InsightDataset[] = [];
                 self.validatequery(query);
                 self.validateWhere(query["WHERE"]);
                 self.validateOptions(query["OPTIONS"]);
-                // name of dataset??
                 finalresult = self.parser.excutequery(query, self.datasetsHash['courses']);
-                // self.parser.clean();
-                // self.parser = new Queryparser();
             } catch (error) {
                 if (error instanceof InsightError) {
                     reject(error);
@@ -207,12 +194,8 @@ public addedDatabase: InsightDataset[] = [];
         });
     }
     public validatequery(query: any) {
-        // let queryobj = JSON.parse(JSON.stringify(query));
-        // let queryobj = query;
         let keys: string[] = [];
-        // this function gets all the keys as an array of queryobj
         keys = Object.keys(query);
-        // if the queryobj has more than three keys, it must be invalid
         if (keys.length >= 3) {
             throw new InsightError("Excess keys in query");
         } else {
