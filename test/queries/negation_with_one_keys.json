@@ -1,0 +1,29 @@
+{
+    "title": "SELECT dept, id, avg WHERE with negation typo",
+    "query": {
+        "WHERE": {
+            "NOT": {
+                "GT": {
+                    "smalldataset_avg": 85
+                }
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "smalldataset_dept",
+                "smalldataset_id",
+                "smalldataset_avg"
+            ],
+            "ORDER": "smalldataset_dept"
+        }
+    },
+    "isQueryValid": true,
+    "result":[ { "smalldataset_dept": "adhe", "smalldataset_id": "330",
+        "smalldataset_avg": 83,
+        "smalldataset_instructor": "",
+        "smalldataset_title": "com adult educ",
+        "smalldataset_pass": 9,
+        "smalldataset_fail": 0,
+        "smalldataset_audit": 0,
+        "smalldataset_uuid": "8679",
+        "smalldataset_year": 2008 }]}

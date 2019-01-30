@@ -15,6 +15,8 @@ export default class Queryparser {
         if (Object.keys(query["WHERE"]).length === 0) {
             if (addHash[this.currentdatabasename].length >= 5000) {
                 throw new ResultTooLargeError();
+            } else {
+                return this.applyOptions(addHash[this.currentdatabasename]);
             }
         }
         if (Object.keys(query["WHERE"]).length >= 2) {
@@ -139,8 +141,9 @@ export default class Queryparser {
                 nodes.forEach((child) => {
                     if (nodes.indexOf(child) === 0) {
                         midresult = Helper.keepboth(midresult, traverseNode(child));
+                    } else {
+                        midresult = Helper.keepcommon(midresult, traverseNode(child));
                     }
-                    midresult = Helper.keepcommon(midresult, traverseNode(child));
                 });
             } else if (identifier === "OR") {
                 nodes.forEach((child) => {
@@ -243,8 +246,8 @@ export default class Queryparser {
         let self = this;
         rowsbeforeoption.forEach((element) => {
             Object.keys(element).forEach((keytoexamine) => {
-                let keytoexaminefull = self.currentdatabasename + "_" + keytoexamine;
-                if (self.columnstoshow.has(keytoexaminefull)) {
+                if (self.columnstoshow.has(keytoexamine)) {
+                    let keytoexaminefull = self.currentdatabasename + "_" + keytoexamine;
                     element[keytoexaminefull] = element[keytoexamine];
                 }
                 delete element[keytoexamine];
@@ -255,9 +258,10 @@ export default class Queryparser {
     public sortrows(rowsbeforesorting: any[]): any[] {
         let self = this;
         if (self.order !== undefined) {
+            let fullorder = self.currentdatabasename + "_" + self.order;
             rowsbeforesorting.sort(function (a, b) {
-                let A = a[self.order];
-                let B = b[self.order];
+                let A = a[fullorder];
+                let B = b[fullorder];
                 if (A < B) {return -1; }
                 if (A > B) {return 1; }
                 return 0;
