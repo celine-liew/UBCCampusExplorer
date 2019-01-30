@@ -244,21 +244,23 @@ export default class Queryparser {
     }
     public applyOptions(rowsbeforeoption: any[]): any[] {
         let self = this;
+        let rowsbeforesort: any[] = [];
         rowsbeforeoption.forEach((element) => {
+            let copiedelement: any = {};
             Object.keys(element).forEach((keytoexamine) => {
                 let keytoexaminefull = self.currentdatabasename + "_" + keytoexamine;
                 if (self.columnstoshow.has(keytoexaminefull)) {
-                    element[keytoexaminefull] = element[keytoexamine];
+                    copiedelement[keytoexaminefull] = element[keytoexamine];
                 }
-                delete element[keytoexamine];
             });
+            rowsbeforesort.push(copiedelement);
         });
-        return this.sortrows(rowsbeforeoption);
+        return this.sortrows(rowsbeforesort);
     }
     public sortrows(rowsbeforesorting: any[]): any[] {
         let self = this;
         if (self.order !== undefined) {
-            let fullorder = self.currentdatabasename + "_" + self.order;
+            let fullorder = self.order;
             rowsbeforesorting.sort(function (a, b) {
                 let A = a[fullorder];
                 let B = b[fullorder];
