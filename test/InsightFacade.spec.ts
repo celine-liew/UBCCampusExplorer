@@ -445,6 +445,7 @@ describe("InsightFacade PerformQuery", () => {
 
                     try {
                         response = await insightFacade.performQuery(test.query);
+                        // console.log(response);
                     } catch (err) {
                         response = err;
                     } finally {

@@ -230,9 +230,7 @@ export default class Queryparser {
         let ret: any[] = [];
         let regexp = new RegExp(/^[*]?[^*]*[*]?$/g);
         let s = value.match(regexp); if (s === null) { throw new InsightError("IS no match"); }
-        if (s.length !== 1) {
-            throw new InsightError("key doesn't match");
-        } else if (s[0] !== value) {
+        if (s.length !== 1 || s[0] !== value) {
             throw new InsightError("key doesn't match");
         } else {
             self.allrows.forEach((element) => {
