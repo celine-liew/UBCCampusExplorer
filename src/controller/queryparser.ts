@@ -221,7 +221,7 @@ export default class Queryparser {
                     ret.push(element); }
             });
             break;
-            default: break; }
+        }
         return ret;
     }
     public selectrowS(key: string, value: string): any[] {
@@ -270,13 +270,5 @@ export default class Queryparser {
             });
         }
         return rowsbeforesorting;
-    }
-    public clean() {
-        this.currentdatabasename = undefined;
-        this.AST = { FilterKey : "", value : [], nodes : []};
-        // this.rowsbeforeoption = [];
-        this.order = undefined;
-        this.allrows = [];
-        this.columnstoshow = new Set<string>();
     }
 }

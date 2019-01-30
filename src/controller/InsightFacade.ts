@@ -251,9 +251,7 @@ public addedDatabase: InsightDataset[] = [];
                     }
                 });
                 this.checkcolumns(optionpart["COLUMNS"]);
-                if (typeof optionpart["ORDER"] !== "string") {
-                    throw new InsightError("Invalid ORDER type");
-                } else {
+                if (optionpart.hasOwnProperty("ORDER") && typeof optionpart["ORDER"] === "string") {
                     this.checkorder(optionpart["COLUMNS"], optionpart["ORDER"]);
                 }
                 return;

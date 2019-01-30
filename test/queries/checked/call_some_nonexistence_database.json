@@ -1,0 +1,19 @@
+{
+    "title": "SELECT keys totally in wrong dataset that have not been added, avg WHERE avg > 97",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "wrong_avg":97
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "wrong_dept",
+                "wrong_avg"
+            ],
+            "ORDER": "wrong_avg"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}
