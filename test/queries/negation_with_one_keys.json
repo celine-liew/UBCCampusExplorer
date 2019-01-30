@@ -19,11 +19,4 @@
     },
     "isQueryValid": true,
     "result":[ { "smalldataset_dept": "adhe", "smalldataset_id": "330",
-        "smalldataset_avg": 83,
-        "smalldataset_instructor": "",
-        "smalldataset_title": "com adult educ",
-        "smalldataset_pass": 9,
-        "smalldataset_fail": 0,
-        "smalldataset_audit": 0,
-        "smalldataset_uuid": "8679",
-        "smalldataset_year": 2008 }]}
+        "smalldataset_avg": 83}]}

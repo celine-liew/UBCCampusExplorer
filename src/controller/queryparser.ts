@@ -246,8 +246,8 @@ export default class Queryparser {
         let self = this;
         rowsbeforeoption.forEach((element) => {
             Object.keys(element).forEach((keytoexamine) => {
-                if (self.columnstoshow.has(keytoexamine)) {
-                    let keytoexaminefull = self.currentdatabasename + "_" + keytoexamine;
+                let keytoexaminefull = self.currentdatabasename + "_" + keytoexamine;
+                if (self.columnstoshow.has(keytoexaminefull)) {
                     element[keytoexaminefull] = element[keytoexamine];
                 }
                 delete element[keytoexamine];

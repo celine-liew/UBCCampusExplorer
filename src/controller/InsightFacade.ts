@@ -293,12 +293,12 @@ public addedDatabase: InsightDataset[] = [];
                 let s2 = s[0].split("_");
                 if ( databasename === undefined) {
                     databasename = s2[0];
-                    self.parser.columnstoshow.add(s[1]);
+                    self.parser.columnstoshow.add(element);
                     self.parser.currentdatabasename = s2[0];
                 } else if ( databasename !== s2[0]) {
                     throw new InsightError("Cannot query more than one dataset");
                 } else {
-                    self.parser.columnstoshow.add(s[1]);
+                    self.parser.columnstoshow.add(element);
                 }
                 return;
             }
