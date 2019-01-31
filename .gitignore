@@ -8,7 +8,6 @@ src/*.js
 src/*.map
 src/**/*.js
 src/**/*.map
-test/*.js
 test/*.map
 data/
 .DS_Store

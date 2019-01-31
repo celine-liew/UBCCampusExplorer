@@ -1,0 +1,20 @@
+{
+    "title": "band* okay",
+    "query":
+    {
+        "WHERE": {
+          "IS": {
+            "courses_instructor": "band*"
+          }
+        },
+        "OPTIONS": {
+          "COLUMNS": [
+            "courses_dept",
+            "courses_avg",
+            "courses_instructor"
+          ],
+          "ORDER": "courses_instructor"
+        }
+      },
+"isQueryValid": true,
+"result":[{"courses_dept":"phar","courses_avg":79.61,"courses_instructor":"bandiera, stelvio"},{"courses_dept":"phar","courses_avg":81.14,"courses_instructor":"bandiera, stelvio"},{"courses_dept":"phar","courses_avg":81.86,"courses_instructor":"bandiera, stelvio"},{"courses_dept":"phar","courses_avg":81.4,"courses_instructor":"bandiera, stelvio"},{"courses_dept":"phar","courses_avg":80.67,"courses_instructor":"bandiera, stelvio;chen, tim;frankel, adam"},{"courses_dept":"phar","courses_avg":72.93,"courses_instructor":"bandiera, stelvio;grierson, david;reid, ronald"},{"courses_dept":"phar","courses_avg":74.12,"courses_instructor":"bandiera, stelvio;grierson, david;reid, ronald"},{"courses_dept":"phar","courses_avg":74.98,"courses_instructor":"bandiera, stelvio;grierson, david;reid, ronald"}]}
