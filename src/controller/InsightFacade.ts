@@ -266,9 +266,7 @@ public addedDatabase: InsightDataset[] = [];
         // let regExp = new RegExp(/^.*?(?=_)/g);
         columns.forEach((element) => {
             let s = element.match(re);
-            if (s.length !== 1) {
-                throw new InsightError("key doesn't match");
-            } else if (s[0] !== element) {
+            if (s.length !== 1 || s[0] !== element) {
                 throw new InsightError("key doesn't match");
             } else {
                 let s2 = s[0].split("_");
