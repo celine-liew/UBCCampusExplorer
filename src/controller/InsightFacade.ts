@@ -125,8 +125,7 @@ public addedDatabase: InsightDataset[] = [];
             throw new InsightError ("null input");
         } if (!this.datasetsHash.courses || this.datasetsHash.courses && !this.datasetsHash.courses[id]){
             throw new NotFoundError ("dataset not in list.");
-        } else {
-            try {
+        } else { try {
             delete this.datasetsHash.courses[id];
             this.addedDatabase = this.addedDatabase.filter(name => id != id);
 
@@ -134,8 +133,7 @@ public addedDatabase: InsightDataset[] = [];
             } catch (err) {
                     if (err instanceof Error) {
                         throw new InsightError(err);
-                    }
-                    return err;
+                    } return err;
             }
         }
     }
@@ -182,12 +180,8 @@ public addedDatabase: InsightDataset[] = [];
                 self.validateOptions(query["OPTIONS"]);
                 finalresult = self.parser.excutequery(query, self.datasetsHash['courses']);
             } catch (error) {
-                if (error instanceof InsightError) {
-                    reject(error);
-                } else if (error instanceof ResultTooLargeError) {
-                    reject(error);
-                } else {
-                    reject (new InsightError(error));
+                if (error instanceof InsightError || error instanceof ResultTooLargeError) {
+                    reject(error); } else { reject (new InsightError(error));
                 }
             }
             resolve(finalresult);
@@ -214,9 +208,8 @@ public addedDatabase: InsightDataset[] = [];
         }
     }
     public validateWhere(wherepart: any) {
-        if (typeof wherepart !== "object") {
-            throw new InsightError("Where must be an object");
-        } else if (wherepart.length === 0) {
+        if (typeof wherepart !== "object") { throw new InsightError("Where must be an object");
+        // } else if (wherepart.length === 0) {
             // throw new InsightError("Where must be non-empty");
         } else if (Object.keys(wherepart).length > 1) {
             throw new InsightError("Excess keys in where");
@@ -226,14 +219,10 @@ public addedDatabase: InsightDataset[] = [];
     }
     public validateOptions(optionpart: any) {
         if (typeof optionpart !== "object") {
-            throw new InsightError("Options must be an object");
-        } else {
-            let keys = Object.keys(optionpart);
-            if (keys.length >= 3) {
-                throw new InsightError("Excess keys in options");
-            } else if (!optionpart.hasOwnProperty("COLUMNS")) {
-                throw new InsightError("Missing Columns");
-            } else if (keys.length === 2 && !optionpart.hasOwnProperty("ORDER")) {
+            throw new InsightError("Options must be an object"); } else { let keys = Object.keys(optionpart);
+            if (!optionpart.hasOwnProperty("COLUMNS")) {
+                //throw new InsightError("Missing Columns"); LINE IS NOT REACHED
+            } if ((keys.length === 2 && !optionpart.hasOwnProperty("ORDER")) || keys.length >= 3) {
                 throw new InsightError("Invalid keys in OPTIONS");
             } else if (optionpart.hasOwnProperty("ORDER") && typeof optionpart["ORDER"] !== "string") {
                 throw new InsightError("Invalid ORDER type");
@@ -266,8 +255,7 @@ public addedDatabase: InsightDataset[] = [];
         // let regExp = new RegExp(/^.*?(?=_)/g);
         columns.forEach((element) => {
             let s = element.match(re);
-            if (s.length !== 1 || s[0] !== element) {
-                throw new InsightError("key doesn't match");
+            if (s.length !== 1 || s[0] !== element) { throw new InsightError("key doesn't match");
             } else {
                 let s2 = s[0].split("_");
                 if ( databasename === undefined) {

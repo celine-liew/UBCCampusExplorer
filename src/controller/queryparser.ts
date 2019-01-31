@@ -119,12 +119,8 @@ export default class Queryparser {
             s = key.match(self.renum);
         }
         if (s === null) { throw new InsightError("no _"); }
-        if (s.length !== 1) {
-            throw new InsightError("key doesn't match");
-        } else if (s[0] !== key) {
-            throw new InsightError("key doesn't match");
-        } else {
-            return; }
+        if (s.length !== 1 || s[0] !== key) { throw new InsightError("key doesn't match");
+        } else {return; }
     }
     public astApplyToRow(currentdatabasename: string, addHash: IHash): any[] {
         if (!addHash[currentdatabasename]) {
@@ -184,8 +180,7 @@ export default class Queryparser {
     public reverse(array1: any[]) {
         let self = this;
         if (array1 === null) {
-            return self.allrows;
-        } else {
+            return self.allrows; } else {
             let set = new Set();
             let ret: any[] = [];
             array1.forEach((element) => {
