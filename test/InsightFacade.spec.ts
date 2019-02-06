@@ -95,7 +95,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
         }
     });
     it("Should not add a invalid dataset with wrong InsightDatasetKind identifier", async function () {
-        const id: string = "cpsccourses2"; //NOTE: need to update checks for identifier... how to test for non-identifier?
+        const id: string = "smalldataset"; //NOTE: need to update checks for identifier... how to test for non-identifier?
         let response: string[];
 
         try {

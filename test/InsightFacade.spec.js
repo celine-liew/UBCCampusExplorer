@@ -85,7 +85,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
     });
     it("Should not add a invalid dataset with wrong InsightDatasetKind identifier", function () {
         return __awaiter(this, void 0, void 0, function* () {
-            const id = "cpsccourses2";
+            const id = "smalldataset";
             let response;
             try {
                 response = yield insightFacade.addDataset(id, datasets[id], IInsightFacade_1.InsightDatasetKind.Rooms);
@@ -295,14 +295,13 @@ describe("InsightFacade Add/Remove Dataset", function () {
             const id = "courseshypothetical";
             let response;
             try {
-                yield insightFacade.addDataset(id, datasets[id], IInsightFacade_1.InsightDatasetKind.Courses);
                 response = yield insightFacade.removeDataset(id);
             }
             catch (err) {
                 response = err;
             }
             finally {
-                chai_1.expect(response).to.be.instanceOf(IInsightFacade_1.InsightError);
+                chai_1.expect(response).to.be.instanceOf(IInsightFacade_1.NotFoundError);
             }
         });
     });
