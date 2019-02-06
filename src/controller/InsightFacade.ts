@@ -38,18 +38,9 @@ public addedDatabase: InsightDataset[] = [];
         // const datasetToAdd: IHash = {};
         const coursesKeys: string[] = ['Subject', 'Course', 'Avg', 'Professor', 'Title', 'Pass', 'Fail','Audit','id','Year'];
         // const coursesTranKeys: string[] = ['dept', 'id', 'avg', 'instructor', 'title', 'pass', 'fail','audit','uuid','year'];
-        if (!id || id === ""){
-            throw new InsightError( "null input");
-        }
-        if (!content) {
-            throw new InsightError( "Can't find database");
-        }
-        if (kind != InsightDatasetKind.Courses){
-            throw new InsightError("invalid InsightDatasetKind");
-        }
-        if (this.datasetsHash && this.datasetsHash[kind] && this.datasetsHash[kind][id]){
-            throw new InsightError("duplicate dataset id.");
-        }
+
+        this.checkValidDatabase(id, content, kind);
+
         return JSZip.loadAsync(content, {base64: true}).then(zip => {
             const files: Promise<string>[] = [];
 
@@ -120,6 +111,23 @@ public addedDatabase: InsightDataset[] = [];
             return err;
         })
     }
+
+    public checkValidDatabase(id: string, content: string, kind: InsightDatasetKind): boolean {
+        if (!id || id === ""){
+            throw new InsightError( "null input");
+        }
+        if (!content) {
+            throw new InsightError( "Can't find database");
+        }
+        if (kind != InsightDatasetKind.Courses && kind != InsightDatasetKind.Rooms){
+            throw new InsightError("invalid InsightDatasetKind");
+        }
+        if (this.datasetsHash && this.datasetsHash[kind] && this.datasetsHash[kind][id]){
+            throw new InsightError("duplicate dataset id.");
+        }
+        return true;
+    }
+
     public removeDataset(id: string): Promise<string> {
         if (!id){
             throw new InsightError ("null input");

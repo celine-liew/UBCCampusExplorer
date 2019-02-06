@@ -95,7 +95,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
         }
     });
     it("Should not add a invalid dataset with wrong InsightDatasetKind identifier", async function () {
-        const id: string = "cpsccourses2";
+        const id: string = "cpsccourses2"; //NOTE: need to update checks for identifier... how to test for non-identifier?
         let response: string[];
 
         try {
@@ -282,12 +282,12 @@ describe("InsightFacade Add/Remove Dataset", function () {
         let response: string;
 
         try {
-            await insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+            // await insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
             response = await insightFacade.removeDataset(id);
         } catch (err) {
             response = err;
         } finally {
-            expect(response).to.be.instanceOf(InsightError);
+            expect(response).to.be.instanceOf(NotFoundError);
         }
 
     });
