@@ -9,6 +9,6 @@ src/*.map
 src/**/*.js
 src/**/*.map
 test/*.map
-data/
+/data
 .DS_Store
 .env
