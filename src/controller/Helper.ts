@@ -29,11 +29,8 @@ export default class Helper {
        }
     }
     public static keepcommon(array1: any[], array2: any[]): any[] {
-        if (array1 === null ) {
-            return array1;
-        } else if (array2 === null ) {
-            return array2;
-        } else {
+        if (array1 === [] ) {return array1; }
+        if (array2 === [] ) { return array2; } else {
             let set = new Set();
             let ret: any[] = [];
             array1.forEach((element) => {
@@ -48,11 +45,7 @@ export default class Helper {
         }
     }
     public static keepboth(array1: any[], array2: any[]) {
-        if (array1 === undefined) {
-            return array2;
-        } else if (array2 === undefined) {
-            return array1;
-        } else {
+        if (array1 === []) { return array2; } if (array2 === []) { return array1; } else {
             let set = new Set();
             let ret = array1;
             array1.forEach((element) => {

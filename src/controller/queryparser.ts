@@ -119,12 +119,8 @@ export default class Queryparser {
             s = key.match(self.renum);
         }
         if (s === null) { throw new InsightError("no _"); }
-        if (s.length !== 1) {
-            throw new InsightError("key doesn't match");
-        } else if (s[0] !== key) {
-            throw new InsightError("key doesn't match");
-        } else {
-            return; }
+        if (s.length !== 1 || s[0] !== key) { throw new InsightError("key doesn't match");
+        } else {return; }
     }
     public astApplyToRow(currentdatabasename: string, addHash: IHash): any[] {
         if (!addHash[currentdatabasename]) {
@@ -184,8 +180,7 @@ export default class Queryparser {
     public reverse(array1: any[]) {
         let self = this;
         if (array1 === null) {
-            return self.allrows;
-        } else {
+            return self.allrows; } else {
             let set = new Set();
             let ret: any[] = [];
             array1.forEach((element) => {
@@ -221,7 +216,7 @@ export default class Queryparser {
                     ret.push(element); }
             });
             break;
-            default: break; }
+        }
         return ret;
     }
     public selectrowS(key: string, value: string): any[] {
@@ -230,9 +225,7 @@ export default class Queryparser {
         let ret: any[] = [];
         let regexp = new RegExp(/^[*]?[^*]*[*]?$/g);
         let s = value.match(regexp); if (s === null) { throw new InsightError("IS no match"); }
-        if (s.length !== 1) {
-            throw new InsightError("key doesn't match");
-        } else if (s[0] !== value) {
+        if (s.length !== 1 || s[0] !== value) {
             throw new InsightError("key doesn't match");
         } else {
             self.allrows.forEach((element) => {
@@ -270,13 +263,5 @@ export default class Queryparser {
             });
         }
         return rowsbeforesorting;
-    }
-    public clean() {
-        this.currentdatabasename = undefined;
-        this.AST = { FilterKey : "", value : [], nodes : []};
-        // this.rowsbeforeoption = [];
-        this.order = undefined;
-        this.allrows = [];
-        this.columnstoshow = new Set<string>();
     }
 }

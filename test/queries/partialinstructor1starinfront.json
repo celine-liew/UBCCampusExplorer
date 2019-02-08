@@ -1,0 +1,20 @@
+{
+    "title": "*elisa 1 only instructor valid query",
+    "query":
+    {
+    "WHERE": {
+      "IS": {
+        "courses_instructor": "*elisa"
+      }
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "courses_dept",
+        "courses_avg",
+        "courses_instructor"
+      ],
+      "ORDER": "courses_instructor"
+    }
+  },
+"isQueryValid": true,
+"result":[{"courses_dept":"cpsc","courses_avg":73.27,"courses_instructor":"baniassad, elisa"},{"courses_dept":"cpsc","courses_avg":86.15,"courses_instructor":"baniassad, elisa"},{"courses_dept":"cpsc","courses_avg":74.17,"courses_instructor":"baniassad, elisa"},{"courses_dept":"cpsc","courses_avg":80.35,"courses_instructor":"baniassad, elisa"},{"courses_dept":"cpsc","courses_avg":76.32,"courses_instructor":"baniassad, elisa"},{"courses_dept":"cpsc","courses_avg":81.18,"courses_instructor":"baniassad, elisa"},{"courses_dept":"cpsc","courses_avg":79.12,"courses_instructor":"baniassad, elisa"},{"courses_dept":"cpsc","courses_avg":79.39,"courses_instructor":"baniassad, elisa"},{"courses_dept":"cpsc","courses_avg":79.62,"courses_instructor":"baniassad, elisa"},{"courses_dept":"cpsc","courses_avg":77.13,"courses_instructor":"baniassad, elisa"},{"courses_dept":"apbi","courses_avg":86.14,"courses_instructor":"lewis, delisa"},{"courses_dept":"apbi","courses_avg":86.57,"courses_instructor":"lewis, delisa"},{"courses_dept":"fhis","courses_avg":79.89,"courses_instructor":"segnini, elisa"},{"courses_dept":"ital","courses_avg":74.63,"courses_instructor":"segnini, elisa"},{"courses_dept":"ital","courses_avg":72.73,"courses_instructor":"segnini, elisa"},{"courses_dept":"ital","courses_avg":78.8,"courses_instructor":"segnini, elisa"},{"courses_dept":"ital","courses_avg":75.73,"courses_instructor":"segnini, elisa"},{"courses_dept":"ital","courses_avg":80,"courses_instructor":"segnini, elisa"},{"courses_dept":"itst","courses_avg":74.36,"courses_instructor":"segnini, elisa"},{"courses_dept":"itst","courses_avg":69.26,"courses_instructor":"segnini, elisa"},{"courses_dept":"itst","courses_avg":82.2,"courses_instructor":"segnini, elisa"},{"courses_dept":"itst","courses_avg":77.33,"courses_instructor":"segnini, elisa"},{"courses_dept":"itst","courses_avg":77,"courses_instructor":"segnini, elisa"},{"courses_dept":"fhis","courses_avg":75.63,"courses_instructor":"segnini, elisa"}]}

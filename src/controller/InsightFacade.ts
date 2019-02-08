@@ -35,107 +35,115 @@ public addedDatabase: InsightDataset[] = [];
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
         const validCourseSections: any[] = [];
-        // const datasetToAdd: IHash = {};
         const coursesKeys: string[] = ['Subject', 'Course', 'Avg', 'Professor', 'Title', 'Pass', 'Fail','Audit','id','Year'];
         // const coursesTranKeys: string[] = ['dept', 'id', 'avg', 'instructor', 'title', 'pass', 'fail','audit','uuid','year'];
-        if (!id || id === ""){
+        this.checkValidDatabase(id, content, kind);
+
+        return JSZip.loadAsync(content, {base64: true}).then((zip) => {
+            const files: Promise<string>[] = [];
+            zip.forEach((path, object) => {
+                if (path.startsWith("courses/") && !object.dir) { // check courses folder exist
+                    files.push(object.async("text")); // take files from courses folder only
+                }
+            });
+            if (!files.length) { // empty lists of files
+                throw new InsightError("No Valid File");
+            }
+            return Promise.all(files);
+        })
+        .then( (files) => {
+            this.addValidFilesonly(files, coursesKeys, validCourseSections, kind, id);
+
+        }).then ( () => {
+            return Object.keys(this.datasetsHash[kind]);
+        })
+        .catch( (err) => {
+            if (!(err instanceof InsightError)) {
+                throw new InsightError(err);
+            }
+            return err;
+        }).catch( (err) => {
+            return err;
+        });
+    }
+
+    public checkValidDatabase(id: string, content: string, kind: InsightDatasetKind): boolean {
+        if (!id || id === "") {
             throw new InsightError( "null input");
         }
         if (!content) {
             throw new InsightError( "Can't find database");
         }
-        if (kind != InsightDatasetKind.Courses){
+        if (kind !== InsightDatasetKind.Courses && kind !== InsightDatasetKind.Rooms) {
             throw new InsightError("invalid InsightDatasetKind");
         }
-        if (this.datasetsHash && this.datasetsHash[kind] && this.datasetsHash[kind][id]){
+        if (this.datasetsHash && this.datasetsHash[kind] && this.datasetsHash[kind][id]) {
             throw new InsightError("duplicate dataset id.");
         }
-        return JSZip.loadAsync(content, {base64: true}).then(zip => {
-            const files: Promise<string>[] = [];
-
-            zip.forEach((path, object) => {
-                if (path.startsWith('courses/') && !object.dir) { // check courses folder exist
-                    files.push(object.async("text")); // take files from courses folder only
-                }
-            })
-            if (!files.length){ // empty lists of files
-                throw new InsightError("No Valid File");
-            }
-            return Promise.all(files);
-        })
-        .then(files => {
-            let courseFile;
-            files.forEach(file => {
-                try {
-                courseFile = JSON.parse(file) // if valid Json
-                } catch (err) {
-                    return; // skipping invalid "Error with JSON parsing";
-                }
-                if (courseFile['result'].length >= 1){
-                    courseFile['result'].forEach((cSection : any) => {
-                        const validSection = coursesKeys.every((key) => {
-                            return Object.keys(cSection).includes(key);
-                        })
-                        if (validSection) { // TO CONTINUE...
-                            const uuid = (cSection['id']).toString();
-                            let year = parseInt(cSection['Year']);
-                            if (cSection['Section'] === "overall"){
-                                year = 1900;
-                            }
-                            const courseSection = {
-                                'dept': cSection['Subject'],
-                                'id': cSection['Course'],
-                                'avg': cSection['Avg'],
-                                'instructor': cSection['Professor'],
-                                'title': cSection['Title'],
-                                'pass': cSection['Pass'],
-                                'fail': cSection['Fail'],
-                                'audit': cSection['Audit'],
-                                'uuid': uuid,
-                                'year': year
-                            }
-                            validCourseSections.push(courseSection);
-                        }
-                    })
-                }
-            })
-            if (validCourseSections.length === 0){
-                throw new InsightError("no valid course sections in dataset.")
-            } else {
-                if (!this.datasetsHash[kind]) {
-                    this.datasetsHash[kind] = {}
-                }
-                this.datasetsHash[kind][id] = validCourseSections;
-                return this.saveDatasetList();
-            }
-        }).then ( () => {
-            return Object.keys(this.datasetsHash[kind]);
-        })
-        .catch(err => {
-            if (!(err instanceof InsightError)){
-                throw new InsightError(err);
-            }
-            return err;
-        }).catch(err => {
-            return err;
-        })
+        return true;
     }
+
+    private addValidFilesonly(files: string[], coursesKeys: string[], validCourseSections: any[],
+        kind: InsightDatasetKind, id: string) {
+        let courseFile;
+        files.forEach( (file) => {
+            try {
+            courseFile = JSON.parse(file); // if valid Json
+            } catch (err) {
+                return; // skipping invalid "Error with JSON parsing";
+            }
+            if (courseFile["result"].length >= 1){
+                courseFile["result"].forEach((cSection : any) => {
+                    const validSection = coursesKeys.every((key) => {
+                        return Object.keys(cSection).includes(key);
+                    })
+                    if (validSection) { // TO CONTINUE...
+                        const uuid = (cSection['id']).toString();
+                        let year = parseInt(cSection['Year']);
+                        if (cSection['Section'] === "overall"){
+                            year = 1900;
+                        }
+                        const courseSection = {
+                            'dept': cSection['Subject'],
+                            'id': cSection['Course'],
+                            'avg': cSection['Avg'],
+                            'instructor': cSection['Professor'],
+                            'title': cSection['Title'],
+                            'pass': cSection['Pass'],
+                            'fail': cSection['Fail'],
+                            'audit': cSection['Audit'],
+                            'uuid': uuid,
+                            'year': year
+                        }
+                        validCourseSections.push(courseSection);
+                    }
+                })
+            }
+        })
+        if (validCourseSections.length === 0){
+            throw new InsightError("no valid course sections in dataset.")
+        } else {
+            if (!this.datasetsHash[kind]) {
+                this.datasetsHash[kind] = {}
+            }
+            this.datasetsHash[kind][id] = validCourseSections;
+            return this.saveDatasetList();
+        }
+        }
+
     public removeDataset(id: string): Promise<string> {
         if (!id){
             throw new InsightError ("null input");
         } if (!this.datasetsHash.courses || this.datasetsHash.courses && !this.datasetsHash.courses[id]){
             throw new NotFoundError ("dataset not in list.");
-        } else {
-            try {
+        } else { try {
             delete this.datasetsHash.courses[id];
             this.addedDatabase = this.addedDatabase.filter(name => id != id);
-
             return Promise.resolve(id);
             } catch (err) {
                     if (err instanceof Error) {
                         throw new InsightError(err);
-                    }
-                    return err;
+                    } return err;
             }
         }
     }
@@ -182,12 +190,8 @@ public addedDatabase: InsightDataset[] = [];
                 self.validateOptions(query["OPTIONS"]);
                 finalresult = self.parser.excutequery(query, self.datasetsHash['courses']);
             } catch (error) {
-                if (error instanceof InsightError) {
-                    reject(error);
-                } else if (error instanceof ResultTooLargeError) {
-                    reject(error);
-                } else {
-                    reject (new InsightError(error));
+                if (error instanceof InsightError || error instanceof ResultTooLargeError) {
+                    reject(error); } else { reject (new InsightError(error));
                 }
             }
             resolve(finalresult);
@@ -214,9 +218,8 @@ public addedDatabase: InsightDataset[] = [];
         }
     }
     public validateWhere(wherepart: any) {
-        if (typeof wherepart !== "object") {
-            throw new InsightError("Where must be an object");
-        } else if (wherepart.length === 0) {
+        if (typeof wherepart !== "object") { throw new InsightError("Where must be an object");
+        // } else if (wherepart.length === 0) {
             // throw new InsightError("Where must be non-empty");
         } else if (Object.keys(wherepart).length > 1) {
             throw new InsightError("Excess keys in where");
@@ -226,14 +229,10 @@ public addedDatabase: InsightDataset[] = [];
     }
     public validateOptions(optionpart: any) {
         if (typeof optionpart !== "object") {
-            throw new InsightError("Options must be an object");
-        } else {
-            let keys = Object.keys(optionpart);
-            if (keys.length >= 3) {
-                throw new InsightError("Excess keys in options");
-            } else if (!optionpart.hasOwnProperty("COLUMNS")) {
-                throw new InsightError("Missing Columns");
-            } else if (keys.length === 2 && !optionpart.hasOwnProperty("ORDER")) {
+            throw new InsightError("Options must be an object"); } else { let keys = Object.keys(optionpart);
+            if (!optionpart.hasOwnProperty("COLUMNS")) {
+                //throw new InsightError("Missing Columns"); LINE IS NOT REACHED
+            } if ((keys.length === 2 && !optionpart.hasOwnProperty("ORDER")) || keys.length >= 3) {
                 throw new InsightError("Invalid keys in OPTIONS");
             } else if (optionpart.hasOwnProperty("ORDER") && typeof optionpart["ORDER"] !== "string") {
                 throw new InsightError("Invalid ORDER type");
@@ -251,9 +250,7 @@ public addedDatabase: InsightDataset[] = [];
                     }
                 });
                 this.checkcolumns(optionpart["COLUMNS"]);
-                if (typeof optionpart["ORDER"] !== "string") {
-                    throw new InsightError("Invalid ORDER type");
-                } else {
+                if (optionpart.hasOwnProperty("ORDER") && typeof optionpart["ORDER"] === "string") {
                     this.checkorder(optionpart["COLUMNS"], optionpart["ORDER"]);
                 }
                 return;
@@ -268,10 +265,7 @@ public addedDatabase: InsightDataset[] = [];
         // let regExp = new RegExp(/^.*?(?=_)/g);
         columns.forEach((element) => {
             let s = element.match(re);
-            if (s.length !== 1) {
-                throw new InsightError("key doesn't match");
-            } else if (s[0] !== element) {
-                throw new InsightError("key doesn't match");
+            if (s.length !== 1 || s[0] !== element) { throw new InsightError("key doesn't match");
             } else {
                 let s2 = s[0].split("_");
                 if ( databasename === undefined) {
