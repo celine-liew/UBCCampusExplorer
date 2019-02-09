@@ -9,7 +9,11 @@ import * as JSZip from "jszip";
 import { PassThrough } from "stream";
 import * as fs from "fs-extra";
 import { addListener } from "cluster";
+<<<<<<< HEAD
 import QueryValidator from "./QueryValidator";
+=======
+import { checkValidDatabase, processCoursesFile, saveDatasetList } from "./HelperAddDataset";
+>>>>>>> 02dbf88dec5f3a1cccec4c204a0787dda2c708b6
 
 /**
  * This is the main programmatic entry point for the project.
@@ -20,7 +24,7 @@ export interface IHash {
     [id: string]: any[];
 }
 
-interface EHash {
+export interface EHash {
     [kind: string]: IHash;
 }
 
@@ -39,7 +43,10 @@ public addedDatabase: InsightDataset[] = [];
         const validCourseSections: any[] = [];
         const coursesKeys: string[] = ['Subject', 'Course', 'Avg', 'Professor', 'Title', 'Pass', 'Fail','Audit','id','Year'];
         // const coursesTranKeys: string[] = ['dept', 'id', 'avg', 'instructor', 'title', 'pass', 'fail','audit','uuid','year'];
-        this.checkValidDatabase(id, content, kind);
+        checkValidDatabase(id, content, kind);
+        if (this.datasetsHash && this.datasetsHash[kind] && this.datasetsHash[kind][id]) {
+            throw new InsightError("duplicate dataset id.");
+        }
 
         return JSZip.loadAsync(content, {base64: true}).then((zip) => {
             const files: Promise<string>[] = [];
@@ -69,68 +76,18 @@ public addedDatabase: InsightDataset[] = [];
         });
     }
 
-    public checkValidDatabase(id: string, content: string, kind: InsightDatasetKind): boolean {
-        if (!id || id === "") {
-            throw new InsightError( "null input");
-        }
-        if (!content) {
-            throw new InsightError( "Can't find database");
-        }
-        if (kind !== InsightDatasetKind.Courses && kind !== InsightDatasetKind.Rooms) {
-            throw new InsightError("invalid InsightDatasetKind");
-        }
-        if (this.datasetsHash && this.datasetsHash[kind] && this.datasetsHash[kind][id]) {
-            throw new InsightError("duplicate dataset id.");
-        }
-        return true;
-    }
-
     private addValidFilesonly(files: string[], coursesKeys: string[], validCourseSections: any[],
         kind: InsightDatasetKind, id: string) {
-        let courseFile;
-        files.forEach( (file) => {
-            try {
-            courseFile = JSON.parse(file); // if valid Json
-            } catch (err) {
-                return; // skipping invalid "Error with JSON parsing";
+            processCoursesFile(files, coursesKeys, validCourseSections);
+            if (validCourseSections.length === 0){
+                throw new InsightError("no valid course sections in dataset.")
+            } else {
+                if (!this.datasetsHash[kind]) {
+                    this.datasetsHash[kind] = {}
+                }
+                this.datasetsHash[kind][id] = validCourseSections;
+                return saveDatasetList(this.datasetsHash);
             }
-            if (courseFile["result"].length >= 1){
-                courseFile["result"].forEach((cSection : any) => {
-                    const validSection = coursesKeys.every((key) => {
-                        return Object.keys(cSection).includes(key);
-                    })
-                    if (validSection) { // TO CONTINUE...
-                        const uuid = (cSection['id']).toString();
-                        let year = parseInt(cSection['Year']);
-                        if (cSection['Section'] === "overall"){
-                            year = 1900;
-                        }
-                        const courseSection = {
-                            'dept': cSection['Subject'],
-                            'id': cSection['Course'],
-                            'avg': cSection['Avg'],
-                            'instructor': cSection['Professor'],
-                            'title': cSection['Title'],
-                            'pass': cSection['Pass'],
-                            'fail': cSection['Fail'],
-                            'audit': cSection['Audit'],
-                            'uuid': uuid,
-                            'year': year
-                        }
-                        validCourseSections.push(courseSection);
-                    }
-                })
-            }
-        })
-        if (validCourseSections.length === 0){
-            throw new InsightError("no valid course sections in dataset.")
-        } else {
-            if (!this.datasetsHash[kind]) {
-                this.datasetsHash[kind] = {}
-            }
-            this.datasetsHash[kind][id] = validCourseSections;
-            return this.saveDatasetList();
-        }
         }
 
     public removeDataset(id: string): Promise<string> {
@@ -149,20 +106,7 @@ public addedDatabase: InsightDataset[] = [];
             }
         }
     }
-    public async saveDatasetList() {
-        const data = this.datasetsHash;
-        const outputFile = Object.keys(data).map((kind) => {
-            return {kind: kind, id: data[kind]}});
-        const dir = "./data"
-        const filePath = "./data/savedDatasets.json"
-        try {
-            await fs.ensureDir(dir);
-            await fs.writeJSON(filePath, outputFile)
-        } catch (err) {
-            console.error(err);
-            throw err;
-        }
-    }
+
     public listDatasets(): Promise<InsightDataset[]> {
         // this.addedDatabase.push(dataset);
         const outputList: InsightDataset[] = [];
