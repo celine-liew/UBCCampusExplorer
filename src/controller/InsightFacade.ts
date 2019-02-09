@@ -9,11 +9,8 @@ import * as JSZip from "jszip";
 import { PassThrough } from "stream";
 import * as fs from "fs-extra";
 import { addListener } from "cluster";
-<<<<<<< HEAD
 import QueryValidator from "./QueryValidator";
-=======
 import { checkValidDatabase, processCoursesFile, saveDatasetList } from "./HelperAddDataset";
->>>>>>> 02dbf88dec5f3a1cccec4c204a0787dda2c708b6
 
 /**
  * This is the main programmatic entry point for the project.
