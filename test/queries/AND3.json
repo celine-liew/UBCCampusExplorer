@@ -1,0 +1,38 @@
+{
+    "title": "SELECT dept, id, avg, instructor, title, pass, fail, uuid, audit, year WHERE audit > 0 && instructor == 'baniassad, elisa' ORDER by instructor",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "GT": {
+                        "courses_audit": 0
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_instructor": "baniassad, elisa"
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg",
+                "courses_instructor",
+                "courses_title",
+                "courses_pass",
+                "courses_fail",
+                "courses_uuid",
+                "courses_audit",
+                "courses_year"
+            ],
+            "ORDER": "courses_instructor"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        { "courses_dept": "cpsc", "courses_id": "310", "courses_avg": 79.12, "courses_instructor": "baniassad, elisa", "courses_title": "intr sftwr eng", "courses_pass": 75, "courses_fail": 1,"courses_uuid": "67312", "courses_audit": 1, "courses_year": 2014 }
+    ]
+}

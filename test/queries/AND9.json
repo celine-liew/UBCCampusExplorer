@@ -1,0 +1,35 @@
+{
+    "title": "SELECT dept, id, avg, year WHERE dept == 'cpsc' && avg > 90 && year > 2013 ORDER BY year",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "IS": {
+                        "courses_dept": "cpsc"
+                    }
+                },
+                {
+                    "GT": {
+                        "courses_avg": 90
+                    }
+                },
+                {
+                    "GT": {
+                        "courses_year": 2013
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg",
+                "courses_year"
+            ],
+            "ORDER": "courses_year"
+        }
+    },
+    "isQueryValid": true,
+    "result":[{"courses_dept":"cpsc","courses_id":"490","courses_avg":92.4,"courses_year":2014},{"courses_dept":"cpsc","courses_id":"540","courses_avg":91.22,"courses_year":2014},{"courses_dept":"cpsc","courses_id":"589","courses_avg":95,"courses_year":2014},{"courses_dept":"cpsc","courses_id":"449","courses_avg":90.25,"courses_year":2015},{"courses_dept":"cpsc","courses_id":"527","courses_avg":91.22,"courses_year":2015},{"courses_dept":"cpsc","courses_id":"540","courses_avg":90.53,"courses_year":2015}]
+}

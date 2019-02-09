@@ -1,0 +1,51 @@
+{
+    "title": "SELECT dept, id, avg, instructor, title, pass, fail, uuid, audit, year WHERE dept = 'psyc' && instructor = '*;*'",
+
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "IS": {
+                        "courses_dept": "psyc"
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_instructor": "*;*"
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg",
+                "courses_instructor",
+                "courses_title",
+                "courses_pass",
+                "courses_fail",
+                "courses_uuid",
+                "courses_audit",
+                "courses_year"
+            ],
+            "ORDER": "courses_audit"
+        }
+    },
+    "isQueryValid": true,
+    "result":[
+        {"courses_dept":"psyc","courses_id":"101","courses_avg":69.2,"courses_instructor":"assanand, sunaina;souza, michael","courses_title":"bio cog psych","courses_pass":230,"courses_fail":7,"courses_uuid":"80818","courses_audit":0,"courses_year":2014},
+        {"courses_dept":"psyc","courses_id":"102","courses_avg":66.64,"courses_instructor":"barnes, steven;lam, mark","courses_title":"dev soc cli psy","courses_pass":38,"courses_fail":4,"courses_uuid":"80833","courses_audit":0,"courses_year":2014},
+        {"courses_dept":"psyc","courses_id":"102","courses_avg":60.79,"courses_instructor":"barnes, steven;lam, mark","courses_title":"dev soc cli psy","courses_pass":30,"courses_fail":8,"courses_uuid":"80834","courses_audit":0,"courses_year":2014},
+        {"courses_dept":"psyc","courses_id":"208","courses_avg":68.88,"courses_instructor":"barnes, steven;lam, mark","courses_title":"soc, dev, clin","courses_pass":66,"courses_fail":3,"courses_uuid":"80845","courses_audit":0,"courses_year":2014},
+        {"courses_dept":"psyc","courses_id":"260","courses_avg":73.22,"courses_instructor":"christoff, kalina;gorzalka, boris","courses_title":"experml psyc&lab","courses_pass":45,"courses_fail":0,"courses_uuid":"25584","courses_audit":0,"courses_year":2007},
+        {"courses_dept":"psyc","courses_id":"102","courses_avg":66.27,"courses_instructor":"barnes, steven;lam, mark","courses_title":"dev soc cli psy","courses_pass":120,"courses_fail":8,"courses_uuid":"78082","courses_audit":0,"courses_year":2015},
+        {"courses_dept":"psyc","courses_id":"304","courses_avg":63.31,"courses_instructor":"christie, brian;gorzalka, boris","courses_title":"brain & behviour","courses_pass":31,"courses_fail":4,"courses_uuid":"25602","courses_audit":0,"courses_year":2007},
+        {"courses_dept":"psyc","courses_id":"304","courses_avg":66.32,"courses_instructor":"gorzalka, boris;hanson, laura","courses_title":"brain & behviour","courses_pass":43,"courses_fail":4,"courses_uuid":"89720","courses_audit":0,"courses_year":2013},
+        {"courses_dept":"psyc","courses_id":"320","courses_avg":70.11,"courses_instructor":"assanand, sunaina;king, david","courses_title":"psyc of gender","courses_pass":162,"courses_fail":6,"courses_uuid":"78177","courses_audit":0,"courses_year":2015},
+        {"courses_dept":"psyc","courses_id":"360","courses_avg":70.53,"courses_instructor":"hamson, dwayne;snyder, jason","courses_title":"biopsychology","courses_pass":54,"courses_fail":4,"courses_uuid":"80955","courses_audit":0,"courses_year":2014},
+        {"courses_dept":"psyc","courses_id":"537","courses_avg":89.2,"courses_instructor":"klonsky, elisha;mcgee, brandy","courses_title":"eth & prof clin","courses_pass":5,"courses_fail":0,"courses_uuid":"31592","courses_audit":0,"courses_year":2009},
+        {"courses_dept":"psyc","courses_id":"260","courses_avg":71.5,"courses_instructor":"christoff, kalina;gorzalka, boris","courses_title":"experml psyc&lab","courses_pass":44,"courses_fail":0,"courses_uuid":"31422","courses_audit":0,"courses_year":2009}
+
+    ]
+}

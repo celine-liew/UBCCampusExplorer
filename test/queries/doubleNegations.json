@@ -1,0 +1,45 @@
+{
+    "title": "SELECT dept, id, avg, instructor, title, pass, fail, uuid, audit, year WHERE audit < 1 && id == '310' && avg > 88 ORDER by audit - all equal",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "LT": {
+                        "courses_audit": 1
+                    }
+                },
+                {
+                    "NOT": {
+                        "NOT": {
+                            "IS": {
+                                "courses_id": "310"
+                            }
+                        }
+                    }
+                },
+                {
+                    "GT": {
+                        "courses_avg": 88
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg",
+                "courses_instructor",
+                "courses_title",
+                "courses_pass",
+                "courses_fail",
+                "courses_uuid",
+                "courses_audit",
+                "courses_year"
+            ],
+            "ORDER": "courses_audit"
+        }
+    },
+    "isQueryValid": true,
+    "result":[{"courses_dept":"midw","courses_id":"310","courses_avg":89.46,"courses_instructor":"thordarson, dana","courses_title":"sr rsrch project","courses_pass":13,"courses_fail":0,"courses_uuid":"1217","courses_audit":0,"courses_year":2014},{"courses_dept":"midw","courses_id":"310","courses_avg":89.46,"courses_instructor":"","courses_title":"sr rsrch project","courses_pass":13,"courses_fail":0,"courses_uuid":"1218","courses_audit":0,"courses_year":1900}]
+}

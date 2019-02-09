@@ -11,6 +11,8 @@ export default class Queryparser {
     public order: string = undefined;
     private renum = new RegExp(/[^_]+_(avg|pass|fail|audit|year)$/g);
     private res = new RegExp(/[^_]+_(dept|id|instructor|title|uuid)$/g);
+    private renumrooms = new RegExp(/[^_]+_(lat|lon|seats)$/g);
+    private resrooms = new RegExp(/[^_]+_(fullname|shortname|number|name|address|type|furniture|href)$/g);
     public excutequery(query: any, addHash: IHash): any[] {
         if (Object.keys(query["WHERE"]).length === 0) {
             if (addHash[this.currentdatabasename].length >= 5000) {

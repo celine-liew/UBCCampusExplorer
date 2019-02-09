@@ -1,0 +1,25 @@
+{
+    "title": "SELECT dept, id, avg, pass, uuid, audit WHERE fail > -99999999999 - negative LT",
+    "query": {
+        "WHERE": {
+            "LT": {
+                "courses_audit": -999999999999
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg",
+                "courses_pass",
+                "courses_uuid",
+                "courses_audit"
+            ],
+            "ORDER": "courses_pass"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+
+    ]
+}

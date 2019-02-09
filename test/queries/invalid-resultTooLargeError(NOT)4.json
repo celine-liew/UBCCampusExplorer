@@ -1,0 +1,32 @@
+{
+    "title": "Unexpected response status 400: The result is too big. Only queries with a maximum of 5000 results are supported.",
+    "query": {
+        "WHERE": {
+            "NOT": {
+                "AND": [
+                    {
+                        "EQ": {
+                            "courses_year": 1990
+                        }
+                    },
+                    {
+                        "EQ": {
+                            "courses_pass": 100
+                        }
+                    }
+                ]
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg",
+                "courses_uuid",
+                "courses_year"
+            ],
+            "ORDER": "courses_year"
+        }
+    },
+    "isQueryValid":false,
+    "result": "ResultTooLargeError"
+}

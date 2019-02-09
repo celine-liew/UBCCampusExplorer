@@ -1,0 +1,22 @@
+{
+    "title": "SELECT dept WHERE avg < 1 - only one column key (id)",
+    "query": {
+        "WHERE": {
+            "LT": {
+                "courses_avg":1
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_id"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        { "courses_id": "100" },
+        { "courses_id": "100" },
+        { "courses_id": "202" }
+    ]
+}
