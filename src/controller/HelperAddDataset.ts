@@ -52,6 +52,7 @@ export const processCoursesFile = (files: string[], coursesKeys: string[], valid
                 });
             }
         });
+        return validCourseSections;
     };
 
 export const saveDatasetList = async (data: EHash) => {

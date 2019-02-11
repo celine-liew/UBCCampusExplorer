@@ -26,7 +26,8 @@ describe("InsightFacade Add/Remove Dataset", function () {
         notZIP: "./test/data/notZIP.txt",
         wrongfile: "./test/data/wrongfile.png",
         only1validcourse: "./test/data/only1validcourse.zip",
-        smalldataset: "./test/data/smalldataset.zip"
+        smalldataset: "./test/data/smalldataset.zip",
+        rooms: "./test/data/rooms.zip"
     };
     let insightFacade;
     let datasets;
@@ -68,6 +69,21 @@ describe("InsightFacade Add/Remove Dataset", function () {
     afterEach(function () {
         Util_1.default.test(`AfterTest: ${this.currentTest.title}`);
     });
+    it.only("TEST TEST Should add a room dataset", function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            const id = "rooms";
+            let response;
+            try {
+                response = yield insightFacade.addDataset(id, datasets[id], IInsightFacade_1.InsightDatasetKind.Rooms);
+            }
+            catch (err) {
+                response = err;
+            }
+            finally {
+                chai_1.expect(response).to.deep.equal([id]);
+            }
+        });
+    });
     it("Should add a valid dataset", function () {
         return __awaiter(this, void 0, void 0, function* () {
             const id = "smalldataset";
@@ -83,7 +99,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
             }
         });
     });
-    it("Should not add a invalid dataset with wrong InsightDatasetKind identifier", function () {
+    it.only("Should not add a invalid dataset with wrong InsightDatasetKind identifier", function () {
         return __awaiter(this, void 0, void 0, function* () {
             const id = "smalldataset";
             let response;

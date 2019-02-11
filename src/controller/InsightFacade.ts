@@ -4,12 +4,12 @@ import {IInsightFacade, InsightDataset, InsightDatasetKind, ResultTooLargeError}
 import {InsightError, NotFoundError} from "./IInsightFacade";
 import { AssertionError, throws, deepStrictEqual } from "assert";
 import Queryparser from "./queryparser";
-import { acceptParser } from "restify";
 import * as JSZip from "jszip";
 import { PassThrough } from "stream";
 import * as fs from "fs-extra";
-import { addListener } from "cluster";
 import { checkValidDatabase, processCoursesFile, saveDatasetList } from "./HelperAddDataset";
+import { NotImplementedError } from "restify";
+const parse5 = require("parse5");
 
 /**
  * This is the main programmatic entry point for the project.
@@ -35,9 +35,10 @@ public addedDatabase: InsightDataset[] = [];
     }
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
-        const validCourseSections: any[] = [];
+        const validSections: any[] = [];
         const coursesKeys: string[] = ['Subject', 'Course', 'Avg', 'Professor', 'Title', 'Pass', 'Fail','Audit','id','Year'];
         // const coursesTranKeys: string[] = ['dept', 'id', 'avg', 'instructor', 'title', 'pass', 'fail','audit','uuid','year'];
+        const fileNames: string[] = [];
         checkValidDatabase(id, content, kind);
         if (this.datasetsHash && this.datasetsHash[kind] && this.datasetsHash[kind][id]) {
             throw new InsightError("duplicate dataset id.");
@@ -45,9 +46,12 @@ public addedDatabase: InsightDataset[] = [];
 
         return JSZip.loadAsync(content, {base64: true}).then((zip) => {
             const files: Promise<string>[] = [];
+
             zip.forEach((path, object) => {
-                if (path.startsWith("courses/") && !object.dir) { // check courses folder exist
+                if ((path.startsWith("courses/") || path.startsWith("rooms/")) && !object.dir) {
                     files.push(object.async("text")); // take files from courses folder only
+                    const allNamesSplit = object.name.split("/");
+                    fileNames.push(allNamesSplit.pop());
                 }
             });
             if (!files.length) { // empty lists of files
@@ -56,7 +60,7 @@ public addedDatabase: InsightDataset[] = [];
             return Promise.all(files);
         })
         .then( (files) => {
-            this.addValidFilesonly(files, coursesKeys, validCourseSections, kind, id);
+            this.addValidFilesonly(files, fileNames, coursesKeys, validSections, kind, id);
 
         }).then ( () => {
             return Object.keys(this.datasetsHash[kind]);
@@ -71,19 +75,110 @@ public addedDatabase: InsightDataset[] = [];
         });
     }
 
-    private addValidFilesonly(files: string[], coursesKeys: string[], validCourseSections: any[],
+    private addValidFilesonly(files: string[], fileNames: string[], coursesKeys: string[], validSections: any[],
         kind: InsightDatasetKind, id: string) {
-            processCoursesFile(files, coursesKeys, validCourseSections);
-            if (validCourseSections.length === 0){
-                throw new InsightError("no valid course sections in dataset.")
+            switch (kind) {
+                case InsightDatasetKind.Courses:
+                    processCoursesFile(files, coursesKeys, validSections);
+                    break;
+                case InsightDatasetKind.Rooms:
+                    this.findBuildings(files, fileNames);
+
+                    // processRoomsfiles(files, roomsKeys, validSections)
+            }
+
+            if (validSections.length === 0){
+                throw new InsightError("no valid sections in dataset.")
             } else {
                 if (!this.datasetsHash[kind]) {
                     this.datasetsHash[kind] = {}
                 }
-                this.datasetsHash[kind][id] = validCourseSections;
+                this.datasetsHash[kind][id] = validSections;
                 return saveDatasetList(this.datasetsHash);
             }
         }
+    public findBuildings(files: any[], fileNames: string[]) {
+        const listofBuildings: any = [];
+        const own = this;
+        let building1: any = {};
+        const tableToCheck = this.findTableInIndex(files, fileNames);
+        tableToCheck.childNodes.forEach( (trNode: any) => {
+            let building: any = {};
+            if (trNode.nodeName === "tr" && trNode.attrs){
+                building = own.getBuildingInfo(trNode.childNodes, building1);
+                listofBuildings.push(building);
+            }
+        });
+        let i = -1;
+        files.forEach( (file) => {
+            i++;
+            debugger;
+            const checkFile = parse5.parse(file, {treeAdapter: true});
+            // console.log(checkFile.getTagName());
+            const temp1 = parse5.parse(files[5]);
+            parse5.treeAdapter.getTagName
+            debugger;
+        })
+        const indexHtm = parse5.parse(files[0]);
+        const temp1 = parse5.parse(files[5]);
+
+        debugger;
+    }
+    getBuildingInfo(trChildNodes: any, building: any): any { // childNodes of trNode
+        trChildNodes.forEach( (onlyWantTD: any) => {
+            if (onlyWantTD.nodeName == "td" && onlyWantTD.attrs){
+                onlyWantTD.attrs.forEach( (tdAttr: any) => {
+                    if (tdAttr.name === "class") {
+                        if ( tdAttr.value === "views-field views-field-field-building-code"){
+                            if (onlyWantTD.childNodes[0].nodeName === "#text") {
+                                const shortname = onlyWantTD.childNodes[0].value.substring(2).trim();
+                                building["shortname"] = shortname;
+                            }
+                        } else if (tdAttr.value === "views-field views-field-title") {
+                            this.getBuildingInfo(onlyWantTD.childNodes, building);
+                            // const fullnameraw = onlyWantTD.childNodes[0].value;
+                            // if (onlyWantTD.childNodes[0].nodeName === "#text" && fullnameraw.length >= 3) {
+                            //     building["fullname"] = fullnameraw.substring(3).trim();
+                        }
+                        else if (tdAttr.value === "views-field views-field-field-building-image") {
+                            this.getBuildingInfo(onlyWantTD.childNodes, building);
+                        }
+                        else if (tdAttr.value ==="views-field views-field-field-building-address"){
+                            const addRaw = onlyWantTD.childNodes[0].value;
+                           if (onlyWantTD.childNodes[0].nodeName === "#text" && addRaw.length >= 3) {
+                                building["address"] = addRaw.substring(3).trim();
+                        }}
+                    }
+                });
+            }
+            else if (onlyWantTD.nodeName === 'a' && onlyWantTD.attrs.length >= 1){
+                if (onlyWantTD.attrs.length > 1) {
+                this.getBuildingInfo(onlyWantTD.attrs, building);
+                }
+                this.getBuildingInfo(onlyWantTD.childNodes, building);
+                }
+            else if (onlyWantTD.name === "href") {
+                const href = onlyWantTD.value.substring(2);
+                building["href"] = href;
+            }
+
+            else if (onlyWantTD.nodeName === "#text" && onlyWantTD.value.substring(3).trim().length >= 1) {
+                const fullname = onlyWantTD.value.trim();
+                building["fullname"] = fullname;
+            }
+        });
+        return building;
+    }
+
+
+    public findTableInIndex(files: string[], fileNames: string[]): any {
+        const index = files.pop();
+        const tableStart = index.indexOf('<tbody>'); //start of building tables
+        const tableEnd = index.indexOf('</tbody>');
+        const tBody = (index.substring(tableStart, tableEnd));
+        const tableToCheck = parse5.parseFragment(tBody).childNodes[0];
+        return tableToCheck;
+    }
 
     public removeDataset(id: string): Promise<string> {
         if (!id){

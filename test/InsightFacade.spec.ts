@@ -37,7 +37,8 @@ describe("InsightFacade Add/Remove Dataset", function () {
         notZIP: "./test/data/notZIP.txt",
         wrongfile: "./test/data/wrongfile.png",
         only1validcourse: "./test/data/only1validcourse.zip",
-        smalldataset: "./test/data/smalldataset.zip"
+        smalldataset: "./test/data/smalldataset.zip",
+        rooms: "./test/data/rooms.zip"
     };
     let insightFacade: InsightFacade;
     let datasets: { [id: string]: string };
@@ -81,6 +82,19 @@ describe("InsightFacade Add/Remove Dataset", function () {
         Log.test(`AfterTest: ${this.currentTest.title}`);
     });
 
+    // TEST TEST
+    it.only("TEST TEST Should add a room dataset", async function () {
+        const id: string = "rooms";
+        let response: string[];
+
+        try {
+            response = await insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms);
+        } catch (err) {
+            response = err;
+        } finally {
+            expect(response).to.deep.equal([id]);
+        }
+    });
     // 1
     it("Should add a valid dataset", async function () {
         const id: string = "smalldataset";
@@ -94,7 +108,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
             expect(response).to.deep.equal([id]);
         }
     });
-    it("Should not add a invalid dataset with wrong InsightDatasetKind identifier", async function () {
+    it.only("Should not add a invalid dataset with wrong InsightDatasetKind identifier", async function () {
         const id: string = "smalldataset"; //NOTE: need to update checks for identifier... how to test for non-identifier?
         let response: string[];
 
@@ -445,7 +459,6 @@ describe("InsightFacade PerformQuery", () => {
 
                     try {
                         response = await insightFacade.performQuery(test.query);
-                        // console.log(response);
                     } catch (err) {
                         response = err;
                     } finally {
