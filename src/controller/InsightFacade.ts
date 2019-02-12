@@ -99,31 +99,85 @@ public addedDatabase: InsightDataset[] = [];
         }
     public findBuildings(files: any[], fileNames: string[]) {
         const listofBuildings: any = [];
+        const listofRooms: any = {};
         const own = this;
-        let building1: any = {};
         const tableToCheck = this.findTableInIndex(files, fileNames);
         tableToCheck.childNodes.forEach( (trNode: any) => {
             let building: any = {};
             if (trNode.nodeName === "tr" && trNode.attrs){
-                building = own.getBuildingInfo(trNode.childNodes, building1);
-                listofBuildings.push(building);
+                const buildingtoPush = own.getBuildingInfo(trNode.childNodes, building); //progress so far
+                listofBuildings.push(buildingtoPush);
             }
         });
+        listofBuildings.sort(function (a: any, b: any){
+            var shortNameA=a.shortname, shortNameB=b.shortname;
+            if (shortNameA < shortNameB) //sort string ascending
+             return -1;
+            if (shortNameA > shortNameB)
+             return 1;
+            return 0; //default return value (no sorting)
+           });
         let i = -1;
         files.forEach( (file) => {
             i++;
             debugger;
-            const checkFile = parse5.parse(file, {treeAdapter: true});
-            // console.log(checkFile.getTagName());
-            const temp1 = parse5.parse(files[5]);
-            parse5.treeAdapter.getTagName
-            debugger;
+            const checkFile = parse5.parse(file);
+            const buildingLookingAt = listofBuildings[i];
+            const fullname = this.findBuildingNameFromFile(checkFile, "");
+            if (fullname) {
+                if (buildingLookingAt["fullname"] === fullname) {
+                    // look at file
+                } else {}
+            }
+            // const temp1 = parse5.parse(files[5]);
+            // parse5.treeAdapter.getTagName
+            // debugger;
         })
         const indexHtm = parse5.parse(files[0]);
         const temp1 = parse5.parse(files[5]);
 
         debugger;
     }
+    public findBuildingNameFromFile(nodes: any, fullname: any): any {
+        if (nodes.parentNode != null && nodes.parentNode.attrs && nodes.parentNode.attrs.length > 0 && nodes.value != null
+            && nodes.nodeName === "#text" && nodes.parentNode.nodeName === "span" &&
+            nodes.parentNode.attrs[0].value === "field-content" && nodes.parentNode.parentNode.nodeName === "h2") {
+            fullname = nodes.value;
+            debugger;
+            return fullname;
+            }
+        else if (nodes.childNodes) {
+            for (let i = 0; i < nodes.childNodes.length; i ++){
+                const rtValue = this.findBuildingNameFromFile(nodes.childNodes[i], fullname);
+                if(rtValue){
+                    return rtValue;
+                }
+
+            }
+        }
+    }
+        // if ( nodes.nodeName === "#document") {
+        //     this.findBuildingNameFromFile(nodes.childNodes, fullname);
+        // }
+
+        // else { nodes.forEach( (isitHTMLnode: any) => {
+        //     const nodeName = isitHTMLnode.nodeName;
+        //     let nodeAttrsValue;
+        //     if (isitHTMLnode.attrs && isitHTMLnode.attrs.length > 0) {
+        //     nodeAttrsValue = isitHTMLnode.attrs[0].value;
+        //     }
+        //      if (nodeName === "html" || nodeName === "body" ||  nodeName=== "h2" || (nodeName=== "span"  &&  nodeAttrsValue === "field-content" )|| nodeName === "section" && nodeName.childNodes ) {
+        //         this.findBuildingNameFromFile(isitHTMLnode.childNodes, fullname);
+        //     } if ( (nodeName === "div" && isitHTMLnode.attrs.length > 0) || nodeAttrsValue === "building-info" || nodeName === "section" ) {
+        //         this.findBuildingNameFromFile(isitHTMLnode.childNodes, fullname);
+        //     }
+        //     if (nodeName === "#text" && isitHTMLnode.parentNode.nodeName === "span" ) {
+        //         fullname = isitHTMLnode.value;
+        //         return fullname;
+        //     }
+    //     });
+    // }
+    // }
     getBuildingInfo(trChildNodes: any, building: any): any { // childNodes of trNode
         trChildNodes.forEach( (onlyWantTD: any) => {
             if (onlyWantTD.nodeName == "td" && onlyWantTD.attrs){
@@ -136,9 +190,6 @@ public addedDatabase: InsightDataset[] = [];
                             }
                         } else if (tdAttr.value === "views-field views-field-title") {
                             this.getBuildingInfo(onlyWantTD.childNodes, building);
-                            // const fullnameraw = onlyWantTD.childNodes[0].value;
-                            // if (onlyWantTD.childNodes[0].nodeName === "#text" && fullnameraw.length >= 3) {
-                            //     building["fullname"] = fullnameraw.substring(3).trim();
                         }
                         else if (tdAttr.value === "views-field views-field-field-building-image") {
                             this.getBuildingInfo(onlyWantTD.childNodes, building);

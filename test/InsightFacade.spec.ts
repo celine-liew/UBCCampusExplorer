@@ -108,7 +108,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
             expect(response).to.deep.equal([id]);
         }
     });
-    it.only("Should not add a invalid dataset with wrong InsightDatasetKind identifier", async function () {
+    it("Should not add a invalid dataset with wrong InsightDatasetKind identifier", async function () {
         const id: string = "smalldataset"; //NOTE: need to update checks for identifier... how to test for non-identifier?
         let response: string[];
 

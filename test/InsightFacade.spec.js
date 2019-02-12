@@ -99,7 +99,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
             }
         });
     });
-    it.only("Should not add a invalid dataset with wrong InsightDatasetKind identifier", function () {
+    it("Should not add a invalid dataset with wrong InsightDatasetKind identifier", function () {
         return __awaiter(this, void 0, void 0, function* () {
             const id = "smalldataset";
             let response;
