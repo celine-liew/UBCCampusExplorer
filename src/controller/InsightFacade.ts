@@ -8,7 +8,8 @@ import * as JSZip from "jszip";
 import { PassThrough } from "stream";
 import * as fs from "fs-extra";
 import { checkValidDatabase, processCoursesFile, saveDatasetList } from "./HelperAddDataset";
-import { NotImplementedError } from "restify";
+import { NotImplementedError, HttpError } from "restify";
+import { latAndLon } from "./getLatandLon";
 const parse5 = require("parse5");
 
 /**
@@ -109,7 +110,7 @@ public addedDatabase: InsightDataset[] = [];
                 listofBuildings.push(buildingtoPush);
             }
         });
-        listofBuildings.sort(function (a: any, b: any){
+        listofBuildings.sort(function (a: any, b: any){ // sort buildings by shortname
             var shortNameA=a.shortname, shortNameB=b.shortname;
             if (shortNameA < shortNameB) //sort string ascending
              return -1;
@@ -119,6 +120,7 @@ public addedDatabase: InsightDataset[] = [];
            });
         let i = -1;
         files.forEach( (file) => {
+            let validRooms = {};
             i++;
             debugger;
             const checkFile = parse5.parse(file);
@@ -126,17 +128,18 @@ public addedDatabase: InsightDataset[] = [];
             const fullname = this.findBuildingNameFromFile(checkFile, "");
             if (fullname) {
                 if (buildingLookingAt["fullname"] === fullname) {
-                    // look at file
-                } else {}
+                    // look at file to find all rooms
+                    validRooms =  this.addRoomsPerBuilding(checkFile, validRooms);
+                }
             }
-            // const temp1 = parse5.parse(files[5]);
-            // parse5.treeAdapter.getTagName
-            // debugger;
         })
         const indexHtm = parse5.parse(files[0]);
         const temp1 = parse5.parse(files[5]);
 
-        debugger;
+    }
+    addRoomsPerBuilding(node: any, validRooms: any): any {
+        if (node)
+        throw new Error("Method not implemented.");
     }
     public findBuildingNameFromFile(nodes: any, fullname: any): any {
         if (nodes.parentNode != null && nodes.parentNode.attrs && nodes.parentNode.attrs.length > 0 && nodes.value != null
@@ -152,32 +155,10 @@ public addedDatabase: InsightDataset[] = [];
                 if(rtValue){
                     return rtValue;
                 }
-
             }
         }
     }
-        // if ( nodes.nodeName === "#document") {
-        //     this.findBuildingNameFromFile(nodes.childNodes, fullname);
-        // }
 
-        // else { nodes.forEach( (isitHTMLnode: any) => {
-        //     const nodeName = isitHTMLnode.nodeName;
-        //     let nodeAttrsValue;
-        //     if (isitHTMLnode.attrs && isitHTMLnode.attrs.length > 0) {
-        //     nodeAttrsValue = isitHTMLnode.attrs[0].value;
-        //     }
-        //      if (nodeName === "html" || nodeName === "body" ||  nodeName=== "h2" || (nodeName=== "span"  &&  nodeAttrsValue === "field-content" )|| nodeName === "section" && nodeName.childNodes ) {
-        //         this.findBuildingNameFromFile(isitHTMLnode.childNodes, fullname);
-        //     } if ( (nodeName === "div" && isitHTMLnode.attrs.length > 0) || nodeAttrsValue === "building-info" || nodeName === "section" ) {
-        //         this.findBuildingNameFromFile(isitHTMLnode.childNodes, fullname);
-        //     }
-        //     if (nodeName === "#text" && isitHTMLnode.parentNode.nodeName === "span" ) {
-        //         fullname = isitHTMLnode.value;
-        //         return fullname;
-        //     }
-    //     });
-    // }
-    // }
     getBuildingInfo(trChildNodes: any, building: any): any { // childNodes of trNode
         trChildNodes.forEach( (onlyWantTD: any) => {
             if (onlyWantTD.nodeName == "td" && onlyWantTD.attrs){
@@ -197,8 +178,22 @@ public addedDatabase: InsightDataset[] = [];
                         else if (tdAttr.value ==="views-field views-field-field-building-address"){
                             const addRaw = onlyWantTD.childNodes[0].value;
                            if (onlyWantTD.childNodes[0].nodeName === "#text" && addRaw.length >= 3) {
-                                building["address"] = addRaw.substring(3).trim();
-                        }}
+                               const address = addRaw.substring(3).trim();
+                                building["address"] = address;
+                                try { const promiselat = latAndLon(address).then( (resp)=> {
+                                    debugger;
+                                    if (resp.hasOwnProperty("error")) {
+                                        building["lat"] = 0;
+                                        building["lon"] = 0;
+                                    } else {
+                                        building["lat"] = resp["lat"];
+                                        building["lon"] = resp["lon"];
+                                    }
+                                })} catch (err) {
+                                    throw new InsightError(err);
+                                }
+                            }
+                        }
                     }
                 });
             }
@@ -220,6 +215,7 @@ public addedDatabase: InsightDataset[] = [];
         });
         return building;
     }
+
 
 
     public findTableInIndex(files: string[], fileNames: string[]): any {
