@@ -3,7 +3,7 @@ import Log from "../Util";
 import {IInsightFacade, InsightDataset, InsightDatasetKind, ResultTooLargeError} from "./IInsightFacade";
 import {InsightError, NotFoundError} from "./IInsightFacade";
 import { AssertionError, throws, deepStrictEqual } from "assert";
-import Queryparser from "./queryparser";
+import Queryparser from "./Queryparser";
 import { acceptParser } from "restify";
 import * as JSZip from "jszip";
 import { PassThrough } from "stream";
@@ -129,9 +129,8 @@ public addedDatabase: InsightDataset[] = [];
             try {
                 self.parser = new Queryparser();
                 self.queryvalidator = new QueryValidator();
-                self.queryvalidator.setQuery(query);
                 self.queryvalidator.validatequery(query);
-                finalresult = self.parser.excutequery(query, self.datasetsHash['courses']);
+                finalresult = self.parser.executeQuery(query, self.datasetsHash['courses']);
             } catch (error) {
                 if (error instanceof InsightError || error instanceof ResultTooLargeError) {
                     reject(error); } else { reject (new InsightError(error));

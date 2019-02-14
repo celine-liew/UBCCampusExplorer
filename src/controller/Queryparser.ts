@@ -1,34 +1,29 @@
 import {IInsightFacade, InsightDataset, InsightDatasetKind, ResultTooLargeError} from "./IInsightFacade";
 import {InsightError, NotFoundError} from "./IInsightFacade";
 import InsightFacade, { IHash } from "./InsightFacade";
-import Helper from "./Helper";
-export default class Queryparser {
+import RowsSelector from "./RowsSelector";
+import QueryInfo from "./QueryInfo";
+export default class Queryparser extends QueryInfo {
     private AST: IFilter = { FilterKey : "", value : [], nodes : []};
-    // private rowsbeforeoption: any[] = [];
-    private allrows: any[] = [];
-    public currentdatabasename: string = undefined;
-    public columnstoshow: Set<string>;
-    public order: string = undefined;
-    private renum = new RegExp(/[^_]+_(avg|pass|fail|audit|year)$/g);
-    private res = new RegExp(/[^_]+_(dept|id|instructor|title|uuid)$/g);
-    private renumrooms = new RegExp(/[^_]+_(lat|lon|seats)$/g);
-    private resrooms = new RegExp(/[^_]+_(fullname|shortname|number|name|address|type|furniture|href)$/g);
-    public excutequery(query: any, addHash: IHash): any[] {
+    private rowselctr: RowsSelector;
+    private realapplyobj: any;
+    public executeQuery(query: any, addHash: IHash): any[] {
         if (Object.keys(query["WHERE"]).length === 0) {
-            if (addHash[this.currentdatabasename].length >= 5000) {
+            if (addHash[QueryInfo.databasename].length >= 5000) {
                 throw new ResultTooLargeError();
             } else {
-                return this.applyOptions(addHash[this.currentdatabasename]);
+                return this.applyOptionswthotTrans(addHash[QueryInfo.databasename]);
             }
         }
         if (Object.keys(query["WHERE"]).length >= 2) {
             throw new InsightError("More than one key");
         }
         this.AST = this.traverseFilterGenAst(query["WHERE"], null);
-        // if ( this.currentdatabasename !== databasename) {
-        //     throw new InsightError("Cannot query more than one dataset 2");
-        // }
-        return this.applyOptions(this.astApplyToRow(this.currentdatabasename, addHash));
+        if (!QueryInfo.hasTransformation) {
+            return this.applyOptionswthotTrans(this.astApplyToRow(QueryInfo.databasename, addHash));
+        } else {
+            return this.applyOptionswthTrans(this.astApplyToRow(QueryInfo.databasename, addHash));
+        }
     }
     public traverseFilterGenAst(filter: any, AST: IFilter): IFilter {
         let element = Object.keys(filter)[0];
@@ -75,7 +70,7 @@ export default class Queryparser {
         } else {
             this.keyMatchCheck(Object.keys(filtervalue)[0], element);
             let s: string[] = Object.keys(filtervalue)[0].split("_");
-            if (this.currentdatabasename !== s[0]) {
+            if (QueryInfo.databasename !== s[0]) {
                 throw new InsightError("Cannot query more than one dataset");
             } else {
                 ast = { FilterKey : "", value : [], nodes : []}; // ast.nodes.length = 0;
@@ -116,9 +111,9 @@ export default class Queryparser {
         let self = this;
         let s = null;
         if (element === "IS") {
-            s = key.match(self.res);
+            s = key.match(QueryInfo.rescourses);
         } else if (element === "LT" || element === "GT" || element === "EQ") {
-            s = key.match(self.renum);
+            s = key.match(QueryInfo.renumcourses);
         }
         if (s === null) { throw new InsightError("no _"); }
         if (s.length !== 1 || s[0] !== key) { throw new InsightError("key doesn't match");
@@ -132,24 +127,24 @@ export default class Queryparser {
     }
     public traverseAst(ast: IFilter, databasename: string, addHash: IHash): any[] {
         let self = this;
-        this.allrows = addHash[databasename];
+        this.rowselctr = new RowsSelector(addHash[databasename], databasename);
         function traverseArray(nodes: IFilter[], identifier: string): any[] {
             let midresult: any[] = [];
             if (identifier === "AND") {
                 nodes.forEach((child) => {
                     if (nodes.indexOf(child) === 0) {
-                        midresult = Helper.keepboth(midresult, traverseNode(child));
+                        midresult = RowsSelector.keepboth(midresult, traverseNode(child));
                     } else {
-                        midresult = Helper.keepcommon(midresult, traverseNode(child));
+                        midresult = RowsSelector.keepcommon(midresult, traverseNode(child));
                     }
                 });
             } else if (identifier === "OR") {
                 nodes.forEach((child) => {
-                    midresult = Helper.keepboth(midresult, traverseNode(child));
+                    midresult = RowsSelector.keepboth(midresult, traverseNode(child));
                 });
             } else if (identifier === "NOT") {
                 nodes.forEach((child) => {
-                    midresult = self.reverse(traverseNode(child));
+                    midresult = self.rowselctr.reverse(traverseNode(child));
                 });
             }
             return midresult;
@@ -164,13 +159,13 @@ export default class Queryparser {
                 let value = current.value;
                 switch (identifier) {
                     case "EQ":
-                        midresult = self.selectrowM(value[1], value[2], "EQ"); break;
+                        midresult = self.rowselctr.selectrowM(value[1], value[2], "EQ"); break;
                     case "GT":
-                        midresult = self.selectrowM(value[1], value[2], "GT"); break;
+                        midresult = self.rowselctr.selectrowM(value[1], value[2], "GT"); break;
                     case "LT":
-                        midresult = self.selectrowM(value[1], value[2], "LT"); break;
+                        midresult = self.rowselctr.selectrowM(value[1], value[2], "LT"); break;
                     case "IS":
-                        midresult = self.selectrowS(value[1], value[2]); break;
+                        midresult = self.rowselctr.selectrowS(value[1], value[2]); break;
                 }
             }
             return midresult;
@@ -179,91 +174,116 @@ export default class Queryparser {
         if (result !== undefined && result.length >= 5000) {throw new ResultTooLargeError(); }
         return result;
     }
-    public reverse(array1: any[]) {
+    private applyOptionswthTrans(rowsbeforcolumnseclection: any[]): any[] {
         let self = this;
-        if (array1 === null) {
-            return self.allrows; } else {
-            let set = new Set();
-            let ret: any[] = [];
-            array1.forEach((element) => {
-                set.add(element);
-            });
-            self.allrows.forEach((element) => {
-                if (!set.has(element)) {
-                    ret.push(element);
+        let rowsbeforetrans: any[] = [];
+        rowsbeforcolumnseclection.forEach((element) => {
+            let copiedelement: any = {};
+            Object.keys(element).forEach((keytoexamine) => {
+                let keytoexaminefull = QueryInfo.databasename + "_" + keytoexamine;
+                if (QueryInfo.groupKeys.has(keytoexaminefull)) {
+                    copiedelement[keytoexaminefull] = element[keytoexamine];
                 }
+                QueryInfo.columnsToDisp.forEach((potentialkey) => {
+                    if (QueryInfo.applykeys.size !== 0 && QueryInfo.applykeys.has(potentialkey)) {
+                        self.realapplyobj[potentialkey] = QueryInfo.query["TRANSFORMATION"]["APPLY"][potentialkey];
+                        let a: any = QueryInfo.query["TRANSFORMATION"]["APPLY"][potentialkey];
+                        if (a[Object.keys(a)[0]] === keytoexaminefull) {
+                            copiedelement[potentialkey] = element[keytoexamine];
+                        }
+                    }
+                });
+            });
+            rowsbeforetrans.push(copiedelement);
+        });
+        let rowsbeforeapply: any;
+        let rowsafterapply: any[];
+        function groupkeyarray(eachrow: any) {
+            let ret: any = {};
+            QueryInfo.groupKeys.forEach((groupkey) => {
+                ret[groupkey] = eachrow[groupkey];
             });
             return ret;
         }
-    }
-    public selectrowM(key: string, value: number, identifier: string): any[] {
-        let ret: any[] = [];
-        let self = this;
-        switch (identifier) {
-            case "EQ":
-            self.allrows.forEach((element) => {
-                if (element.hasOwnProperty(key) && element[key] === value) {
-                    ret.push(element); }
-            });
-            break;
-            case "GT":
-            self.allrows.forEach((element) => {
-                if (element.hasOwnProperty(key) && element[key] > value) {
-                    ret.push(element); }
-            });
-            break;
-            case "LT":
-            self.allrows.forEach((element) => {
-                if (element.hasOwnProperty(key) && element[key] < value) {
-                    ret.push(element); }
-            });
-            break;
-        }
-        return ret;
-    }
-    public selectrowS(key: string, value: string): any[] {
-        let self = this;
-        if (value === "*" || value === "**") { return self.allrows; }
-        let ret: any[] = [];
-        let regexp = new RegExp(/^[*]?[^*]*[*]?$/g);
-        let s = value.match(regexp); if (s === null) { throw new InsightError("IS no match"); }
-        if (s.length !== 1 || s[0] !== value) {
-            throw new InsightError("key doesn't match");
+        rowsbeforeapply = this.groupRows(rowsbeforetrans, groupkeyarray);
+        if (self.realapplyobj.size !== 0) {
+            rowsafterapply = this.trimcolumn(this.applykeyop(rowsbeforeapply));
         } else {
-            self.allrows.forEach((element) => {
-                if (Helper.helper(element[key], value)) {
-                    ret.push(element); }
-            });
+            rowsafterapply = this.trimcolumn(rowsbeforeapply);
         }
+        if (typeof QueryInfo.order === "string") {
+            return this.sortRowsWithOneOrder(rowsafterapply);
+        } else {
+            return this.sortRowsWithObjOrder(rowsafterapply);
+        }
+    }
+    private groupRows(rowsbeforetrans: any[], groupkeyarray: any): any {
+        let self = this;
+        if (self.realapplyobj.size === 0) {
+            let groups: Set<any>;
+            rowsbeforetrans.forEach( function (eachrow) {
+                if (!groups.has(eachrow)) {
+                    groups.add(groupkeyarray(eachrow));
+                }
+            });
+            let ret = (groups.size !== 0 ) ? Array.from(groups) : [];
+            return ret;
+        } else {
+            let groups: any = {};
+            rowsbeforetrans.forEach( function (eachrow) {
+                let group = JSON.stringify(groupkeyarray(eachrow));
+                groups[group] = groups[group] || [];
+                groups[group].push(eachrow);
+            });
+            return groups;
+        }
+    }
+    private applykeyop(rowsbeforeapply: any): any[] {
+        let self = this;
+        let ret: any[];
+        Object.keys(rowsbeforeapply).forEach((key) => {
+            ret.push(RowsSelector.cmptAcrsEachrowinGroup(rowsbeforeapply[key], self.realapplyobj));
+        });
         return ret;
     }
-    public applyOptions(rowsbeforeoption: any[]): any[] {
+    private trimcolumn(rowsafterapply: any): any[] {
+        return [];
+    }
+    public applyOptionswthotTrans(rowsbeforeoption: any[]): any[] {
         let self = this;
         let rowsbeforesort: any[] = [];
         rowsbeforeoption.forEach((element) => {
             let copiedelement: any = {};
             Object.keys(element).forEach((keytoexamine) => {
-                let keytoexaminefull = self.currentdatabasename + "_" + keytoexamine;
-                if (self.columnstoshow.has(keytoexaminefull)) {
+                let keytoexaminefull = QueryInfo.databasename + "_" + keytoexamine;
+                if (QueryInfo.columnsToDisp.has(keytoexaminefull)) {
                     copiedelement[keytoexaminefull] = element[keytoexamine];
                 }
             });
             rowsbeforesort.push(copiedelement);
         });
-        return this.sortrows(rowsbeforesort);
+        if (typeof QueryInfo.order === "string") {
+            return this.sortRowsWithOneOrder(rowsbeforesort);
+        } else {
+            return this.sortRowsWithObjOrder(rowsbeforesort);
+        }
     }
-    public sortrows(rowsbeforesorting: any[]): any[] {
+    public sortRowsWithOneOrder(rowsbeforesorting: any[]): any[] {
         let self = this;
-        if (self.order !== undefined) {
-            let fullorder = self.order;
+        if (QueryInfo.order !== undefined) {
+            let fullorder = QueryInfo.order;
             rowsbeforesorting.sort(function (a, b) {
                 let A = a[fullorder];
                 let B = b[fullorder];
-                if (A < B) {return -1; }
+                if (A < B) { return -1; }
                 if (A > B) {return 1; }
                 return 0;
             });
         }
         return rowsbeforesorting;
     }
+    private sortRowsWithObjOrder(rowsbeforesort: any[]): any {
+        return null;
+    }
+
 }
