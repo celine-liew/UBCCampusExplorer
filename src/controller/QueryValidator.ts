@@ -2,7 +2,6 @@ import {InsightError} from "./IInsightFacade";
 import "./QueryInfo";
 import QueryInfo from "./QueryInfo";
 export default class QueryValidator extends QueryInfo {
-    // columnsToDisp represents all columns that is shown in COLUMNS, they can be normal keys or applykes
     private setQuery(query: any) {
         QueryInfo.query = query;
     }
@@ -58,7 +57,6 @@ export default class QueryValidator extends QueryInfo {
         }
     }
     public validateOptions(optionpart: any) {
-        let self = this;
         if (typeof optionpart !== "object") {
             throw new InsightError("Options must be an object");
         } else {
@@ -145,7 +143,6 @@ export default class QueryValidator extends QueryInfo {
         }
     }
     public validateGroup() {
-        let self = this;
         let s: string[];
         QueryInfo.query["TRANSFORMATION"]["GROUP"].foreach((key: any) => {
             if (typeof key !== "string") {
@@ -168,7 +165,6 @@ export default class QueryValidator extends QueryInfo {
         });
     }
     public validateApply() {
-        let self = this;
         let applykey: string;
         let applytoken: string;
         let applytokenreg = new RegExp(/^(MAX|MIN|AVG|COUNT|SUM)$/g);
@@ -204,7 +200,6 @@ export default class QueryValidator extends QueryInfo {
         });
     }
     public checkcolumnsWithoutTrans() {
-        let self = this;
         this.setDbNameByFirstColumn();
         QueryInfo.columnsToDisp = new Set<string>();
         QueryInfo.query["OPTIONS"]["COLUMNS"].forEach((element: any) => {
@@ -227,7 +222,6 @@ export default class QueryValidator extends QueryInfo {
         });
     }
     private setDbNameByFirstColumn() {
-        let self = this;
         let firstelement = Object.keys(QueryInfo.query["OPTIONS"]["COLUMNS"])[0];
         let s = firstelement.match(QueryInfo.recourses);
         // let isCourse: boolean;

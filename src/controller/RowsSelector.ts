@@ -3,12 +3,10 @@ import {InsightError} from "./IInsightFacade";
 export default class RowsSelector {
     private allrows: any[] = [];
     private databasename: string;
-
     constructor(allrows: any[], databasename: string) {
         this.allrows = allrows;
         this.databasename = databasename;
     }
-
     public static helper(databaseinfo: string, userinput: string): boolean {
        if (databaseinfo === "" || userinput === "") {
            return false;
@@ -127,21 +125,23 @@ export default class RowsSelector {
         }
         return ret;
     }
+    // TODO
     public static findSumInArray(array: any[], eachkey: any) {
         return;
-
     }
+    // TODO
     public static findMinInArray(array: any[], eachkey: any) {
         return;
-
     }
+    // TODO
     public static findMaxInArray(array: any[], eachkey: any) {
         return;
-
     }
+    // TODO
     public static findAvgInArray(array: any[], eachkey: any) {
         return;
     }
+    // TODO
     public static findCountInArray(array: any[], eachkey: any) {
         return;
 

@@ -246,6 +246,7 @@ export default class Queryparser extends QueryInfo {
         });
         return ret;
     }
+    // TODO
     private trimcolumn(rowsafterapply: any): any[] {
         return [];
     }
@@ -282,6 +283,7 @@ export default class Queryparser extends QueryInfo {
         }
         return rowsbeforesorting;
     }
+    // TODO
     private sortRowsWithObjOrder(rowsbeforesort: any[]): any {
         return null;
     }
