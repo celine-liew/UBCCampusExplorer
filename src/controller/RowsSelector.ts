@@ -1,4 +1,5 @@
 import {InsightError} from "./IInsightFacade";
+import Decimal from "decimal.js";
 
 export default class RowsSelector {
     private allrows: any[] = [];
@@ -125,26 +126,43 @@ export default class RowsSelector {
         }
         return ret;
     }
-    // TODO
     public static findSumInArray(array: any[], eachkey: any) {
-        return;
+        let sum = 0;
+        array.forEach((eachrow) => {
+            sum += eachrow[eachkey];
+        });
+        return Number(sum.toFixed(2));
     }
-    // TODO
     public static findMinInArray(array: any[], eachkey: any) {
-        return;
+        let ret = array[0][eachkey];
+        array.forEach((eachrow) => {
+            if (eachrow[eachkey] < ret) {
+                ret = eachrow[eachkey];
+            }
+        });
+        return ret;
     }
-    // TODO
     public static findMaxInArray(array: any[], eachkey: any) {
-        return;
+        let ret = array[0][eachkey];
+        array.forEach((eachrow) => {
+            if (eachrow[eachkey] > ret) {
+                ret = eachrow[eachkey];
+            }
+        });
+        return ret;
     }
-    // TODO
     public static findAvgInArray(array: any[], eachkey: any) {
-        return;
+        let sum = new Decimal(0);
+        array.forEach((eachrow) => {
+            let value = new Decimal(eachrow[eachkey]);
+            sum.add(value);
+        });
+        let avg = sum.toNumber() / array.length;
+        let ret = Number(avg.toFixed(2));
+        return ret;
     }
-    // TODO
     public static findCountInArray(array: any[], eachkey: any) {
-        return;
-
+        return array.length;
     }
     public static cmptAcrsEachrowinGroup(array: any[], realapplyobj: any) {
         let ret = array[0];

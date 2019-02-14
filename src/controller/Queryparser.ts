@@ -1,8 +1,8 @@
-import {IInsightFacade, InsightDataset, InsightDatasetKind, ResultTooLargeError} from "./IInsightFacade";
-import {InsightError, NotFoundError} from "./IInsightFacade";
-import InsightFacade, { IHash } from "./InsightFacade";
+import {InsightError, ResultTooLargeError} from "./IInsightFacade";
+import {IHash} from "./InsightFacade";
 import RowsSelector from "./RowsSelector";
 import QueryInfo from "./QueryInfo";
+
 export default class Queryparser extends QueryInfo {
     private AST: IFilter = { FilterKey : "", value : [], nodes : []};
     private rowselctr: RowsSelector;
@@ -226,8 +226,7 @@ export default class Queryparser extends QueryInfo {
                     groups.add(groupkeyarray(eachrow));
                 }
             });
-            let ret = (groups.size !== 0 ) ? Array.from(groups) : [];
-            return ret;
+            return (groups.size !== 0) ? Array.from(groups) : [];
         } else {
             let groups: any = {};
             rowsbeforetrans.forEach( function (eachrow) {
@@ -246,9 +245,18 @@ export default class Queryparser extends QueryInfo {
         });
         return ret;
     }
-    // TODO
     private trimcolumn(rowsafterapply: any): any[] {
-        return [];
+        let ret: any[] = [];
+        rowsafterapply.foreach((eachrow: any) => {
+            let rowtobepushedin: any;
+            Object.keys(eachrow).forEach((eachkey) => {
+                if (QueryInfo.columnsToDisp.has(eachkey)) {
+                    rowtobepushedin[eachkey] = eachrow[eachkey];
+                }
+            });
+            ret.push(rowtobepushedin);
+        });
+        return ret;
     }
     public applyOptionswthotTrans(rowsbeforeoption: any[]): any[] {
         let self = this;
@@ -270,7 +278,6 @@ export default class Queryparser extends QueryInfo {
         }
     }
     public sortRowsWithOneOrder(rowsbeforesorting: any[]): any[] {
-        let self = this;
         if (QueryInfo.order !== undefined) {
             let fullorder = QueryInfo.order;
             rowsbeforesorting.sort(function (a, b) {
@@ -283,7 +290,6 @@ export default class Queryparser extends QueryInfo {
         }
         return rowsbeforesorting;
     }
-    // TODO
     private sortRowsWithObjOrder(rowsbeforesort: any[]): any {
         return null;
     }
