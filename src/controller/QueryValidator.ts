@@ -98,7 +98,7 @@ export default class QueryValidator extends QueryInfo {
         self.validateTransForm();
         QueryInfo.columnsToDisp = new Set<string>();
         QueryInfo.query["OPTIONS"]["COLUMNS"].forEach((eachcolumn: any) => {
-            let flwstrings: string[];
+            let flwstrings: string[] = [];
             if (QueryInfo.isCourse) {
                 flwstrings = eachcolumn.match(QueryInfo.recourses);
             } else {
@@ -143,7 +143,7 @@ export default class QueryValidator extends QueryInfo {
         }
     }
     public validateGroup() {
-        let s: string[];
+        let s: string[] = [];
         QueryInfo.query["TRANSFORMATION"]["GROUP"].foreach((key: any) => {
             if (typeof key !== "string") {
                 throw new InsightError("invalid group key");
@@ -203,7 +203,7 @@ export default class QueryValidator extends QueryInfo {
         this.setDbNameByFirstColumn();
         QueryInfo.columnsToDisp = new Set<string>();
         QueryInfo.query["OPTIONS"]["COLUMNS"].forEach((element: any) => {
-            let flwstrings: string[];
+            let flwstrings: string[] = [];
             if (QueryInfo.isCourse) {
                 flwstrings = element.match(QueryInfo.recourses);
             } else {
