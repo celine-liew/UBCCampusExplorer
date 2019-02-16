@@ -28,8 +28,6 @@ export interface EHash {
 export default class InsightFacade implements IInsightFacade {
 
 public datasetsHash: EHash = {};
-public parser: Queryparser;
-public queryvalidator: QueryValidator;
 public addedDatabase: InsightDataset[] = [];
 
     constructor() {
@@ -127,10 +125,10 @@ public addedDatabase: InsightDataset[] = [];
         let finalresult: any[] = [];
         return new Promise(function (resolve, reject) {
             try {
-                self.parser = new Queryparser();
-                self.queryvalidator = new QueryValidator();
-                self.queryvalidator.validatequery(query);
-                finalresult = self.parser.executeQuery(query, self.datasetsHash['courses']);
+                let queryvalidator: QueryValidator = new QueryValidator();
+                queryvalidator.validatequery(query);
+                let parser: Queryparser = new Queryparser(queryvalidator.queryinfo);
+                finalresult = parser.executeQuery(query, self.datasetsHash['courses']);
             } catch (error) {
                 if (error instanceof InsightError || error instanceof ResultTooLargeError) {
                     reject(error); } else { reject (new InsightError(error));

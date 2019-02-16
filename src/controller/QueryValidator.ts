@@ -1,20 +1,10 @@
 import {InsightError} from "./IInsightFacade";
-import "./QueryInfo";
+// import "./QueryInfo";
 import QueryInfo from "./QueryInfo";
-export default class QueryValidator extends QueryInfo {
-    private setQuery(query: any) {
-        QueryInfo.query = query;
-    }
-    private reset() {
-        QueryInfo.applykeys = new Set<string>();
-        QueryInfo.groupKeys = new Set<string>();
-        QueryInfo.databasename = undefined;
-        QueryInfo.order = {};
-    }
+export default class QueryValidator  {
+    public queryinfo: QueryInfo;
     public validatequery(query: any) {
-        let self = this;
-        self.reset();
-        self.setQuery(query);
+        this.queryinfo = new QueryInfo(query);
         let keys: string[];
         keys = Object.keys(query);
         if (keys.length >= 4) {
@@ -32,16 +22,14 @@ export default class QueryValidator extends QueryInfo {
             } else if (keys.length === 3 && !query.hasOwnProperty("TRANSFORMATION")) {
                 throw new InsightError("Missing Transformation, has some wrong key");
             } else if (query.hasOwnProperty("TRANSFORMATION")) {
-                QueryInfo.hasTransformation = true;
-                self.setQuery(query);
-                self.validateWhere(query["WHERE"]);
-                self.validateOptions(query["OPTIONS"]);
+                this.queryinfo.hasTransformation = true;
+                this.validateWhere(query["WHERE"]);
+                this.validateOptions(query["OPTIONS"]);
                 return;
             } else {
-                QueryInfo.hasTransformation = false;
-                self.setQuery(query);
-                self.validateWhere(query["WHERE"]);
-                self.validateOptions(query["OPTIONS"]);
+                this.queryinfo.hasTransformation = false;
+                this.validateWhere(query["WHERE"]);
+                this.validateOptions(query["OPTIONS"]);
                 return;
             }
         }
@@ -57,6 +45,7 @@ export default class QueryValidator extends QueryInfo {
         }
     }
     public validateOptions(optionpart: any) {
+        let self = this;
         if (typeof optionpart !== "object") {
             throw new InsightError("Options must be an object");
         } else {
@@ -81,13 +70,13 @@ export default class QueryValidator extends QueryInfo {
                     throw new InsightError("Invalid query string 1");
                 }
             });
-            if (QueryInfo.hasTransformation) {
+            if (self.queryinfo.hasTransformation) {
                 this.checkcolumnsWithTrans();
             } else {
                 this.checkcolumnsWithoutTrans();
             }
             if (optionpart.hasOwnProperty("ORDER")) {
-                this.checkorder(QueryInfo.columnsToDisp, optionpart["ORDER"]);
+                this.checkorder(self.queryinfo.columnsToDisp, optionpart["ORDER"]);
             }
             return;
         }
@@ -96,43 +85,43 @@ export default class QueryValidator extends QueryInfo {
         let self = this;
         this.setDbNameByFirstColumn();
         self.validateTransForm();
-        QueryInfo.columnsToDisp = new Set<string>();
-        QueryInfo.query["OPTIONS"]["COLUMNS"].forEach((eachcolumn: any) => {
+        self.queryinfo.columnsToDisp = new Set<string>();
+        self.queryinfo.query["OPTIONS"]["COLUMNS"].forEach((eachcolumn: any) => {
             let flwstrings: string[] = [];
-            if (QueryInfo.isCourse) {
-                flwstrings = eachcolumn.match(QueryInfo.recourses);
+            if (self.queryinfo.isCourse) {
+                flwstrings = eachcolumn.match(self.queryinfo.recourses);
             } else {
-                flwstrings = eachcolumn.match(QueryInfo.rerooms);
+                flwstrings = eachcolumn.match(self.queryinfo.rerooms);
             }
             if (flwstrings.length !== 1 || flwstrings[0] !== eachcolumn) {
                 throw new InsightError("key doesn't match, being wrong key, or intertwining rooms and courses");
             } else {
                 let s3 = flwstrings[0].split("_");
-                if ( QueryInfo.databasename !== s3[0]) {
+                if ( self.queryinfo.databasename !== s3[0]) {
                     throw new InsightError("Cannot query more than one dataset");
-                } else if (!QueryInfo.applykeys.has(s3[0]) && !QueryInfo.groupKeys.has(s3[0])) {
+                } else if (!self.queryinfo.applykeys.has(s3[0]) && !self.queryinfo.groupKeys.has(s3[0])) {
                     throw new InsightError("Keys in COLUMNS must be in GROUP or APPLY when TRANSFORMATIONS is present");
                 } else {
-                    QueryInfo.columnsToDisp.add(eachcolumn);
+                    self.queryinfo.columnsToDisp.add(eachcolumn);
                 }
             }
         });
     }
     public validateTransForm() {
         let self = this;
-        if (typeof QueryInfo.query["TRANSFORMATION"] !== "object") {
+        if (typeof self.queryinfo.query["TRANSFORMATION"] !== "object") {
             throw new InsightError("Transformation must be an object");
         } else {
-            let keys = Object.keys(QueryInfo.query["TRANSFORMATION"]);
-            if (!QueryInfo.query["TRANSFORMATION"].hasOwnProperty("GROUP")) {
+            let keys = Object.keys(self.queryinfo.query["TRANSFORMATION"]);
+            if (!self.queryinfo.query["TRANSFORMATION"].hasOwnProperty("GROUP")) {
                 throw new InsightError("Missing GROUP");
-            } else if (!Array.isArray(QueryInfo.query["TRANSFORMATION"]["GROUP"])) {
+            } else if (!Array.isArray(self.queryinfo.query["TRANSFORMATION"]["GROUP"])) {
                 throw new InsightError("GROUP must be an array");
-            } else if (QueryInfo.query["TRANSFORMATION"]["GROUP"].length === 0) {
+            } else if (self.queryinfo.query["TRANSFORMATION"]["GROUP"].length === 0) {
                 throw new InsightError("GROUP must be an non-empty array");
-            } else if (!QueryInfo.query["TRANSFORMATION"].hasOwnProperty("APPLY")) {
+            } else if (!self.queryinfo.query["TRANSFORMATION"].hasOwnProperty("APPLY")) {
                 throw new InsightError("Missing APPLY");
-            } else if (!Array.isArray(QueryInfo.query["TRANSFORMATION"]["APPLY"])) {
+            } else if (!Array.isArray(self.queryinfo.query["TRANSFORMATION"]["APPLY"])) {
                 throw new InsightError("APPLY must be an array");
             } else if (keys.length >= 3) {
                 throw new InsightError("Invalid Transformation with excess keys");
@@ -143,39 +132,41 @@ export default class QueryValidator extends QueryInfo {
         }
     }
     public validateGroup() {
+        let self = this;
         let s: string[] = [];
-        QueryInfo.query["TRANSFORMATION"]["GROUP"].foreach((key: any) => {
+        self.queryinfo.query["TRANSFORMATION"]["GROUP"].foreach((key: any) => {
             if (typeof key !== "string") {
                 throw new InsightError("invalid group key");
-            } else if (QueryInfo.isCourse) {
-                s = key.match(QueryInfo.recourses);
+            } else if (self.queryinfo.isCourse) {
+                s = key.match(self.queryinfo.recourses);
             } else {
-                s = key.match(QueryInfo.rerooms);
+                s = key.match(self.queryinfo.rerooms);
             }
             if (s.length !== 1 || s[0] !== key) {
                 throw new InsightError("Group key doesn't match");
             } else {
                 let s3 = s[0].split("_");
-                if ( QueryInfo.databasename !== s3[0]) {
+                if ( self.queryinfo.databasename !== s3[0]) {
                     throw new InsightError("Cannot query more than one dataset");
                 } else {
-                    QueryInfo.groupKeys.add(s[0]);
+                    self.queryinfo.groupKeys.add(s[0]);
                 }
             }
         });
     }
     public validateApply() {
+        let self = this;
         let applykey: string;
         let applytoken: string;
         let applytokenreg = new RegExp(/^(MAX|MIN|AVG|COUNT|SUM)$/g);
-        QueryInfo.query["TRANSFORMATION"]["APPLY"].foreach((applyRule: any) => {
+        self.queryinfo.query["TRANSFORMATION"]["APPLY"].foreach((applyRule: any) => {
             if (typeof applyRule !== "object") {
                 throw new InsightError("APPLYRULES should be json objects");
             } else if (Object.keys(applyRule).length !== 1) {
                 throw new InsightError("Apply rule should only have 1 key, has " + Object.keys(applyRule).length);
             } else {
                 applykey = Object.keys(applyRule)[0];
-                QueryInfo.applykeys.add(applykey);
+                self.queryinfo.applykeys.add(applykey);
             }
             if (Object.keys(applyRule[applykey]).length !== 1) {
                 let l: number = Object.keys(applyRule[applykey]).length;
@@ -187,11 +178,11 @@ export default class QueryValidator extends QueryInfo {
                 } else if (typeof applyRule[applykey][applytoken] !== "string") {
                     throw new InsightError("apply should excute on string");
                 } else {
-                    if (QueryInfo.isCourse && QueryInfo.recourses.test(applyRule[applykey][applytoken])) {
-                        QueryInfo.applykeys.add(applyRule[applykey][applytoken]);
+                    if (self.queryinfo.isCourse && self.queryinfo.recourses.test(applyRule[applykey][applytoken])) {
+                        self.queryinfo.applykeys.add(applyRule[applykey][applytoken]);
                     }
-                    if (!QueryInfo.isCourse && QueryInfo.rerooms.test(applyRule[applykey][applytoken])) {
-                        QueryInfo.applykeys.add(applyRule[applykey][applytoken]);
+                    if (!self.queryinfo.isCourse && self.queryinfo.rerooms.test(applyRule[applykey][applytoken])) {
+                        self.queryinfo.applykeys.add(applyRule[applykey][applytoken]);
                     } else {
                         throw new InsightError("key to apply is mismatched");
                     }
@@ -200,45 +191,48 @@ export default class QueryValidator extends QueryInfo {
         });
     }
     public checkcolumnsWithoutTrans() {
+        let self = this;
         this.setDbNameByFirstColumn();
-        QueryInfo.columnsToDisp = new Set<string>();
-        QueryInfo.query["OPTIONS"]["COLUMNS"].forEach((element: any) => {
+        self.queryinfo.columnsToDisp = new Set<string>();
+        self.queryinfo.query["OPTIONS"]["COLUMNS"].forEach((element: any) => {
             let flwstrings: string[] = [];
-            if (QueryInfo.isCourse) {
-                flwstrings = element.match(QueryInfo.recourses);
+            if (self.queryinfo.isCourse) {
+                flwstrings = element.match(self.queryinfo.recourses);
             } else {
-                flwstrings = element.match(QueryInfo.rerooms);
+                flwstrings = element.match(self.queryinfo.rerooms);
             }
             if (flwstrings.length !== 1 || flwstrings[0] !== element) {
                 throw new InsightError("key doesn't match");
             } else {
                 let s3 = flwstrings[0].split("_");
-                if ( QueryInfo.databasename !== s3[0]) {
+                if ( self.queryinfo.databasename !== s3[0]) {
                     throw new InsightError("Cannot query more than one dataset");
                 } else {
-                    QueryInfo.columnsToDisp.add(element);
+                    self.queryinfo.columnsToDisp.add(element);
                 }
             }
         });
     }
     private setDbNameByFirstColumn() {
-        let firstelement = Object.keys(QueryInfo.query["OPTIONS"]["COLUMNS"])[0];
-        let s = firstelement.match(QueryInfo.recourses);
+        let self = this;
+        let firstelement = Object.keys(self.queryinfo.query["OPTIONS"]["COLUMNS"])[0];
+        let s = firstelement.match(self.queryinfo.recourses);
         // let isCourse: boolean;
         if (s.length !== 1 || s[0] !== firstelement) {
-            s = firstelement.match(QueryInfo.rerooms);
+            s = firstelement.match(self.queryinfo.rerooms);
             if (s.length !== 1 || s[0] !== firstelement) {
                 throw new InsightError("key doesn't match");
             } else {
-                QueryInfo.isCourse = false;
+                self.queryinfo.isCourse = false;
             }
         } else {
-            QueryInfo.isCourse = true;
+            self.queryinfo.isCourse = true;
         }
         let s2 = firstelement.split("_");
-        QueryInfo.databasename = s2[0];
+        self.queryinfo.databasename = s2[0];
     }
     public checkorder(columns: Set<string>, order: any) {
+        let self = this;
         if (typeof order === "string") {
             let flag = false;
             columns.forEach((element) => {
@@ -252,7 +246,7 @@ export default class QueryValidator extends QueryInfo {
         } else {
             this.checkOrderObj(columns, order);
         }
-        QueryInfo.order = order;
+        self.queryinfo.order = order;
     }
     public checkOrderObj(columns: Set<string>, order: any) {
         let l = Object.keys(order).length;

@@ -3,26 +3,30 @@ import {IHash} from "./InsightFacade";
 import RowsSelector from "./RowsSelector";
 import QueryInfo from "./QueryInfo";
 
-export default class Queryparser extends QueryInfo {
+export default class Queryparser  {
     private AST: IFilter = { FilterKey : "", value : [], nodes : []};
     private rowselctr: RowsSelector;
     private realapplyobj: any;
+    private queryinfo: QueryInfo;
+    constructor(queryinfo: QueryInfo) {
+        this.queryinfo = queryinfo;
+    }
     public executeQuery(query: any, addHash: IHash): any[] {
         if (Object.keys(query["WHERE"]).length === 0) {
-            if (addHash[QueryInfo.databasename].length >= 5000) {
+            if (addHash[this.queryinfo.databasename].length >= 5000) {
                 throw new ResultTooLargeError();
             } else {
-                return this.applyOptionswthotTrans(addHash[QueryInfo.databasename]);
+                return this.applyOptionswthotTrans(addHash[this.queryinfo.databasename]);
             }
         }
         if (Object.keys(query["WHERE"]).length >= 2) {
             throw new InsightError("More than one key");
         }
         this.AST = this.traverseFilterGenAst(query["WHERE"], null);
-        if (!QueryInfo.hasTransformation) {
-            return this.applyOptionswthotTrans(this.astApplyToRow(QueryInfo.databasename, addHash));
+        if (!this.queryinfo.hasTransformation) {
+            return this.applyOptionswthotTrans(this.astApplyToRow(this.queryinfo.databasename, addHash));
         } else {
-            return this.applyOptionswthTrans(this.astApplyToRow(QueryInfo.databasename, addHash));
+            return this.applyOptionswthTrans(this.astApplyToRow(this.queryinfo.databasename, addHash));
         }
     }
     public traverseFilterGenAst(filter: any, AST: IFilter): IFilter {
@@ -70,7 +74,7 @@ export default class Queryparser extends QueryInfo {
         } else {
             this.keyMatchCheck(Object.keys(filtervalue)[0], element);
             let s: string[] = Object.keys(filtervalue)[0].split("_");
-            if (QueryInfo.databasename !== s[0]) {
+            if (this.queryinfo.databasename !== s[0]) {
                 throw new InsightError("Cannot query more than one dataset");
             } else {
                 ast = { FilterKey : "", value : [], nodes : []}; // ast.nodes.length = 0;
@@ -111,9 +115,9 @@ export default class Queryparser extends QueryInfo {
         let self = this;
         let s = null;
         if (element === "IS") {
-            s = key.match(QueryInfo.rescourses);
+            s = key.match(this.queryinfo.rescourses);
         } else if (element === "LT" || element === "GT" || element === "EQ") {
-            s = key.match(QueryInfo.renumcourses);
+            s = key.match(this.queryinfo.renumcourses);
         }
         if (s === null) { throw new InsightError("no _"); }
         if (s.length !== 1 || s[0] !== key) { throw new InsightError("key doesn't match");
@@ -180,14 +184,14 @@ export default class Queryparser extends QueryInfo {
         rowsbeforcolumnseclection.forEach((element) => {
             let copiedelement: any = {};
             Object.keys(element).forEach((keytoexamine) => {
-                let keytoexaminefull = QueryInfo.databasename + "_" + keytoexamine;
-                if (QueryInfo.groupKeys.has(keytoexaminefull)) {
+                let keytoexaminefull = this.queryinfo.databasename + "_" + keytoexamine;
+                if (this.queryinfo.groupKeys.has(keytoexaminefull)) {
                     copiedelement[keytoexaminefull] = element[keytoexamine];
                 }
-                QueryInfo.columnsToDisp.forEach((potentialkey) => {
-                    if (QueryInfo.applykeys.size !== 0 && QueryInfo.applykeys.has(potentialkey)) {
-                        self.realapplyobj[potentialkey] = QueryInfo.query["TRANSFORMATION"]["APPLY"][potentialkey];
-                        let a: any = QueryInfo.query["TRANSFORMATION"]["APPLY"][potentialkey];
+                this.queryinfo.columnsToDisp.forEach((potentialkey) => {
+                    if (this.queryinfo.applykeys.size !== 0 && this.queryinfo.applykeys.has(potentialkey)) {
+                        self.realapplyobj[potentialkey] = this.queryinfo.query["TRANSFORMATION"]["APPLY"][potentialkey];
+                        let a: any = this.queryinfo.query["TRANSFORMATION"]["APPLY"][potentialkey];
                         if (a[Object.keys(a)[0]] === keytoexaminefull) {
                             copiedelement[potentialkey] = element[keytoexamine];
                         }
@@ -200,7 +204,7 @@ export default class Queryparser extends QueryInfo {
         let rowsafterapply: any[];
         function groupkeyarray(eachrow: any) {
             let ret: any = {};
-            QueryInfo.groupKeys.forEach((groupkey) => {
+            this.queryinfo.groupKeys.forEach((groupkey: any) => {
                 ret[groupkey] = eachrow[groupkey];
             });
             return ret;
@@ -211,7 +215,7 @@ export default class Queryparser extends QueryInfo {
         } else {
             rowsafterapply = this.trimcolumn(rowsbeforeapply);
         }
-        if (typeof QueryInfo.order === "string") {
+        if (typeof this.queryinfo.order === "string") {
             return this.sortRowsWithOneOrder(rowsafterapply);
         } else {
             return this.sortRowsWithObjOrder(rowsafterapply);
@@ -250,9 +254,8 @@ export default class Queryparser extends QueryInfo {
         rowsafterapply.foreach((eachrow: any) => {
             let rowtobepushedin: any;
             Object.keys(eachrow).forEach((eachkey) => {
-                if (QueryInfo.columnsToDisp.has(eachkey)) {
-                    rowtobepushedin[eachkey] = eachrow[eachkey];
-                }
+                if (this.queryinfo.columnsToDisp.has(eachkey)) {
+                    rowtobepushedin[eachkey] = eachrow[eachkey]; }
             });
             ret.push(rowtobepushedin);
         });
@@ -264,22 +267,22 @@ export default class Queryparser extends QueryInfo {
         rowsbeforeoption.forEach((element) => {
             let copiedelement: any = {};
             Object.keys(element).forEach((keytoexamine) => {
-                let keytoexaminefull = QueryInfo.databasename + "_" + keytoexamine;
-                if (QueryInfo.columnsToDisp.has(keytoexaminefull)) {
+                let keytoexaminefull = this.queryinfo.databasename + "_" + keytoexamine;
+                if (this.queryinfo.columnsToDisp.has(keytoexaminefull)) {
                     copiedelement[keytoexaminefull] = element[keytoexamine];
                 }
             });
             rowsbeforesort.push(copiedelement);
         });
-        if (typeof QueryInfo.order === "string") {
+        if (typeof this.queryinfo.order === "string") {
             return this.sortRowsWithOneOrder(rowsbeforesort);
         } else {
             return this.sortRowsWithObjOrder(rowsbeforesort);
         }
     }
     public sortRowsWithOneOrder(rowsbeforesorting: any[]): any[] {
-        if (QueryInfo.order !== undefined) {
-            let fullorder = QueryInfo.order;
+        if (this.queryinfo.order !== undefined) {
+            let fullorder = this.queryinfo.order;
             rowsbeforesorting.sort(function (a, b) {
                 let A = a[fullorder];
                 let B = b[fullorder];
@@ -293,5 +296,4 @@ export default class Queryparser extends QueryInfo {
     private sortRowsWithObjOrder(rowsbeforesort: any[]): any {
         return null;
     }
-
 }
