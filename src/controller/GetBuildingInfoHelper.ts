@@ -89,14 +89,19 @@ export const addRoomsPerBuilding = (node: any, validRooms: any, validRoom: any):
     // debugger;
     if (node.parentNode && node.parentNode.parentNode &&
         node.parentNode.parentNode.nodeName === "tbody"){//looking at tr childnodes
-            debugger;
         if (node.attrs && node.childNodes){
         const checkValue = node.attrs;
         for (let i = 0; i < checkValue.length; i++) {
             if (checkValue[i].value === "views-field views-field-field-room-number") {
-                if (checkValue.childNodes[i].nodeName === "#text"){
-                validRoom["href"] = checkValue.childNodes[i].value;
+                // if a - find href and number
+                debugger;
+                node.childNodes.forEach( (ifaNode: any) => {
+                    if (ifaNode.nodeName === "a") {
+                        if (ifaNode.attrs && ifaNode.attrs[0].name === "href"){
+                            validRoom["href"] = ifaNode.attrs[0].value;
+                    }
                 }
+            });
             }
         }
         if (checkValue.parentNode.value === "views-field views-field-field-room-capacity") {
@@ -106,11 +111,10 @@ export const addRoomsPerBuilding = (node: any, validRooms: any, validRoom: any):
     }
     if (node.childNodes) {
         node.childNodes.forEach( (nodetoCheck: any) => {
-            const validRoomtoAdd = addRoomsPerBuilding(nodetoCheck, validRooms, validRoom);
+            addRoomsPerBuilding(nodetoCheck, validRooms, validRoom);
         });
 
     }
-    debugger;
     if (validRoom["number"] && validRoom["name"]) {
         validRooms.push(validRoom);
     }
