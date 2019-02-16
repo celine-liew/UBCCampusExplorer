@@ -5,11 +5,9 @@ import {InsightError, NotFoundError} from "./IInsightFacade";
 import { AssertionError, throws, deepStrictEqual } from "assert";
 import Queryparser from "./queryparser";
 import * as JSZip from "jszip";
-import { PassThrough } from "stream";
 import * as fs from "fs-extra";
 import { checkValidDatabase, processCoursesFile, saveDatasetList } from "./HelperAddDataset";
-import { NotImplementedError, HttpError } from "restify";
-import { latAndLon } from "./getLatandLon";
+import { findBuildingNameFromFile, getBuildingInfo, addRoomsPerBuilding , getLanandLon} from "./GetBuildingInfoHelper";
 const parse5 = require("parse5");
 
 /**
@@ -41,19 +39,12 @@ public addedDatabase: InsightDataset[] = [];
         // const coursesTranKeys: string[] = ['dept', 'id', 'avg', 'instructor', 'title', 'pass', 'fail','audit','uuid','year'];
         const fileNames: string[] = [];
         checkValidDatabase(id, content, kind);
-        if (this.datasetsHash && this.datasetsHash[kind] && this.datasetsHash[kind][id]) {
-            throw new InsightError("duplicate dataset id.");
-        }
+        this.checkDuplicateIDs(kind, id);
 
         return JSZip.loadAsync(content, {base64: true}).then((zip) => {
             const files: Promise<string>[] = [];
-
             zip.forEach((path, object) => {
-                if ((path.startsWith("courses/") || path.startsWith("rooms/")) && !object.dir) {
-                    files.push(object.async("text")); // take files from courses folder only
-                    const allNamesSplit = object.name.split("/");
-                    fileNames.push(allNamesSplit.pop());
-                }
+                this.parseFileNamesIfCoursesOrRoomstype(path, object, files, fileNames);
             });
             if (!files.length) { // empty lists of files
                 throw new InsightError("No Valid File");
@@ -61,7 +52,7 @@ public addedDatabase: InsightDataset[] = [];
             return Promise.all(files);
         })
         .then( (files) => {
-            this.addValidFilesonly(files, fileNames, coursesKeys, validSections, kind, id);
+            return this.addValidFilesonly(files, fileNames, coursesKeys, validSections, kind, id);
 
         }).then ( () => {
             return Object.keys(this.datasetsHash[kind]);
@@ -76,18 +67,30 @@ public addedDatabase: InsightDataset[] = [];
         });
     }
 
-    private addValidFilesonly(files: string[], fileNames: string[], coursesKeys: string[], validSections: any[],
+    private parseFileNamesIfCoursesOrRoomstype(path: string, object: JSZip.JSZipObject, files: Promise<string>[], fileNames: string[]) {
+        if ((path.startsWith("courses/") || path.startsWith("rooms/")) && !object.dir) {
+            files.push(object.async("text")); // take files from courses folder only
+            const allNamesSplit = object.name.split("/");
+            fileNames.push(allNamesSplit.pop());
+        }
+    }
+
+    private checkDuplicateIDs(kind: InsightDatasetKind, id: string) {
+        if (this.datasetsHash && this.datasetsHash[kind] && this.datasetsHash[kind][id]) {
+            throw new InsightError("duplicate dataset id.");
+        }
+    }
+
+    private async addValidFilesonly(files: string[], fileNames: string[], coursesKeys: string[], validSections: any[],
         kind: InsightDatasetKind, id: string) {
             switch (kind) {
                 case InsightDatasetKind.Courses:
                     processCoursesFile(files, coursesKeys, validSections);
                     break;
                 case InsightDatasetKind.Rooms:
-                    this.findBuildings(files, fileNames);
-
+                    await this.findBuildings(files, fileNames);
                     // processRoomsfiles(files, roomsKeys, validSections)
             }
-
             if (validSections.length === 0){
                 throw new InsightError("no valid sections in dataset.")
             } else {
@@ -98,125 +101,62 @@ public addedDatabase: InsightDataset[] = [];
                 return saveDatasetList(this.datasetsHash);
             }
         }
-    public findBuildings(files: any[], fileNames: string[]) {
+    public async findBuildings(files: any[], fileNames: string[]) {
         const listofBuildings: any = [];
         const listofRooms: any = {};
-        const own = this;
         const tableToCheck = this.findTableInIndex(files, fileNames);
-        tableToCheck.childNodes.forEach( (trNode: any) => {
+        for (const trNode of tableToCheck.childNodes) {
             let building: any = {};
             if (trNode.nodeName === "tr" && trNode.attrs){
-                const buildingtoPush = own.getBuildingInfo(trNode.childNodes, building); //progress so far
+                const buildingwithAdd = getBuildingInfo(trNode.childNodes, building);
+                const buildingtoPush = await getLanandLon(buildingwithAdd);
                 listofBuildings.push(buildingtoPush);
             }
-        });
-        listofBuildings.sort(function (a: any, b: any){ // sort buildings by shortname
-            var shortNameA=a.shortname, shortNameB=b.shortname;
-            if (shortNameA < shortNameB) //sort string ascending
-             return -1;
-            if (shortNameA > shortNameB)
-             return 1;
-            return 0; //default return value (no sorting)
-           });
-        let i = -1;
-        files.forEach( (file) => {
-            let validRooms = {};
-            i++;
-            debugger;
-            const checkFile = parse5.parse(file);
-            const buildingLookingAt = listofBuildings[i];
-            const fullname = this.findBuildingNameFromFile(checkFile, "");
-            if (fullname) {
-                if (buildingLookingAt["fullname"] === fullname) {
-                    // look at file to find all rooms
-                    validRooms =  this.addRoomsPerBuilding(checkFile, validRooms);
+        }
+        this.sortByShortName(listofBuildings);
+            let i = -1;
+            files.forEach( (file) => {
+                let validRooms: any = [];
+                let validRoom = {};
+                i++;
+                debugger;
+                const checkFile = parse5.parse(file);
+                const buildingLookingAt = listofBuildings[i];
+                const fullname = findBuildingNameFromFile(checkFile, "");
+                if (fullname) {
+                    if (buildingLookingAt["fullname"] === fullname) {
+                        // look at file to find all rooms
+                        const validRoom = {
+                            fullname: buildingLookingAt["fullname"],
+                            shortname: buildingLookingAt["shortname"],
+                            number: "",
+                            name: "",
+                            address: buildingLookingAt["address"],
+                            lat: buildingLookingAt["lat"],
+                            lon: buildingLookingAt["lon"],
+                            seats: 0,
+                            type: "",
+                            furniture: "",
+                            href: ""
+                        };
+                        validRooms =  addRoomsPerBuilding(checkFile, validRooms, validRoom);
+                    }
                 }
-            }
         })
         const indexHtm = parse5.parse(files[0]);
         const temp1 = parse5.parse(files[5]);
 
     }
-    addRoomsPerBuilding(node: any, validRooms: any): any {
-        if (node)
-        throw new Error("Method not implemented.");
-    }
-    public findBuildingNameFromFile(nodes: any, fullname: any): any {
-        if (nodes.parentNode != null && nodes.parentNode.attrs && nodes.parentNode.attrs.length > 0 && nodes.value != null
-            && nodes.nodeName === "#text" && nodes.parentNode.nodeName === "span" &&
-            nodes.parentNode.attrs[0].value === "field-content" && nodes.parentNode.parentNode.nodeName === "h2") {
-            fullname = nodes.value;
-            debugger;
-            return fullname;
-            }
-        else if (nodes.childNodes) {
-            for (let i = 0; i < nodes.childNodes.length; i ++){
-                const rtValue = this.findBuildingNameFromFile(nodes.childNodes[i], fullname);
-                if(rtValue){
-                    return rtValue;
-                }
-            }
-        }
-    }
-
-    getBuildingInfo(trChildNodes: any, building: any): any { // childNodes of trNode
-        trChildNodes.forEach( (onlyWantTD: any) => {
-            if (onlyWantTD.nodeName == "td" && onlyWantTD.attrs){
-                onlyWantTD.attrs.forEach( (tdAttr: any) => {
-                    if (tdAttr.name === "class") {
-                        if ( tdAttr.value === "views-field views-field-field-building-code"){
-                            if (onlyWantTD.childNodes[0].nodeName === "#text") {
-                                const shortname = onlyWantTD.childNodes[0].value.substring(2).trim();
-                                building["shortname"] = shortname;
-                            }
-                        } else if (tdAttr.value === "views-field views-field-title") {
-                            this.getBuildingInfo(onlyWantTD.childNodes, building);
-                        }
-                        else if (tdAttr.value === "views-field views-field-field-building-image") {
-                            this.getBuildingInfo(onlyWantTD.childNodes, building);
-                        }
-                        else if (tdAttr.value ==="views-field views-field-field-building-address"){
-                            const addRaw = onlyWantTD.childNodes[0].value;
-                           if (onlyWantTD.childNodes[0].nodeName === "#text" && addRaw.length >= 3) {
-                               const address = addRaw.substring(3).trim();
-                                building["address"] = address;
-                                try { const promiselat = latAndLon(address).then( (resp)=> {
-                                    debugger;
-                                    if (resp.hasOwnProperty("error")) {
-                                        building["lat"] = 0;
-                                        building["lon"] = 0;
-                                    } else {
-                                        building["lat"] = resp["lat"];
-                                        building["lon"] = resp["lon"];
-                                    }
-                                })} catch (err) {
-                                    throw new InsightError(err);
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-            else if (onlyWantTD.nodeName === 'a' && onlyWantTD.attrs.length >= 1){
-                if (onlyWantTD.attrs.length > 1) {
-                this.getBuildingInfo(onlyWantTD.attrs, building);
-                }
-                this.getBuildingInfo(onlyWantTD.childNodes, building);
-                }
-            else if (onlyWantTD.name === "href") {
-                const href = onlyWantTD.value.substring(2);
-                building["href"] = href;
-            }
-
-            else if (onlyWantTD.nodeName === "#text" && onlyWantTD.value.substring(3).trim().length >= 1) {
-                const fullname = onlyWantTD.value.trim();
-                building["fullname"] = fullname;
-            }
+    private sortByShortName(listofBuildings: any) {
+        listofBuildings.sort(function (a: any, b: any) {
+            var shortNameA = a.shortname, shortNameB = b.shortname;
+            if (shortNameA < shortNameB) //sort string ascending
+                return -1;
+            if (shortNameA > shortNameB)
+                return 1;
+            return 0;
         });
-        return building;
     }
-
-
 
     public findTableInIndex(files: string[], fileNames: string[]): any {
         const index = files.pop();
