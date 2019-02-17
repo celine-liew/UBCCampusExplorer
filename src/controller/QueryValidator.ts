@@ -1,6 +1,6 @@
 import {InsightError} from "./IInsightFacade";
 // import "./QueryInfo";
-import QueryInfo from "./QueryInfo";
+import {QueryInfo} from "./QueryInfo";
 export default class QueryValidator  {
     public queryinfo: QueryInfo;
     public validatequery(query: any) {
@@ -19,9 +19,9 @@ export default class QueryValidator  {
                 throw new InsightError("Options Missing Columns");
             } else if (query["OPTIONS"]["COLUMNS"].length <= 0) {
                 throw new InsightError("Columns must be an un-empty array");
-            } else if (keys.length === 3 && !query.hasOwnProperty("TRANSFORMATION")) {
+            } else if (keys.length === 3 && !query.hasOwnProperty("TRANSFORMATIONS")) {
                 throw new InsightError("Missing Transformation, has some wrong key");
-            } else if (query.hasOwnProperty("TRANSFORMATION")) {
+            } else if (query.hasOwnProperty("TRANSFORMATIONS")) {
                 this.queryinfo.hasTransformation = true;
                 this.validateWhere(query["WHERE"]);
                 this.validateOptions(query["OPTIONS"]);
@@ -71,168 +71,17 @@ export default class QueryValidator  {
                 }
             });
             if (self.queryinfo.hasTransformation) {
-                this.checkcolumnsWithTrans();
+                self.queryinfo.checkcolumnsWithTrans();
             } else {
-                this.checkcolumnsWithoutTrans();
+                self.queryinfo.checkcolumnsWithoutTrans();
             }
             if (optionpart.hasOwnProperty("ORDER")) {
-                this.checkorder(self.queryinfo.columnsToDisp, optionpart["ORDER"]);
+                self.checkorder(this.queryinfo.columnsToDisp, optionpart["ORDER"]);
             }
             return;
         }
     }
-    public checkcolumnsWithTrans() {
-        let self = this;
-        this.setDbNameByFirstColumn();
-        self.validateTransForm();
-        self.queryinfo.columnsToDisp = new Set<string>();
-        self.queryinfo.query["OPTIONS"]["COLUMNS"].forEach((eachcolumn: any) => {
-            let flwstrings: string[] = [];
-            if (self.queryinfo.isCourse) {
-                flwstrings = eachcolumn.match(self.queryinfo.recourses);
-            } else {
-                flwstrings = eachcolumn.match(self.queryinfo.rerooms);
-            }
-            if (flwstrings.length !== 1 || flwstrings[0] !== eachcolumn) {
-                throw new InsightError("key doesn't match, being wrong key, or intertwining rooms and courses");
-            } else {
-                let s3 = flwstrings[0].split("_");
-                if ( self.queryinfo.databasename !== s3[0]) {
-                    throw new InsightError("Cannot query more than one dataset");
-                } else if (!self.queryinfo.applykeys.has(s3[0]) && !self.queryinfo.groupKeys.has(s3[0])) {
-                    throw new InsightError("Keys in COLUMNS must be in GROUP or APPLY when TRANSFORMATIONS is present");
-                } else {
-                    self.queryinfo.columnsToDisp.add(eachcolumn);
-                }
-            }
-        });
-    }
-    public validateTransForm() {
-        let self = this;
-        if (typeof self.queryinfo.query["TRANSFORMATION"] !== "object") {
-            throw new InsightError("Transformation must be an object");
-        } else {
-            let keys = Object.keys(self.queryinfo.query["TRANSFORMATION"]);
-            if (!self.queryinfo.query["TRANSFORMATION"].hasOwnProperty("GROUP")) {
-                throw new InsightError("Missing GROUP");
-            } else if (!Array.isArray(self.queryinfo.query["TRANSFORMATION"]["GROUP"])) {
-                throw new InsightError("GROUP must be an array");
-            } else if (self.queryinfo.query["TRANSFORMATION"]["GROUP"].length === 0) {
-                throw new InsightError("GROUP must be an non-empty array");
-            } else if (!self.queryinfo.query["TRANSFORMATION"].hasOwnProperty("APPLY")) {
-                throw new InsightError("Missing APPLY");
-            } else if (!Array.isArray(self.queryinfo.query["TRANSFORMATION"]["APPLY"])) {
-                throw new InsightError("APPLY must be an array");
-            } else if (keys.length >= 3) {
-                throw new InsightError("Invalid Transformation with excess keys");
-            } else {
-                self.validateGroup();
-                self.validateApply();
-            }
-        }
-    }
-    public validateGroup() {
-        let self = this;
-        let s: string[] = [];
-        self.queryinfo.query["TRANSFORMATION"]["GROUP"].foreach((key: any) => {
-            if (typeof key !== "string") {
-                throw new InsightError("invalid group key");
-            } else if (self.queryinfo.isCourse) {
-                s = key.match(self.queryinfo.recourses);
-            } else {
-                s = key.match(self.queryinfo.rerooms);
-            }
-            if (s.length !== 1 || s[0] !== key) {
-                throw new InsightError("Group key doesn't match");
-            } else {
-                let s3 = s[0].split("_");
-                if ( self.queryinfo.databasename !== s3[0]) {
-                    throw new InsightError("Cannot query more than one dataset");
-                } else {
-                    self.queryinfo.groupKeys.add(s[0]);
-                }
-            }
-        });
-    }
-    public validateApply() {
-        let self = this;
-        let applykey: string;
-        let applytoken: string;
-        let applytokenreg = new RegExp(/^(MAX|MIN|AVG|COUNT|SUM)$/g);
-        self.queryinfo.query["TRANSFORMATION"]["APPLY"].foreach((applyRule: any) => {
-            if (typeof applyRule !== "object") {
-                throw new InsightError("APPLYRULES should be json objects");
-            } else if (Object.keys(applyRule).length !== 1) {
-                throw new InsightError("Apply rule should only have 1 key, has " + Object.keys(applyRule).length);
-            } else {
-                applykey = Object.keys(applyRule)[0];
-                self.queryinfo.applykeys.add(applykey);
-            }
-            if (Object.keys(applyRule[applykey]).length !== 1) {
-                let l: number = Object.keys(applyRule[applykey]).length;
-                throw new InsightError("Apply body should only have 1 key, has " + l);
-            } else {
-                applytoken = Object.keys(applyRule[applykey])[0];
-                if (!applytokenreg.test(applytoken)) {
-                    throw new InsightError("Wrong Apply Token");
-                } else if (typeof applyRule[applykey][applytoken] !== "string") {
-                    throw new InsightError("apply should excute on string");
-                } else {
-                    if (self.queryinfo.isCourse && self.queryinfo.recourses.test(applyRule[applykey][applytoken])) {
-                        self.queryinfo.applykeys.add(applyRule[applykey][applytoken]);
-                    }
-                    if (!self.queryinfo.isCourse && self.queryinfo.rerooms.test(applyRule[applykey][applytoken])) {
-                        self.queryinfo.applykeys.add(applyRule[applykey][applytoken]);
-                    } else {
-                        throw new InsightError("key to apply is mismatched");
-                    }
-                }
-            }
-        });
-    }
-    public checkcolumnsWithoutTrans() {
-        let self = this;
-        this.setDbNameByFirstColumn();
-        self.queryinfo.columnsToDisp = new Set<string>();
-        self.queryinfo.query["OPTIONS"]["COLUMNS"].forEach((element: any) => {
-            let flwstrings: string[] = [];
-            if (self.queryinfo.isCourse) {
-                flwstrings = element.match(self.queryinfo.recourses);
-            } else {
-                flwstrings = element.match(self.queryinfo.rerooms);
-            }
-            if (flwstrings.length !== 1 || flwstrings[0] !== element) {
-                throw new InsightError("key doesn't match");
-            } else {
-                let s3 = flwstrings[0].split("_");
-                if ( self.queryinfo.databasename !== s3[0]) {
-                    throw new InsightError("Cannot query more than one dataset");
-                } else {
-                    self.queryinfo.columnsToDisp.add(element);
-                }
-            }
-        });
-    }
-    private setDbNameByFirstColumn() {
-        let self = this;
-        let firstelement = Object.keys(self.queryinfo.query["OPTIONS"]["COLUMNS"])[0];
-        let s = firstelement.match(self.queryinfo.recourses);
-        // let isCourse: boolean;
-        if (s.length !== 1 || s[0] !== firstelement) {
-            s = firstelement.match(self.queryinfo.rerooms);
-            if (s.length !== 1 || s[0] !== firstelement) {
-                throw new InsightError("key doesn't match");
-            } else {
-                self.queryinfo.isCourse = false;
-            }
-        } else {
-            self.queryinfo.isCourse = true;
-        }
-        let s2 = firstelement.split("_");
-        self.queryinfo.databasename = s2[0];
-    }
     public checkorder(columns: Set<string>, order: any) {
-        let self = this;
         if (typeof order === "string") {
             let flag = false;
             columns.forEach((element) => {
@@ -246,7 +95,7 @@ export default class QueryValidator  {
         } else {
             this.checkOrderObj(columns, order);
         }
-        self.queryinfo.order = order;
+        this.queryinfo.order = order;
     }
     public checkOrderObj(columns: Set<string>, order: any) {
         let l = Object.keys(order).length;

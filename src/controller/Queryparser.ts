@@ -1,16 +1,15 @@
 import {InsightError, ResultTooLargeError} from "./IInsightFacade";
 import {IHash} from "./InsightFacade";
 import RowsSelector from "./RowsSelector";
-import QueryInfo from "./QueryInfo";
+import {QueryInfo} from "./QueryInfo";
 
 export default class Queryparser  {
     private AST: IFilter = { FilterKey : "", value : [], nodes : []};
     private rowselctr: RowsSelector;
-    private realapplyobj: any;
+    private realapplyobj: Set<any> = new Set();
     private queryinfo: QueryInfo;
     constructor(queryinfo: QueryInfo) {
-        this.queryinfo = queryinfo;
-    }
+        this.queryinfo = queryinfo; }
     public executeQuery(query: any, addHash: IHash): any[] {
         if (Object.keys(query["WHERE"]).length === 0) {
             if (addHash[this.queryinfo.databasename].length >= 5000) {
@@ -181,21 +180,22 @@ export default class Queryparser  {
     private applyOptionswthTrans(rowsbeforcolumnseclection: any[]): any[] {
         let self = this;
         let rowsbeforetrans: any[] = [];
-        rowsbeforcolumnseclection.forEach((element) => {
+        rowsbeforcolumnseclection.forEach((eachrow) => {
             let copiedelement: any = {};
-            Object.keys(element).forEach((keytoexamine) => {
-                let keytoexaminefull = this.queryinfo.databasename + "_" + keytoexamine;
-                if (this.queryinfo.groupKeys.has(keytoexaminefull)) {
-                    copiedelement[keytoexaminefull] = element[keytoexamine];
-                }
-                this.queryinfo.columnsToDisp.forEach((potentialkey) => {
-                    if (this.queryinfo.applykeys.size !== 0 && this.queryinfo.applykeys.has(potentialkey)) {
-                        self.realapplyobj[potentialkey] = this.queryinfo.query["TRANSFORMATION"]["APPLY"][potentialkey];
-                        let a: any = this.queryinfo.query["TRANSFORMATION"]["APPLY"][potentialkey];
-                        if (a[Object.keys(a)[0]] === keytoexaminefull) {
-                            copiedelement[potentialkey] = element[keytoexamine];
+            Object.keys(eachrow).forEach((keytoexamine) => {
+                let keytoexaminefull = self.queryinfo.databasename + "_" + keytoexamine;
+                if (self.queryinfo.groupKeys.has(keytoexaminefull)) {
+                    copiedelement[keytoexaminefull] = eachrow[keytoexamine]; }
+                self.queryinfo.columnsToDisp.forEach((potentialkey: any) => {
+                    self.queryinfo.query["TRANSFORMATIONS"]["APPLY"].forEach((applyrule: any) => {
+                        if (self.queryinfo.applykeys.size !== 0 && applyrule.hasOwnProperty(potentialkey)) {
+                            self.realapplyobj.add(applyrule[potentialkey]);
+                            let a: any = applyrule[potentialkey];
+                            if (a[Object.keys(a)[0]] === keytoexaminefull) {
+                                copiedelement[potentialkey] = eachrow[keytoexamine];
+                            }
                         }
-                    }
+                    });
                 });
             });
             rowsbeforetrans.push(copiedelement);
@@ -204,7 +204,7 @@ export default class Queryparser  {
         let rowsafterapply: any[];
         function groupkeyarray(eachrow: any) {
             let ret: any = {};
-            this.queryinfo.groupKeys.forEach((groupkey: any) => {
+            self.queryinfo.groupKeys.forEach((groupkey: any) => {
                 ret[groupkey] = eachrow[groupkey];
             });
             return ret;
@@ -222,8 +222,7 @@ export default class Queryparser  {
         }
     }
     private groupRows(rowsbeforetrans: any[], groupkeyarray: any): any {
-        let self = this;
-        if (self.realapplyobj.size === 0) {
+        if (this.realapplyobj.size === 0) {
             let groups: Set<any>;
             rowsbeforetrans.forEach( function (eachrow) {
                 if (!groups.has(eachrow)) {
@@ -243,7 +242,7 @@ export default class Queryparser  {
     }
     private applykeyop(rowsbeforeapply: any): any[] {
         let self = this;
-        let ret: any[];
+        let ret: any[] = [];
         Object.keys(rowsbeforeapply).forEach((key) => {
             ret.push(RowsSelector.cmptAcrsEachrowinGroup(rowsbeforeapply[key], self.realapplyobj));
         });
@@ -251,8 +250,8 @@ export default class Queryparser  {
     }
     private trimcolumn(rowsafterapply: any): any[] {
         let ret: any[] = [];
-        rowsafterapply.foreach((eachrow: any) => {
-            let rowtobepushedin: any;
+        rowsafterapply.forEach((eachrow: any) => {
+            let rowtobepushedin: any = {};
             Object.keys(eachrow).forEach((eachkey) => {
                 if (this.queryinfo.columnsToDisp.has(eachkey)) {
                     rowtobepushedin[eachkey] = eachrow[eachkey]; }

@@ -131,11 +131,13 @@ public addedDatabase: InsightDataset[] = [];
                 finalresult = parser.executeQuery(query, self.datasetsHash['courses']);
             } catch (error) {
                 if (error instanceof InsightError || error instanceof ResultTooLargeError) {
-                    reject(error); } else { reject (new InsightError(error));
+                    reject(error);
+                } else {
+                    reject (new InsightError(error));
                 }
             }
             resolve(finalresult);
         });
     }
-    
+
 }
