@@ -133,8 +133,10 @@ export class QueryInfo {
                 } else if (typeof applyRule[applykey][applytoken] !== "string") {
                     throw new InsightError("apply should excute on string");
                 } else {
-                    if (!(self.isCourse && self.recourses.test(applyRule[applykey][applytoken]))
-                     && (!(!self.isCourse && self.rerooms.test(applyRule[applykey][applytoken])))) {
+                    if (!(self.isCourse && self.recourses.test(applyRule[applykey][applytoken]))) {
+                        throw new InsightError("key to apply is mismatched");
+                    }
+                    if (!(!self.isCourse && self.rerooms.test(applyRule[applykey][applytoken]))) {
                         throw new InsightError("key to apply is mismatched");
                     }
                 }
