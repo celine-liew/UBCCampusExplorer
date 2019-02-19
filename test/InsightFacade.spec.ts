@@ -37,7 +37,8 @@ describe("InsightFacade Add/Remove Dataset", function () {
         notZIP: "./test/data/notZIP.txt",
         wrongfile: "./test/data/wrongfile.png",
         only1validcourse: "./test/data/only1validcourse.zip",
-        smalldataset: "./test/data/smalldataset.zip"
+        smalldataset: "./test/data/smalldataset.zip",
+        rooms: "./test/data/rooms.zip"
     };
     let insightFacade: InsightFacade;
     let datasets: { [id: string]: string };
@@ -81,8 +82,21 @@ describe("InsightFacade Add/Remove Dataset", function () {
         Log.test(`AfterTest: ${this.currentTest.title}`);
     });
 
+    // TEST TEST
+    it("TEST Should add a room dataset", async function () {
+        const id: string = "rooms";
+        let response: string[];
+
+        try {
+            response = await insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms);
+        } catch (err) {
+            response = err;
+        } finally {
+            expect(response).to.deep.equal([id]);
+        }
+    });
     // 1
-    it("Should add a valid dataset", async function () {
+    it("Should add a valid course small dataset", async function () {
         const id: string = "smalldataset";
         let response: string[];
 
@@ -110,7 +124,6 @@ describe("InsightFacade Add/Remove Dataset", function () {
     it("Shouldn't add a duplicate dataset", async function () {
         const id: string = "courses";
         const id2: string = "courses";
-        let response: string[];
         let response2: string[];
 
         try {
@@ -445,7 +458,6 @@ describe("InsightFacade PerformQuery", () => {
 
                     try {
                         response = await insightFacade.performQuery(test.query);
-                        // console.log(response);
                     } catch (err) {
                         response = err;
                     } finally {

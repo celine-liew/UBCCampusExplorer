@@ -6,8 +6,9 @@ import { AssertionError, throws, deepStrictEqual } from "assert";
 import Queryparser from "./Queryparser";
 import { acceptParser } from "restify";
 import * as JSZip from "jszip";
-import { PassThrough } from "stream";
 import * as fs from "fs-extra";
+import { checkValidDatabase, saveDatasetList, parseFileNamesIfCoursesOrRoomstype, checkDuplicateIDs, processBasedonInsightType } from "./HelperAddDataset";
+const parse5 = require("parse5");
 import { addListener } from "cluster";
 import QueryValidator from "./QueryValidator";
 import { checkValidDatabase, processCoursesFile, saveDatasetList } from "./HelperAddDataset";
@@ -35,20 +36,18 @@ public addedDatabase: InsightDataset[] = [];
     }
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
-        const validCourseSections: any[] = [];
+        const validSectionsOrRooms: any[] = [];
         const coursesKeys: string[] = ['Subject', 'Course', 'Avg', 'Professor', 'Title', 'Pass', 'Fail','Audit','id','Year'];
         // const coursesTranKeys: string[] = ['dept', 'id', 'avg', 'instructor', 'title', 'pass', 'fail','audit','uuid','year'];
+        const fileNames: string[] = [];
         checkValidDatabase(id, content, kind);
         if (this.datasetsHash && this.datasetsHash[kind] && this.datasetsHash[kind][id]) {
-            throw new InsightError("duplicate dataset id.");
-        }
-
+                throw new InsightError("duplicate dataset id.");
+            }
         return JSZip.loadAsync(content, {base64: true}).then((zip) => {
             const files: Promise<string>[] = [];
             zip.forEach((path, object) => {
-                if (path.startsWith("courses/") && !object.dir) { // check courses folder exist
-                    files.push(object.async("text")); // take files from courses folder only
-                }
+                parseFileNamesIfCoursesOrRoomstype(path, object, files, fileNames);
             });
             if (!files.length) { // empty lists of files
                 throw new InsightError("No Valid File");
@@ -56,7 +55,7 @@ public addedDatabase: InsightDataset[] = [];
             return Promise.all(files);
         })
         .then( (files) => {
-            this.addValidFilesonly(files, coursesKeys, validCourseSections, kind, id);
+            return this.addValidFilesonly(files, fileNames, coursesKeys, validSectionsOrRooms, kind, id);
 
         }).then ( () => {
             return Object.keys(this.datasetsHash[kind]);
@@ -71,19 +70,20 @@ public addedDatabase: InsightDataset[] = [];
         });
     }
 
-    private addValidFilesonly(files: string[], coursesKeys: string[], validCourseSections: any[],
-        kind: InsightDatasetKind, id: string) {
-            processCoursesFile(files, coursesKeys, validCourseSections);
-            if (validCourseSections.length === 0){
-                throw new InsightError("no valid course sections in dataset.")
-            } else {
-                if (!this.datasetsHash[kind]) {
-                    this.datasetsHash[kind] = {}
+    private addValidFilesonly = async (files: string[], fileNames: string[],
+        coursesKeys: string[], validSectionsOrRooms: any[], kind: InsightDatasetKind, id: string) => {
+                await processBasedonInsightType(kind, files, coursesKeys, validSectionsOrRooms, fileNames);
+                if (validSectionsOrRooms.length === 0) {
+                    throw new InsightError("no valid sections in dataset.");
+                } else {
+                    if (!this.datasetsHash[kind]) {
+                        this.datasetsHash[kind] = {};
+                    }
+                    this.datasetsHash[kind][id] = validSectionsOrRooms;
+                    return saveDatasetList(this.datasetsHash);
                 }
-                this.datasetsHash[kind][id] = validCourseSections;
-                return saveDatasetList(this.datasetsHash);
-            }
-        }
+    };
+
 
     public removeDataset(id: string): Promise<string> {
         if (!id){
