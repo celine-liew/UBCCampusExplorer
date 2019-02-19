@@ -85,38 +85,95 @@ export const getLanandLon = async (building: any) => {
     }
 }
 
-export const addRoomsPerBuilding = (node: any, validRooms: any, validRoom: any): any => {
-    // debugger;
+export const addRoomsPerBuilding = (node: any, buildingValidRooms: any, validRoomTemplate: any): any => {
+    if (node.childNodes && node.nodeName === "tbody") {
+        node.childNodes.forEach( (trNodetoCheck: any) => {
+            if (trNodetoCheck.nodeName === "tr") {
+                let validRoom: any = {};
+                validRoom["shortname"] = validRoomTemplate["shortname"];
+                buildingValidRooms = processTRRow(trNodetoCheck, buildingValidRooms, validRoom, validRoomTemplate);
+            }
+        });
+        return buildingValidRooms;
+    } else if (node.childNodes) {
+        for (let i = 0; i < node.childNodes.length; i++){
+                addRoomsPerBuilding(node.childNodes[i], buildingValidRooms, validRoomTemplate);
+        }
+    }
+    return buildingValidRooms;
+}
+
+export const processTRRow = (node: any, buildingValidRooms:any, validRoom: any, validRoomTemplate: any ):any => {
+            validRoom = findValidRoom(node, validRoom);
+            if (validRoom["number"] && validRoom["name"] && validRoom["seats"]) {
+                Object.keys(validRoomTemplate).forEach(function(key) {
+                    validRoom[key] = validRoomTemplate[key];
+                  });
+                buildingValidRooms.push(validRoom);
+            }
+            return buildingValidRooms;
+
+    }
+
+export const findValidRoom = (node: any, validRoom: any): any => {
     if (node.parentNode && node.parentNode.parentNode &&
         node.parentNode.parentNode.nodeName === "tbody"){//looking at tr childnodes
         if (node.attrs && node.childNodes){
         const checkValue = node.attrs;
-        for (let i = 0; i < checkValue.length; i++) {
-            if (checkValue[i].value === "views-field views-field-field-room-number") {
-                // if a - find href and number
-                debugger;
-                node.childNodes.forEach( (ifaNode: any) => {
-                    if (ifaNode.nodeName === "a") {
-                        if (ifaNode.attrs && ifaNode.attrs[0].name === "href"){
-                            validRoom["href"] = ifaNode.attrs[0].value;
+            for (let i = 0; i < checkValue.length; i++) {
+                // findHrefNumberAndName
+                if (checkValue[i].value === "views-field views-field-field-room-number") {
+                    node.childNodes.forEach( (ifaNode: any) => {
+                        if (ifaNode.nodeName === "a" && ifaNode.attrs) {
+                            for (let i = 0; i < ifaNode.attrs.length; i++ ){
+                                if (ifaNode.attrs[i].name === "href"){
+                                    validRoom["href"] = ifaNode.attrs[i].value;
+                                }
+                                if (ifaNode.attrs[i].value === "Room Details"){
+                                    validRoom["number"] = ifaNode.childNodes[0].value;
+                                    validRoom["name"] = validRoom["shortname"] + "_" + validRoom["number"];
+                                }
+                            }
+
                     }
+                });
                 }
-            });
+
+                //findSeats
+                if (checkValue[i].value === "views-field views-field-field-room-capacity"){
+                    node.childNodes.forEach( (roomCapChildNode: any) => {
+                        if (roomCapChildNode.nodeName = "#text" && roomCapChildNode.value.substring(removeBackLash).trim().length >= 0) {
+                            validRoom["seats"] = parseInt(roomCapChildNode.value.trim());
+                        }
+                    });
+                }
+
+                //findFurniture
+                if (checkValue[i].value === "views-field views-field-field-room-furniture"){
+                    node.childNodes.forEach( (roomFurChildNode: any) => {
+                        if (roomFurChildNode.nodeName = "#text" && roomFurChildNode.value.substring(removeBackLash).trim().length >= 0) {
+                            validRoom["furniture"] = roomFurChildNode.value.trim();
+                        }
+                    });
+                }
+
+                //findRoomType
+                if (checkValue[i].value === "views-field views-field-field-room-type"){
+                    node.childNodes.forEach( (roomTypeChildNode: any) => {
+                        if (roomTypeChildNode.nodeName = "#text" && roomTypeChildNode.value.substring(removeBackLash).trim().length >= 0) {
+                            validRoom["type"] = roomTypeChildNode.value.trim();
+                        }
+                    });
+                }
             }
         }
-        if (checkValue.parentNode.value === "views-field views-field-field-room-capacity") {
-            // node.childNodes[0].value
-        }
-    }
     }
     if (node.childNodes) {
         node.childNodes.forEach( (nodetoCheck: any) => {
-            addRoomsPerBuilding(nodetoCheck, validRooms, validRoom);
+            return findValidRoom(nodetoCheck, validRoom);
         });
-
     }
-    if (validRoom["number"] && validRoom["name"]) {
-        validRooms.push(validRoom);
-    }
-    return validRooms;
+    if (validRoom["number"] && validRoom["name"] && validRoom["seats"] &&  validRoom["type"]) {
+        return validRoom;
+    } else return;
 }

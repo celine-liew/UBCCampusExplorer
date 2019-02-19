@@ -34,7 +34,8 @@ public addedDatabase: InsightDataset[] = [];
     }
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
-        const validSections: any[] = [];
+        // const buildingValidRooms: any = [];
+        const validSectionsOrRooms: any[] = [];
         const coursesKeys: string[] = ['Subject', 'Course', 'Avg', 'Professor', 'Title', 'Pass', 'Fail','Audit','id','Year'];
         // const coursesTranKeys: string[] = ['dept', 'id', 'avg', 'instructor', 'title', 'pass', 'fail','audit','uuid','year'];
         const fileNames: string[] = [];
@@ -52,7 +53,7 @@ public addedDatabase: InsightDataset[] = [];
             return Promise.all(files);
         })
         .then( (files) => {
-            return this.addValidFilesonly(files, fileNames, coursesKeys, validSections, kind, id);
+            return this.addValidFilesonly(files, fileNames, coursesKeys, validSectionsOrRooms, kind, id);
 
         }).then ( () => {
             return Object.keys(this.datasetsHash[kind]);
@@ -81,29 +82,30 @@ public addedDatabase: InsightDataset[] = [];
         }
     }
 
-    private async addValidFilesonly(files: string[], fileNames: string[], coursesKeys: string[], validSections: any[],
+    private async addValidFilesonly(files: string[], fileNames: string[], coursesKeys: string[], validSectionsOrRooms: any[],
         kind: InsightDatasetKind, id: string) {
             switch (kind) {
                 case InsightDatasetKind.Courses:
-                    processCoursesFile(files, coursesKeys, validSections);
+                    processCoursesFile(files, coursesKeys, validSectionsOrRooms);
                     break;
                 case InsightDatasetKind.Rooms:
-                    await this.findBuildings(files, fileNames);
+                    await this.findBuildings(files, fileNames, validSectionsOrRooms);
                     // processRoomsfiles(files, roomsKeys, validSections)
             }
-            if (validSections.length === 0){
+            if (validSectionsOrRooms.length === 0){
                 throw new InsightError("no valid sections in dataset.")
             } else {
                 if (!this.datasetsHash[kind]) {
                     this.datasetsHash[kind] = {}
                 }
-                this.datasetsHash[kind][id] = validSections;
+                this.datasetsHash[kind][id] = validSectionsOrRooms;
                 return saveDatasetList(this.datasetsHash);
             }
         }
-    public async findBuildings(files: any[], fileNames: string[]) {
+    public async findBuildings(files: any[], fileNames: string[], buildingValidRooms: any[]) {
         const listofBuildings: any = [];
-        const listofRooms: any = {};
+
+
         const tableToCheck = this.findTableInIndex(files, fileNames);
         for (const trNode of tableToCheck.childNodes) {
             let building: any = {};
@@ -116,36 +118,31 @@ public addedDatabase: InsightDataset[] = [];
         this.sortByShortName(listofBuildings);
             let i = -1;
             files.forEach( (file) => {
-                let validRooms: any = [];
-                let validRoom = {};
+                let listofRooms: any = [];
+                let validRoomTemplate = {};
                 i++;
-                debugger;
                 const checkFile = parse5.parse(file);
                 const buildingLookingAt = listofBuildings[i];
                 const fullname = findBuildingNameFromFile(checkFile, "");
                 if (fullname) {
                     if (buildingLookingAt["fullname"] === fullname) {
                         // look at file to find all rooms
-                        const validRoom = {
+                        validRoomTemplate = {
                             fullname: buildingLookingAt["fullname"],
                             shortname: buildingLookingAt["shortname"],
-                            number: "",
-                            name: "",
                             address: buildingLookingAt["address"],
                             lat: buildingLookingAt["lat"],
                             lon: buildingLookingAt["lon"],
-                            seats: 0,
-                            type: "",
-                            furniture: "",
-                            href: ""
                         };
-                        validRooms =  addRoomsPerBuilding(checkFile, validRooms, validRoom);
+                        listofRooms =  addRoomsPerBuilding(checkFile, listofRooms, validRoomTemplate);
+                        if (listofRooms.length > 0){
+                            Array.prototype.push.apply(buildingValidRooms, listofRooms);
+                            // buildingValidRooms.push(listofRooms);
+                        } else return;
                     }
                 }
-        })
-        const indexHtm = parse5.parse(files[0]);
-        const temp1 = parse5.parse(files[5]);
-
+        });
+        return buildingValidRooms;
     }
     private sortByShortName(listofBuildings: any) {
         listofBuildings.sort(function (a: any, b: any) {
