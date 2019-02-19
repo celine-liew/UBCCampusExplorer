@@ -83,7 +83,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
     });
 
     // TEST TEST
-    it.only("TEST TEST Should add a room dataset", async function () {
+    it("TEST Should add a room dataset", async function () {
         const id: string = "rooms";
         let response: string[];
 
@@ -96,7 +96,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
         }
     });
     // 1
-    it("Should add a valid dataset", async function () {
+    it("Should add a valid course small dataset", async function () {
         const id: string = "smalldataset";
         let response: string[];
 
@@ -124,7 +124,6 @@ describe("InsightFacade Add/Remove Dataset", function () {
     it("Shouldn't add a duplicate dataset", async function () {
         const id: string = "courses";
         const id2: string = "courses";
-        let response: string[];
         let response2: string[];
 
         try {

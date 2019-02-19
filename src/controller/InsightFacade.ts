@@ -2,12 +2,10 @@
 import Log from "../Util";
 import {IInsightFacade, InsightDataset, InsightDatasetKind, ResultTooLargeError} from "./IInsightFacade";
 import {InsightError, NotFoundError} from "./IInsightFacade";
-import { AssertionError, throws, deepStrictEqual } from "assert";
 import Queryparser from "./queryparser";
 import * as JSZip from "jszip";
 import * as fs from "fs-extra";
-import { checkValidDatabase, processCoursesFile, saveDatasetList } from "./HelperAddDataset";
-import { findBuildingNameFromFile, getBuildingInfo, addRoomsPerBuilding , getLanandLon} from "./GetBuildingInfoHelper";
+import { checkValidDatabase, saveDatasetList, parseFileNamesIfCoursesOrRoomstype, checkDuplicateIDs, processBasedonInsightType } from "./HelperAddDataset";
 const parse5 = require("parse5");
 
 /**
@@ -34,18 +32,18 @@ public addedDatabase: InsightDataset[] = [];
     }
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
-        // const buildingValidRooms: any = [];
         const validSectionsOrRooms: any[] = [];
         const coursesKeys: string[] = ['Subject', 'Course', 'Avg', 'Professor', 'Title', 'Pass', 'Fail','Audit','id','Year'];
         // const coursesTranKeys: string[] = ['dept', 'id', 'avg', 'instructor', 'title', 'pass', 'fail','audit','uuid','year'];
         const fileNames: string[] = [];
         checkValidDatabase(id, content, kind);
-        this.checkDuplicateIDs(kind, id);
-
+        if (this.datasetsHash && this.datasetsHash[kind] && this.datasetsHash[kind][id]) {
+                throw new InsightError("duplicate dataset id.");
+            }
         return JSZip.loadAsync(content, {base64: true}).then((zip) => {
             const files: Promise<string>[] = [];
             zip.forEach((path, object) => {
-                this.parseFileNamesIfCoursesOrRoomstype(path, object, files, fileNames);
+                parseFileNamesIfCoursesOrRoomstype(path, object, files, fileNames);
             });
             if (!files.length) { // empty lists of files
                 throw new InsightError("No Valid File");
@@ -68,101 +66,20 @@ public addedDatabase: InsightDataset[] = [];
         });
     }
 
-    private parseFileNamesIfCoursesOrRoomstype(path: string, object: JSZip.JSZipObject, files: Promise<string>[], fileNames: string[]) {
-        if ((path.startsWith("courses/") || path.startsWith("rooms/")) && !object.dir) {
-            files.push(object.async("text")); // take files from courses folder only
-            const allNamesSplit = object.name.split("/");
-            fileNames.push(allNamesSplit.pop());
-        }
-    }
-
-    private checkDuplicateIDs(kind: InsightDatasetKind, id: string) {
-        if (this.datasetsHash && this.datasetsHash[kind] && this.datasetsHash[kind][id]) {
-            throw new InsightError("duplicate dataset id.");
-        }
-    }
-
-    private async addValidFilesonly(files: string[], fileNames: string[], coursesKeys: string[], validSectionsOrRooms: any[],
-        kind: InsightDatasetKind, id: string) {
-            switch (kind) {
-                case InsightDatasetKind.Courses:
-                    processCoursesFile(files, coursesKeys, validSectionsOrRooms);
-                    break;
-                case InsightDatasetKind.Rooms:
-                    await this.findBuildings(files, fileNames, validSectionsOrRooms);
-                    // processRoomsfiles(files, roomsKeys, validSections)
-            }
-            if (validSectionsOrRooms.length === 0){
-                throw new InsightError("no valid sections in dataset.")
-            } else {
-                if (!this.datasetsHash[kind]) {
-                    this.datasetsHash[kind] = {}
-                }
-                this.datasetsHash[kind][id] = validSectionsOrRooms;
-                return saveDatasetList(this.datasetsHash);
-            }
-        }
-    public async findBuildings(files: any[], fileNames: string[], buildingValidRooms: any[]) {
-        const listofBuildings: any = [];
-
-
-        const tableToCheck = this.findTableInIndex(files, fileNames);
-        for (const trNode of tableToCheck.childNodes) {
-            let building: any = {};
-            if (trNode.nodeName === "tr" && trNode.attrs){
-                const buildingwithAdd = getBuildingInfo(trNode.childNodes, building);
-                const buildingtoPush = await getLanandLon(buildingwithAdd);
-                listofBuildings.push(buildingtoPush);
-            }
-        }
-        this.sortByShortName(listofBuildings);
-            let i = -1;
-            files.forEach( (file) => {
-                let listofRooms: any = [];
-                let validRoomTemplate = {};
-                i++;
-                const checkFile = parse5.parse(file);
-                const buildingLookingAt = listofBuildings[i];
-                const fullname = findBuildingNameFromFile(checkFile, "");
-                if (fullname) {
-                    if (buildingLookingAt["fullname"] === fullname) {
-                        // look at file to find all rooms
-                        validRoomTemplate = {
-                            fullname: buildingLookingAt["fullname"],
-                            shortname: buildingLookingAt["shortname"],
-                            address: buildingLookingAt["address"],
-                            lat: buildingLookingAt["lat"],
-                            lon: buildingLookingAt["lon"],
-                        };
-                        listofRooms =  addRoomsPerBuilding(checkFile, listofRooms, validRoomTemplate);
-                        if (listofRooms.length > 0){
-                            Array.prototype.push.apply(buildingValidRooms, listofRooms);
-                            // buildingValidRooms.push(listofRooms);
-                        } else return;
+    private addValidFilesonly = async (files: string[], fileNames: string[],
+        coursesKeys: string[], validSectionsOrRooms: any[], kind: InsightDatasetKind, id: string) => {
+                await processBasedonInsightType(kind, files, coursesKeys, validSectionsOrRooms, fileNames);
+                if (validSectionsOrRooms.length === 0) {
+                    throw new InsightError("no valid sections in dataset.");
+                } else {
+                    if (!this.datasetsHash[kind]) {
+                        this.datasetsHash[kind] = {};
                     }
+                    this.datasetsHash[kind][id] = validSectionsOrRooms;
+                    return saveDatasetList(this.datasetsHash);
                 }
-        });
-        return buildingValidRooms;
-    }
-    private sortByShortName(listofBuildings: any) {
-        listofBuildings.sort(function (a: any, b: any) {
-            var shortNameA = a.shortname, shortNameB = b.shortname;
-            if (shortNameA < shortNameB) //sort string ascending
-                return -1;
-            if (shortNameA > shortNameB)
-                return 1;
-            return 0;
-        });
-    }
+    };
 
-    public findTableInIndex(files: string[], fileNames: string[]): any {
-        const index = files.pop();
-        const tableStart = index.indexOf('<tbody>'); //start of building tables
-        const tableEnd = index.indexOf('</tbody>');
-        const tBody = (index.substring(tableStart, tableEnd));
-        const tableToCheck = parse5.parseFragment(tBody).childNodes[0];
-        return tableToCheck;
-    }
 
     public removeDataset(id: string): Promise<string> {
         if (!id){

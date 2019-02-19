@@ -2,10 +2,20 @@ import { latAndLon } from "./GetLatandLon";
 import { InsightError } from "./IInsightFacade";
 import Log from "../Util";
 import { debug } from "util";
+const parse5 = require("parse5");
 
 // tslint:disable
 
 const removeBackLash = 3;
+
+export const  findTableInIndex = (files: string[], fileNames: string[]): any => {
+    const index = files.pop();
+    const tableStart = index.indexOf('<tbody>'); //start of building tables
+    const tableEnd = index.indexOf('</tbody>');
+    const tBody = (index.substring(tableStart, tableEnd));
+    const tableToCheck = parse5.parseFragment(tBody).childNodes[0];
+    return tableToCheck;
+};
 
 export const findBuildingNameFromFile = (nodes: any, fullname: any): any => {
     if (nodes.parentNode != null && nodes.parentNode.attrs && nodes.parentNode.attrs.length > 0 && nodes.value != null
@@ -20,6 +30,14 @@ export const findBuildingNameFromFile = (nodes: any, fullname: any): any => {
                 return rtValue;
             }
         }
+    }
+}
+
+export const processIfTrNode = async(trNode: any, building: any, listofBuildings: any) => {
+    if (trNode.nodeName === "tr" && trNode.attrs) {
+        const buildingwithAdd = getBuildingInfo(trNode.childNodes, building);
+        const buildingtoPush = await getLanandLon(buildingwithAdd);
+        listofBuildings.push(buildingtoPush);
     }
 }
 
@@ -173,7 +191,9 @@ export const findValidRoom = (node: any, validRoom: any): any => {
             return findValidRoom(nodetoCheck, validRoom);
         });
     }
-    if (validRoom["number"] && validRoom["name"] && validRoom["seats"] &&  validRoom["type"]) {
+    if (validRoom["number"] && validRoom["name"] && validRoom["seats"] &&  validRoom["type"] === ""|| validRoom["type"] ) {
         return validRoom;
-    } else return;
+    } else {
+        validRoom = {}
+        return validRoom };
 }

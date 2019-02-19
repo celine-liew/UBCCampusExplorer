@@ -69,7 +69,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
     afterEach(function () {
         Util_1.default.test(`AfterTest: ${this.currentTest.title}`);
     });
-    it.only("TEST TEST Should add a room dataset", function () {
+    it("TEST Should add a room dataset", function () {
         return __awaiter(this, void 0, void 0, function* () {
             const id = "rooms";
             let response;
@@ -84,7 +84,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
             }
         });
     });
-    it("Should add a valid dataset", function () {
+    it("Should add a valid course small dataset", function () {
         return __awaiter(this, void 0, void 0, function* () {
             const id = "smalldataset";
             let response;
@@ -118,7 +118,6 @@ describe("InsightFacade Add/Remove Dataset", function () {
         return __awaiter(this, void 0, void 0, function* () {
             const id = "courses";
             const id2 = "courses";
-            let response;
             let response2;
             try {
                 yield insightFacade.addDataset(id, datasets[id], IInsightFacade_1.InsightDatasetKind.Courses);
