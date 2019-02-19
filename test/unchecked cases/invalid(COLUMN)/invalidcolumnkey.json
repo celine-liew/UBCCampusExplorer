@@ -1,0 +1,17 @@
+{
+    "title": "Invalid COLUMNS key",
+    "query": {
+    "WHERE": {
+        "IS": {
+            "courses_id": "100"
+        }
+    },
+    "OPTIONS": {
+        "COLUMNS": [
+            "courses_invalid"
+        ]
+    }
+},
+    "isQueryValid": false,
+    "result": "InsightError"
+}

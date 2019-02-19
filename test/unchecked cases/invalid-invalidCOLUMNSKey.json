@@ -1,0 +1,27 @@
+{
+    "title": "Unexpected response status 400: Invalid key courses_AuDit in COLUMNS",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_uuid": "16427"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_instructor",
+                "courses_avg",
+                "courses_title",
+                "courses_fail",
+                "courses_pass",
+                "courses_uuid",
+                "courses_AuDit",
+                "courses_year"
+            ],
+            "ORDER": "courses_dept"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

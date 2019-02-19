@@ -1,0 +1,27 @@
+{
+    "title": "SELECT dept, id, avg, pass, uuid, audit WHERE uuid == uuuuuuuuuuuuuuuuuuuuuuuuuu - nonexistent IS",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_uuid": "uuuuuuuuuuuuuuuuuuuuuuuuuuuuu"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_instructor",
+                "courses_avg",
+                "courses_title",
+                "courses_fail",
+                "courses_pass",
+                "courses_uuid",
+                "courses_audit",
+                "courses_year"
+            ],
+            "ORDER": "courses_dept"
+        }
+    },
+    "isQueryValid": true,
+    "result": []
+}

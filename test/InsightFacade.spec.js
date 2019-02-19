@@ -447,7 +447,7 @@ describe("InsightFacade PerformQuery", () => {
     afterEach(function () {
         Util_1.default.test(`AfterTest: ${this.currentTest.title}`);
     });
-    it("Should run test queries", function () {
+    it.only("Should run test queries", function () {
         describe("Dynamic InsightFacade PerformQuery tests", function () {
             for (const test of testQueries) {
                 it(`[${test.filename}] ${test.title}`, function () {

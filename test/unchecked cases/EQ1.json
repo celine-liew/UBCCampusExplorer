@@ -1,0 +1,25 @@
+{
+    "title": "SELECT dept, id, avg WHERE avg = 97.09",
+    "query": {
+        "WHERE": {
+            "EQ": {
+                "courses_avg":97.09
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        { "courses_dept": "epse", "courses_id": "596", "courses_avg": 97.09 },
+        { "courses_dept": "epse", "courses_id": "596", "courses_avg": 97.09 },
+        { "courses_dept": "math", "courses_id": "541", "courses_avg": 97.09 },
+        { "courses_dept": "math", "courses_id": "541", "courses_avg": 97.09 }
+    ]
+}

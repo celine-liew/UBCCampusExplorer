@@ -1,0 +1,44 @@
+{
+    "title": "SELECT dept, id, avg, instructor, title, pass, fail, uuid, audit, year WHERE !(audit < 1) && id == '310' && avg > 88 ORDER by audit - all equal",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "NOT": {
+                        "LT": {
+                            "courses_audit": 1
+                        }
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_id": "310"
+                    }
+                },
+                {
+                    "GT": {
+                        "courses_avg": 88
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg",
+                "courses_instructor",
+                "courses_title",
+                "courses_pass",
+                "courses_fail",
+                "courses_uuid",
+                "courses_audit",
+                "courses_year"
+            ],
+            "ORDER": "courses_audit"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+    ]
+}

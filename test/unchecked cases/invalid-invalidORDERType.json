@@ -1,0 +1,27 @@
+{
+    "title": "Unexpected response status 400: Invalid ORDER type",
+    "query": {
+        "WHERE": {
+            "LT": {
+                "courses_pass": 1
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg",
+                "courses_instructor",
+                "courses_title",
+                "courses_pass",
+                "courses_fail",
+                "courses_uuid",
+                "courses_audit",
+                "courses_year"
+            ],
+            "ORDER": 99
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

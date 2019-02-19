@@ -1,0 +1,34 @@
+{
+    "title": "Valid EQ no child",
+    "query": {
+        "WHERE": {
+            "EQ": {
+                "courses_audit": 10
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_id"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_id": "430"
+        },
+        {
+            "courses_id": "501"
+        },
+        {
+            "courses_id": "509"
+        },
+        {
+            "courses_id": "530"
+        },
+        {
+            "courses_id": "530"
+        }
+    ]
+}

@@ -1,0 +1,22 @@
+{
+    "title": "SELECT dept, id WHERE course dept = '123123' - nonexistent IS",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_dept": "123123"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+
+    ]
+
+}

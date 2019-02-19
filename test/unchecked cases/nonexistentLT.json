@@ -1,0 +1,22 @@
+{
+    "title": "SELECT dept, id WHERE avg < 0 - nonexistent LT",
+    "query": {
+        "WHERE": {
+            "LT": {
+                "courses_avg": 0
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+
+    ]
+
+}

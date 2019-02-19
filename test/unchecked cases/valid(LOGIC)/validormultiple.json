@@ -1,0 +1,1032 @@
+{
+    "title": "Valid OR with multiple MC ",
+    "query": {
+        "WHERE": {
+            "OR": [
+                {
+                    "GT": {
+                        "courses_avg": 100
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_id": "503"
+                    }
+                },
+                {
+                    "LT": {
+                        "courses_pass": 1
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_id"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_id": "100"
+        },
+        {
+            "courses_id": "100"
+        },
+        {
+            "courses_id": "202"
+        },
+        {
+            "courses_id": "330"
+        },
+        {
+            "courses_id": "330"
+        },
+        {
+            "courses_id": "362"
+        },
+        {
+            "courses_id": "475"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        },
+        {
+            "courses_id": "503"
+        }
+    ]
+}

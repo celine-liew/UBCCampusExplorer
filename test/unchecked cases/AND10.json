@@ -1,0 +1,31 @@
+{
+    "title": "SELECT dept, id, instructor, avg, year WHERE dept == 'cpsc' && instructor == 'baniasssad, elisa' ORDER BY avg",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "IS": {
+                        "courses_dept":"cpsc"
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_instructor": "baniassad, elisa"
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_instructor",
+                "courses_avg",
+                "courses_year"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result":[{"courses_dept":"cpsc","courses_id":"210","courses_instructor":"baniassad, elisa","courses_avg":73.27,"courses_year":2014},{"courses_dept":"cpsc","courses_id":"210","courses_instructor":"baniassad, elisa","courses_avg":74.17,"courses_year":2015},{"courses_dept":"cpsc","courses_id":"210","courses_instructor":"baniassad, elisa","courses_avg":76.32,"courses_year":2014},{"courses_dept":"cpsc","courses_id":"310","courses_instructor":"baniassad, elisa","courses_avg":77.13,"courses_year":2015},{"courses_dept":"cpsc","courses_id":"310","courses_instructor":"baniassad, elisa","courses_avg":79.12,"courses_year":2014},{"courses_dept":"cpsc","courses_id":"410","courses_instructor":"baniassad, elisa","courses_avg":79.39,"courses_year":2014},{"courses_dept":"cpsc","courses_id":"410","courses_instructor":"baniassad, elisa","courses_avg":79.62,"courses_year":2013},{"courses_dept":"cpsc","courses_id":"310","courses_instructor":"baniassad, elisa","courses_avg":80.35,"courses_year":2014},{"courses_dept":"cpsc","courses_id":"310","courses_instructor":"baniassad, elisa","courses_avg":81.18,"courses_year":2015},{"courses_dept":"cpsc","courses_id":"210","courses_instructor":"baniassad, elisa","courses_avg":86.15,"courses_year":2014}]
+}

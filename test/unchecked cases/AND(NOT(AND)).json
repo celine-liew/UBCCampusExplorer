@@ -1,0 +1,56 @@
+{
+    "title": "AND(NOT(AND))",
+    "query": {
+        "WHERE": {
+            "OR": [
+                {
+                    "AND": [
+                        {
+                            "IS": {
+                                "courses_instructor": "grow, laura"
+                            }
+                        },
+                        {
+                            "NOT": {
+                                "AND": [
+                                    {
+                                        "IS": {
+                                            "courses_id": "310"
+                                        }
+                                    },
+                                    {
+                                        "IS": {
+                                            "courses_dept": "math"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "EQ": {
+                        "courses_avg": 97
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg",
+                "courses_instructor",
+                "courses_title",
+                "courses_pass",
+                "courses_fail",
+                "courses_uuid",
+                "courses_audit",
+                "courses_year"
+            ],
+            "ORDER": "courses_audit"
+        }
+    },
+    "isQueryValid": true,
+    "result":[{"courses_dept":"crwr","courses_id":"599","courses_avg":97,"courses_instructor":"campbell, deborah","courses_title":"thesis","courses_pass":1,"courses_fail":0,"courses_uuid":"26255","courses_audit":0,"courses_year":2014},{"courses_dept":"epse","courses_id":"593","courses_avg":93.59,"courses_instructor":"grow, laura","courses_title":"dsgn&anl smp&sub","courses_pass":17,"courses_fail":0,"courses_uuid":"29330","courses_audit":0,"courses_year":2012},{"courses_dept":"epse","courses_id":"449","courses_avg":98.58,"courses_instructor":"grow, laura","courses_title":"educ stds autism","courses_pass":24,"courses_fail":0,"courses_uuid":"29255","courses_audit":0,"courses_year":2012},{"courses_dept":"epse","courses_id":"449","courses_avg":95.47,"courses_instructor":"grow, laura","courses_title":"educ stds autism","courses_pass":17,"courses_fail":0,"courses_uuid":"44402","courses_audit":0,"courses_year":2014},{"courses_dept":"epse","courses_id":"449","courses_avg":98.76,"courses_instructor":"grow, laura","courses_title":"educ stds autism","courses_pass":17,"courses_fail":0,"courses_uuid":"44816","courses_audit":0,"courses_year":2012},{"courses_dept":"epse","courses_id":"449","courses_avg":98.8,"courses_instructor":"grow, laura","courses_title":"educ stds autism","courses_pass":25,"courses_fail":0,"courses_uuid":"6320","courses_audit":0,"courses_year":2014},{"courses_dept":"epse","courses_id":"549","courses_avg":97.69,"courses_instructor":"grow, laura","courses_title":"sem in autism","courses_pass":16,"courses_fail":0,"courses_uuid":"3228","courses_audit":0,"courses_year":2013},{"courses_dept":"epse","courses_id":"549","courses_avg":91.22,"courses_instructor":"grow, laura","courses_title":"sem in autism","courses_pass":27,"courses_fail":0,"courses_uuid":"28987","courses_audit":0,"courses_year":2011},{"courses_dept":"epse","courses_id":"574","courses_avg":93.27,"courses_instructor":"grow, laura","courses_title":"prin behav anlys","courses_pass":25,"courses_fail":1,"courses_uuid":"3249","courses_audit":0,"courses_year":2013},{"courses_dept":"epse","courses_id":"574","courses_avg":94.25,"courses_instructor":"grow, laura","courses_title":"prin behav anlys","courses_pass":16,"courses_fail":0,"courses_uuid":"3250","courses_audit":0,"courses_year":2013},{"courses_dept":"epse","courses_id":"574","courses_avg":93.81,"courses_instructor":"grow, laura","courses_title":"prin behav anlys","courses_pass":21,"courses_fail":0,"courses_uuid":"6376","courses_audit":0,"courses_year":2014},{"courses_dept":"epse","courses_id":"449","courses_avg":96.24,"courses_instructor":"grow, laura","courses_title":"educ stds autism","courses_pass":25,"courses_fail":0,"courses_uuid":"3181","courses_audit":0,"courses_year":2013},{"courses_dept":"psyc","courses_id":"549","courses_avg":97,"courses_instructor":"","courses_title":"masters thesis","courses_pass":1,"courses_fail":0,"courses_uuid":"54846","courses_audit":0,"courses_year":2012},{"courses_dept":"epse","courses_id":"534","courses_avg":97,"courses_instructor":"amaral, deborah;ford, laurie","courses_title":"acad assess schl","courses_pass":8,"courses_fail":0,"courses_uuid":"76310","courses_audit":0,"courses_year":2009},{"courses_dept":"epse","courses_id":"449","courses_avg":94.72,"courses_instructor":"grow, laura","courses_title":"educ stds autism","courses_pass":29,"courses_fail":0,"courses_uuid":"28942","courses_audit":1,"courses_year":2011}]
+}

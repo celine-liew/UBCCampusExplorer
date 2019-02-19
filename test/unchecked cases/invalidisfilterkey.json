@@ -1,0 +1,19 @@
+{
+    "title": "Invalid IS filter key type ",
+    "query": {
+    "WHERE": {
+        "IS": {
+            "courses_avg": "phys"
+        }
+    },
+    "OPTIONS": {
+        "COLUMNS": [
+            "courses_dept",
+            "courses_avg"
+        ],
+        "ORDER": "courses_avg"
+    }
+},
+    "isQueryValid": false,
+    "result": "InsightError"
+}

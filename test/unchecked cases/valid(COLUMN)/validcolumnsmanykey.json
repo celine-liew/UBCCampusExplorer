@@ -1,0 +1,538 @@
+{
+    "title": "Valid columns with many keys",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_dept": "caps"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_id",
+                "courses_dept",
+                "courses_uuid",
+                "courses_instructor"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_id": "200",
+            "courses_dept": "caps",
+            "courses_uuid": "11363",
+            "courses_instructor": "moore, edwin d;osborne, salma;roskelley, calvin;yule, heather"
+        },
+        {
+            "courses_id": "200",
+            "courses_dept": "caps",
+            "courses_uuid": "23363",
+            "courses_instructor": "haas, kurt;hammond, geoffrey lewis;kindler, pawel;osborne, salma"
+        },
+        {
+            "courses_id": "200",
+            "courses_dept": "caps",
+            "courses_uuid": "23364",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "200",
+            "courses_dept": "caps",
+            "courses_uuid": "11364",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "301",
+            "courses_dept": "caps",
+            "courses_uuid": "23365",
+            "courses_instructor": "kwok, yin nam kenny"
+        },
+        {
+            "courses_id": "301",
+            "courses_dept": "caps",
+            "courses_uuid": "48248",
+            "courses_instructor": "kwok, yin nam kenny"
+        },
+        {
+            "courses_id": "301",
+            "courses_dept": "caps",
+            "courses_uuid": "48249",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "301",
+            "courses_dept": "caps",
+            "courses_uuid": "88776",
+            "courses_instructor": "kwok, yin nam kenny"
+        },
+        {
+            "courses_id": "301",
+            "courses_dept": "caps",
+            "courses_uuid": "88777",
+            "courses_instructor": "kwok, yin nam kenny"
+        },
+        {
+            "courses_id": "301",
+            "courses_dept": "caps",
+            "courses_uuid": "88778",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "301",
+            "courses_dept": "caps",
+            "courses_uuid": "94088",
+            "courses_instructor": "kwok, yin nam kenny"
+        },
+        {
+            "courses_id": "301",
+            "courses_dept": "caps",
+            "courses_uuid": "23367",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "301",
+            "courses_dept": "caps",
+            "courses_uuid": "23366",
+            "courses_instructor": "kwok, yin nam kenny"
+        },
+        {
+            "courses_id": "301",
+            "courses_dept": "caps",
+            "courses_uuid": "11366",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "301",
+            "courses_dept": "caps",
+            "courses_uuid": "11365",
+            "courses_instructor": "kwok, yin nam kenny"
+        },
+        {
+            "courses_id": "301",
+            "courses_dept": "caps",
+            "courses_uuid": "94089",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "303",
+            "courses_dept": "caps",
+            "courses_uuid": "23368",
+            "courses_instructor": "accili, eric;clee, susanne michelle;horne, andrew;kindler, pawel;kwok, yin nam kenny;osborne, salma;tanentzapf, guy"
+        },
+        {
+            "courses_id": "303",
+            "courses_dept": "caps",
+            "courses_uuid": "11367",
+            "courses_instructor": "baimbridge, kenneth;clee, susanne michelle;courneya, carol-ann;haas, kurt;horne, andrew;kehl, steven;kwok, yin nam kenny;mason, barry;moukhles, hakima;osborne, salma;tanentzapf, guy"
+        },
+        {
+            "courses_id": "303",
+            "courses_dept": "caps",
+            "courses_uuid": "88779",
+            "courses_instructor": "osborne, salma"
+        },
+        {
+            "courses_id": "303",
+            "courses_dept": "caps",
+            "courses_uuid": "88780",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "303",
+            "courses_dept": "caps",
+            "courses_uuid": "11368",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "303",
+            "courses_dept": "caps",
+            "courses_uuid": "23369",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "390",
+            "courses_dept": "caps",
+            "courses_uuid": "11370",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "390",
+            "courses_dept": "caps",
+            "courses_uuid": "23370",
+            "courses_instructor": "roskelley, calvin"
+        },
+        {
+            "courses_id": "390",
+            "courses_dept": "caps",
+            "courses_uuid": "11369",
+            "courses_instructor": "kopp, janel;loewen, christopher;moukhles, hakima;o'connor, timothy;roskelley, calvin;tanentzapf, guy;viau, victor"
+        },
+        {
+            "courses_id": "390",
+            "courses_dept": "caps",
+            "courses_uuid": "48250",
+            "courses_instructor": "alimohammadi, majid"
+        },
+        {
+            "courses_id": "390",
+            "courses_dept": "caps",
+            "courses_uuid": "48251",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "390",
+            "courses_dept": "caps",
+            "courses_uuid": "88781",
+            "courses_instructor": "roskelley, calvin"
+        },
+        {
+            "courses_id": "390",
+            "courses_dept": "caps",
+            "courses_uuid": "88782",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "390",
+            "courses_dept": "caps",
+            "courses_uuid": "94090",
+            "courses_instructor": "alimohammadi, majid"
+        },
+        {
+            "courses_id": "390",
+            "courses_dept": "caps",
+            "courses_uuid": "94091",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "390",
+            "courses_dept": "caps",
+            "courses_uuid": "23371",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "391",
+            "courses_dept": "caps",
+            "courses_uuid": "11372",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "391",
+            "courses_dept": "caps",
+            "courses_uuid": "23373",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "391",
+            "courses_dept": "caps",
+            "courses_uuid": "48252",
+            "courses_instructor": "doroudi, majid"
+        },
+        {
+            "courses_id": "391",
+            "courses_dept": "caps",
+            "courses_uuid": "48253",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "391",
+            "courses_dept": "caps",
+            "courses_uuid": "88783",
+            "courses_instructor": "alimohammadi, majid"
+        },
+        {
+            "courses_id": "391",
+            "courses_dept": "caps",
+            "courses_uuid": "88784",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "391",
+            "courses_dept": "caps",
+            "courses_uuid": "94092",
+            "courses_instructor": "doroudi, majid"
+        },
+        {
+            "courses_id": "391",
+            "courses_dept": "caps",
+            "courses_uuid": "23372",
+            "courses_instructor": "alimohammadi, majid"
+        },
+        {
+            "courses_id": "391",
+            "courses_dept": "caps",
+            "courses_uuid": "11371",
+            "courses_instructor": "alimohammadi, majid"
+        },
+        {
+            "courses_id": "391",
+            "courses_dept": "caps",
+            "courses_uuid": "94093",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "421",
+            "courses_dept": "caps",
+            "courses_uuid": "11373",
+            "courses_instructor": "nabi, ivan robert;underhill, tully michael"
+        },
+        {
+            "courses_id": "421",
+            "courses_dept": "caps",
+            "courses_uuid": "23374",
+            "courses_instructor": "nabi, ivan robert;underhill, tully michael"
+        },
+        {
+            "courses_id": "421",
+            "courses_dept": "caps",
+            "courses_uuid": "23375",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "421",
+            "courses_dept": "caps",
+            "courses_uuid": "85664",
+            "courses_instructor": "nabi, ivan robert;underhill, tully michael"
+        },
+        {
+            "courses_id": "421",
+            "courses_dept": "caps",
+            "courses_uuid": "85665",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "421",
+            "courses_dept": "caps",
+            "courses_uuid": "88785",
+            "courses_instructor": "nabi, ivan robert;underhill, tully michael"
+        },
+        {
+            "courses_id": "421",
+            "courses_dept": "caps",
+            "courses_uuid": "88786",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "421",
+            "courses_dept": "caps",
+            "courses_uuid": "11374",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "422",
+            "courses_dept": "caps",
+            "courses_uuid": "11375",
+            "courses_instructor": "courneya, carol-ann;kehl, steven;moore, edwin d;osborne, salma"
+        },
+        {
+            "courses_id": "422",
+            "courses_dept": "caps",
+            "courses_uuid": "88787",
+            "courses_instructor": "moore, edwin d;osborne, salma"
+        },
+        {
+            "courses_id": "422",
+            "courses_dept": "caps",
+            "courses_uuid": "88788",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "422",
+            "courses_dept": "caps",
+            "courses_uuid": "23376",
+            "courses_instructor": "moore, edwin d;osborne, salma"
+        },
+        {
+            "courses_id": "422",
+            "courses_dept": "caps",
+            "courses_uuid": "23377",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "422",
+            "courses_dept": "caps",
+            "courses_uuid": "11376",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "423",
+            "courses_dept": "caps",
+            "courses_uuid": "23378",
+            "courses_instructor": "kwok, yin nam kenny"
+        },
+        {
+            "courses_id": "423",
+            "courses_dept": "caps",
+            "courses_uuid": "11378",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "423",
+            "courses_dept": "caps",
+            "courses_uuid": "88790",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "423",
+            "courses_dept": "caps",
+            "courses_uuid": "11377",
+            "courses_instructor": "clee, susanne michelle;kieffer, tim;kwok, yin nam kenny;lynn, francis"
+        },
+        {
+            "courses_id": "423",
+            "courses_dept": "caps",
+            "courses_uuid": "23379",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "423",
+            "courses_dept": "caps",
+            "courses_uuid": "88789",
+            "courses_instructor": "kwok, yin nam kenny"
+        },
+        {
+            "courses_id": "424",
+            "courses_dept": "caps",
+            "courses_uuid": "23380",
+            "courses_instructor": "baimbridge, kenneth;clee, susanne michelle;hammond, geoffrey lewis;hoffman, bradford;kieffer, tim;kindler, pawel;luciani, dan;verchere, bruce;viau, victor"
+        },
+        {
+            "courses_id": "424",
+            "courses_dept": "caps",
+            "courses_uuid": "23381",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "424",
+            "courses_dept": "caps",
+            "courses_uuid": "88791",
+            "courses_instructor": "baimbridge, kenneth"
+        },
+        {
+            "courses_id": "424",
+            "courses_dept": "caps",
+            "courses_uuid": "88792",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "424",
+            "courses_dept": "caps",
+            "courses_uuid": "11380",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "424",
+            "courses_dept": "caps",
+            "courses_uuid": "11379",
+            "courses_instructor": "baimbridge, kenneth;clee, susanne michelle;hammond, geoffrey lewis;hoffman, bradford;kieffer, tim;kindler, pawel;luciani, dan;verchere, bruce;viau, victor"
+        },
+        {
+            "courses_id": "426",
+            "courses_dept": "caps",
+            "courses_uuid": "11382",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "426",
+            "courses_dept": "caps",
+            "courses_uuid": "23382",
+            "courses_instructor": "allan, douglas;baimbridge, kenneth;haas, kurt;kehl, steven"
+        },
+        {
+            "courses_id": "426",
+            "courses_dept": "caps",
+            "courses_uuid": "23383",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "426",
+            "courses_dept": "caps",
+            "courses_uuid": "88793",
+            "courses_instructor": "kehl, steven"
+        },
+        {
+            "courses_id": "426",
+            "courses_dept": "caps",
+            "courses_uuid": "88794",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "426",
+            "courses_dept": "caps",
+            "courses_uuid": "11381",
+            "courses_instructor": "allan, douglas;baimbridge, kenneth;haas, kurt;kehl, steven"
+        },
+        {
+            "courses_id": "430",
+            "courses_dept": "caps",
+            "courses_uuid": "11383",
+            "courses_instructor": "allan, douglas;baimbridge, kenneth;clee, susanne michelle;haas, kurt;hammond, geoffrey lewis;johnson, james;kieffer, tim;loewen, christopher;luciani, dan;mason, barry;osborne, salma;tanentzapf, guy"
+        },
+        {
+            "courses_id": "430",
+            "courses_dept": "caps",
+            "courses_uuid": "23384",
+            "courses_instructor": "accili, eric;allan, douglas;kieffer, tim;kurata, harley;luciani, dan;mason, barry"
+        },
+        {
+            "courses_id": "430",
+            "courses_dept": "caps",
+            "courses_uuid": "23385",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "430",
+            "courses_dept": "caps",
+            "courses_uuid": "88795",
+            "courses_instructor": "allan, douglas"
+        },
+        {
+            "courses_id": "430",
+            "courses_dept": "caps",
+            "courses_uuid": "88796",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "430",
+            "courses_dept": "caps",
+            "courses_uuid": "11384",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "449",
+            "courses_dept": "caps",
+            "courses_uuid": "11388",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "449",
+            "courses_dept": "caps",
+            "courses_uuid": "23386",
+            "courses_instructor": "kieffer, tim"
+        },
+        {
+            "courses_id": "449",
+            "courses_dept": "caps",
+            "courses_uuid": "23387",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "449",
+            "courses_dept": "caps",
+            "courses_uuid": "88797",
+            "courses_instructor": "kieffer, tim"
+        },
+        {
+            "courses_id": "449",
+            "courses_dept": "caps",
+            "courses_uuid": "88798",
+            "courses_instructor": ""
+        },
+        {
+            "courses_id": "449",
+            "courses_dept": "caps",
+            "courses_uuid": "11387",
+            "courses_instructor": "kieffer, tim"
+        }
+    ]
+}
