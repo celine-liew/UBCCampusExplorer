@@ -1,0 +1,42 @@
+{
+    "title": "room given example",
+
+    "query": {
+        "WHERE": {
+            "AND": [{
+                "IS": {
+                    "rooms_furniture": "*Tables*"
+                }
+            }, {
+                "GT": {
+                    "roomse_seats": 100
+                }
+            }]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "COUNT",
+                "sumSeats"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": ["COUNT","sumSeats"]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["rooms_shortname","rooms_href"],
+            "APPLY": [{
+                "COUNT": {
+                    "COUNT": "rooms_type"
+                }
+            },{
+                "sumSeats": {
+                    "SUM": "rooms_seats"
+                }
+            }]
+        }
+    },
+    "isQueryValid": false,
+    "result":"InsightError"
+
+}
