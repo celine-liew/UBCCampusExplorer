@@ -111,12 +111,19 @@ export default class Queryparser  {
         return ast;
     }
     public keyMatchCheck(key: string, element: string) {
-        let self = this;
         let s = null;
         if (element === "IS") {
-            s = key.match(this.queryinfo.rescourses);
+            if (this.queryinfo.isCourse) {
+                s = key.match(this.queryinfo.rescourses);
+            } else {
+                s = key.match(this.queryinfo.resrooms);
+            }
         } else if (element === "LT" || element === "GT" || element === "EQ") {
-            s = key.match(this.queryinfo.renumcourses);
+            if (this.queryinfo.isCourse) {
+                s = key.match(this.queryinfo.renumcourses);
+            } else {
+                s = key.match(this.queryinfo.renumrooms);
+            }
         }
         if (s === null) { throw new InsightError("no _"); }
         if (s.length !== 1 || s[0] !== key) { throw new InsightError("key doesn't match");

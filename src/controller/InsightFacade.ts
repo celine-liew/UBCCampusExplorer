@@ -125,9 +125,13 @@ public addedDatabase: InsightDataset[] = [];
         return new Promise(function (resolve, reject) {
             try {
                 let queryvalidator: QueryValidator = new QueryValidator();
-                queryvalidator.validatequery(query);
+                let isCourse = queryvalidator.validatequery(query);
                 let parser: Queryparser = new Queryparser(queryvalidator.queryinfo);
-                finalresult = parser.executeQuery(query, self.datasetsHash['courses']);
+                if (isCourse) {
+                    finalresult = parser.executeQuery(query, self.datasetsHash['courses']);
+                } else {
+                    finalresult = parser.executeQuery(query, self.datasetsHash['rooms']);
+                }
             } catch (error) {
                 if (error instanceof InsightError || error instanceof ResultTooLargeError) {
                     reject(error);

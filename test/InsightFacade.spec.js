@@ -387,8 +387,8 @@ describe("InsightFacade Add/Remove Dataset", function () {
 });
 describe("InsightFacade PerformQuery", () => {
     const datasetsToQuery = {
-        courses: "./test/data/courses.zip",
-        rooms: "./test/data/rooms.zip"
+        rooms: "./test/data/rooms.zip",
+        courses: "./test/data/courses.zip"
     };
     let insightFacade;
     let testQueries = [];
@@ -423,7 +423,12 @@ describe("InsightFacade PerformQuery", () => {
                 const responsePromises = [];
                 const datasets = Object.assign({}, ...loadedDatasets);
                 for (const [id, content] of Object.entries(datasets)) {
-                    responsePromises.push(insightFacade.addDataset(id, content, IInsightFacade_1.InsightDatasetKind.Courses));
+                    if (id === "courses") {
+                        responsePromises.push(insightFacade.addDataset(id, content, IInsightFacade_1.InsightDatasetKind.Courses));
+                    }
+                    if (id === "rooms") {
+                        responsePromises.push(insightFacade.addDataset(id, content, IInsightFacade_1.InsightDatasetKind.Rooms));
+                    }
                 }
                 try {
                     const responses = yield Promise.all(responsePromises);

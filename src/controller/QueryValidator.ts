@@ -3,7 +3,7 @@ import {InsightError} from "./IInsightFacade";
 import {QueryInfo} from "./QueryInfo";
 export default class QueryValidator  {
     public queryinfo: QueryInfo;
-    public validatequery(query: any) {
+    public validatequery(query: any): boolean {
         this.queryinfo = new QueryInfo(query);
         let keys: string[];
         keys = Object.keys(query);
@@ -25,12 +25,12 @@ export default class QueryValidator  {
                 this.queryinfo.hasTransformation = true;
                 this.validateWhere(query["WHERE"]);
                 this.validateOptions(query["OPTIONS"]);
-                return;
+                return this.queryinfo.isCourse;
             } else {
                 this.queryinfo.hasTransformation = false;
                 this.validateWhere(query["WHERE"]);
                 this.validateOptions(query["OPTIONS"]);
-                return;
+                return this.queryinfo.isCourse;
             }
         }
     }
@@ -78,7 +78,6 @@ export default class QueryValidator  {
             if (optionpart.hasOwnProperty("ORDER")) {
                 self.checkorder(this.queryinfo.columnsToDisp, optionpart["ORDER"]);
             }
-            return;
         }
     }
     public checkorder(columns: Set<string>, order: any) {
@@ -114,7 +113,7 @@ export default class QueryValidator  {
         } else if (order["keys"].length === 0) {
             throw new InsightError("invalid order, keys should be an non-empty array");
         } else {
-            order["keys"].foreach((orderKey: any) => {
+            order["keys"].forEach((orderKey: any) => {
                 let flag = false;
                 columns.forEach((element) => {
                     if (element === orderKey) {

@@ -375,8 +375,8 @@ describe("InsightFacade Add/Remove Dataset", function () {
 describe("InsightFacade PerformQuery", () => {
     const datasetsToQuery: { [id: string]: string } = {
         //smalldataset: "./test/data/smalldataset.zip",
-        courses: "./test/data/courses.zip",
-        rooms: "./test/data/rooms.zip"
+        rooms: "./test/data/rooms.zip",
+        courses: "./test/data/courses.zip"
         // cpsccourses2: "./test/data/cpsccourses2.zip",
         // only1validcourse: "./test/data/only1validcourse.zip"
     };
@@ -421,7 +421,12 @@ describe("InsightFacade PerformQuery", () => {
             const responsePromises: Array<Promise<string[]>> = [];
             const datasets: { [id: string]: string } = Object.assign({}, ...loadedDatasets);
             for (const [id, content] of Object.entries(datasets)) {
-                responsePromises.push(insightFacade.addDataset(id, content, InsightDatasetKind.Courses));
+                if (id === "courses") {
+                    responsePromises.push(insightFacade.addDataset(id, content, InsightDatasetKind.Courses));
+                }
+                if (id === "rooms") {
+                    responsePromises.push(insightFacade.addDataset(id, content, InsightDatasetKind.Rooms));
+                }
             }
 
             // This try/catch is a hack to let your dynamic tests execute even if the addDataset method fails.

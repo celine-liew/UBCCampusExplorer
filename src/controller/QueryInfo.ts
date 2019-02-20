@@ -8,6 +8,7 @@ export class QueryInfo {
     public hasTransformation: boolean;
     public databasename: string;
     public isCourse: boolean;
+    public isCourseSet: boolean = false;
     public order: any;
     public recourses = new RegExp(/[^_]+_(avg|pass|fail|audit|year|dept|id|instructor|title|uuid)$/g);
     public rerooms =
@@ -34,7 +35,7 @@ export class QueryInfo {
 
     public checkcolumnsWithTrans() {
         let self = this;
-        this.setDbNameByFirstColumn();
+        this.setDbNameisCourseByFirstColumn();
         this.validateTransForm();
         this.columnsToDisp = new Set<string>();
         this.query["OPTIONS"]["COLUMNS"].forEach((eachcolumn: any) => {
@@ -172,7 +173,7 @@ export class QueryInfo {
     }
     public checkcolumnsWithoutTrans() {
         let self = this;
-        this.setDbNameByFirstColumn();
+        this.setDbNameisCourseByFirstColumn();
         this.query["OPTIONS"]["COLUMNS"].forEach((element: any) => {
             let flwstrings: string[] = [];
             if (self.isCourse) {
@@ -192,23 +193,71 @@ export class QueryInfo {
             }
         });
     }
-    public setDbNameByFirstColumn() {
+    public setDbNameisCourseByFirstColumn() {
         let self = this;
-        let columns = self.query["OPTIONS"]["COLUMNS"];
-        let firstelement = columns[0];
+        let firstelement = self.query["OPTIONS"]["COLUMNS"][0];
         let s = firstelement.match(this.recourses);
-        // let isCourse: boolean;
-        if (s.length !== 1 || s[0] !== firstelement) {
-            s = firstelement.match(this.rerooms);
+        if (s !== null) {
             if (s.length !== 1 || s[0] !== firstelement) {
-                throw new InsightError("key doesn't match");
+                s = firstelement.match(this.rerooms);
+                if (s !== null) {
+                    if (s.length !== 1 || s[0] !== firstelement) {
+                        if (!this.hasTransformation) {
+                            throw new InsightError("invalid key in column");
+                        }
+                    } else {
+                        this.isCourse = false;
+                        this.isCourseSet = true;
+                    }
+                }
             } else {
-                this.isCourse = false;
+                this.isCourse = true;
+                this.isCourseSet = true;
             }
         } else {
-            this.isCourse = true;
+            s = firstelement.match(this.rerooms);
+            if (s !== null) {
+                if (s.length !== 1 || s[0] !== firstelement) {
+                    if (!this.hasTransformation) {
+                        throw new InsightError("invalid key in column");
+                    }
+                } else {
+                    this.isCourse = false;
+                    this.isCourseSet = true;
+                }
+            }
+        }
+        if (! this.isCourseSet && !this.query.hasTransformation) {
+            throw new InsightError("column invalid!");
+        } else if (! this.isCourseSet && this.query.hasTransformation) {
+            firstelement = this.setDbNameisCourseByGroup();
         }
         let s2 = firstelement.split("_");
         this.databasename = s2[0];
+    }
+    public setDbNameisCourseByGroup(): string {
+        let groupkeys = this.query["TRANSFORMATION"]["GROUP"];
+        if (!Array.isArray(groupkeys)) {
+            throw new InsightError("Group must be an non-empty array");
+        } else if (groupkeys.length === 0) {
+            throw new InsightError("Group must be an non-empty array");
+        } else {
+            let firstgroupkey = groupkeys[0];
+            if (typeof firstgroupkey !== "string") {
+                throw new InsightError("Group must be an non-empty array of string");
+            } else {
+                if (this.recourses.test(firstgroupkey)) {
+                    this.isCourse = true;
+                    this.isCourseSet = true;
+                    return firstgroupkey;
+                } else if (this.rerooms.test(firstgroupkey)) {
+                    this.isCourse = false;
+                    this.isCourseSet = true;
+                    return firstgroupkey;
+                } else {
+                    throw new InsightError("Invalid group key string");
+                }
+            }
+        }
     }
 }
