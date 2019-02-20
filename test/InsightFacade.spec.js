@@ -468,6 +468,7 @@ describe("InsightFacade PerformQuery", () => {
                             if (test.isQueryValid) {
                                 chai_1.expect(response).to.deep.include.members(test.result);
                                 chai_1.expect(response.length).to.deep.equal(test.result.length);
+                                chai_1.expect(response).to.deep.equal(test.result);
                             }
                             else {
                                 switch (test.result) {
