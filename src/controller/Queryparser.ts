@@ -6,7 +6,7 @@ import {QueryInfo} from "./QueryInfo";
 export default class Queryparser  {
     private AST: IFilter = { FilterKey : "", value : [], nodes : []};
     private rowselctr: RowsSelector;
-    private realapplyobj: Set<any> = new Set();
+    private realapplyobj: any = {};
     private queryinfo: QueryInfo;
     constructor(queryinfo: QueryInfo) {
         this.queryinfo = queryinfo; }
@@ -189,7 +189,8 @@ export default class Queryparser  {
                 self.queryinfo.columnsToDisp.forEach((potentialkey: any) => {
                     self.queryinfo.query["TRANSFORMATIONS"]["APPLY"].forEach((applyrule: any) => {
                         if (self.queryinfo.applykeys.size !== 0 && applyrule.hasOwnProperty(potentialkey)) {
-                            self.realapplyobj.add(applyrule[potentialkey]);
+                            let applykey = Object.keys(applyrule)[0];
+                            self.realapplyobj[applykey] = applyrule[applykey];
                             let a: any = applyrule[potentialkey];
                             if (a[Object.keys(a)[0]] === keytoexaminefull) {
                                 copiedelement[potentialkey] = eachrow[keytoexamine];
@@ -210,20 +211,23 @@ export default class Queryparser  {
             return ret;
         }
         rowsbeforeapply = this.groupRows(rowsbeforetrans, groupkeyarray);
-        if (self.realapplyobj.size !== 0) {
+        if (Object.keys(self.realapplyobj).length !== 0) {
             rowsafterapply = this.trimcolumn(this.applykeyop(rowsbeforeapply));
         } else {
             rowsafterapply = this.trimcolumn(rowsbeforeapply);
         }
         if (typeof this.queryinfo.order === "string") {
-            return this.sortRowsWithOneOrder(rowsafterapply);
+            return this.rowselctr.sortRowsWithOneOrder(rowsafterapply, this.queryinfo.order);
         } else {
-            return this.sortRowsWithObjOrder(rowsafterapply);
+            if (Object.keys(this.queryinfo.order).length === 0 ) {
+                return rowsafterapply;
+            }
+            return this.rowselctr.sortRowsWithObjOrder(rowsafterapply, this.queryinfo.order);
         }
     }
     private groupRows(rowsbeforetrans: any[], groupkeyarray: any): any {
-        if (this.realapplyobj.size === 0) {
-            let groups: Set<any>;
+        if (Object.keys(this.realapplyobj).length === 0) {
+            let groups: Set<any> = new Set();
             rowsbeforetrans.forEach( function (eachrow) {
                 if (!groups.has(eachrow)) {
                     groups.add(groupkeyarray(eachrow));
@@ -266,33 +270,20 @@ export default class Queryparser  {
         rowsbeforeoption.forEach((element) => {
             let copiedelement: any = {};
             Object.keys(element).forEach((keytoexamine) => {
-                let keytoexaminefull = this.queryinfo.databasename + "_" + keytoexamine;
-                if (this.queryinfo.columnsToDisp.has(keytoexaminefull)) {
+                let keytoexaminefull = self.queryinfo.databasename + "_" + keytoexamine;
+                if (self.queryinfo.columnsToDisp.has(keytoexaminefull)) {
                     copiedelement[keytoexaminefull] = element[keytoexamine];
                 }
             });
             rowsbeforesort.push(copiedelement);
         });
         if (typeof this.queryinfo.order === "string") {
-            return this.sortRowsWithOneOrder(rowsbeforesort);
+            return this.rowselctr.sortRowsWithOneOrder(rowsbeforesort, this.queryinfo.order);
         } else {
-            return this.sortRowsWithObjOrder(rowsbeforesort);
+            if (Object.keys(this.queryinfo.order).length === 0 ) {
+                return rowsbeforesort;
+            }
+            return this.rowselctr.sortRowsWithObjOrder(rowsbeforesort, this.queryinfo.order);
         }
-    }
-    public sortRowsWithOneOrder(rowsbeforesorting: any[]): any[] {
-        if (this.queryinfo.order !== undefined) {
-            let fullorder = this.queryinfo.order;
-            rowsbeforesorting.sort(function (a, b) {
-                let A = a[fullorder];
-                let B = b[fullorder];
-                if (A < B) { return -1; }
-                if (A > B) {return 1; }
-                return 0;
-            });
-        }
-        return rowsbeforesorting;
-    }
-    private sortRowsWithObjOrder(rowsbeforesort: any[]): any {
-        return null;
     }
 }

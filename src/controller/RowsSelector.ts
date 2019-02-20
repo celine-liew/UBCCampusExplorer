@@ -126,14 +126,14 @@ export default class RowsSelector {
         }
         return ret;
     }
-    public static findSumInArray(array: any[], eachkey: any) {
+    public static findSumInArray(array: any[], eachkey: any): number {
         let sum = 0;
         array.forEach((eachrow) => {
             sum += eachrow[eachkey];
         });
         return Number(sum.toFixed(2));
     }
-    public static findMinInArray(array: any[], eachkey: any) {
+    public static findMinInArray(array: any[], eachkey: any): number {
         let ret = array[0][eachkey];
         array.forEach((eachrow) => {
             if (eachrow[eachkey] < ret) {
@@ -142,7 +142,7 @@ export default class RowsSelector {
         });
         return ret;
     }
-    public static findMaxInArray(array: any[], eachkey: any) {
+    public static findMaxInArray(array: any[], eachkey: any): number {
         let ret = array[0][eachkey];
         array.forEach((eachrow) => {
             if (eachrow[eachkey] > ret) {
@@ -151,17 +151,17 @@ export default class RowsSelector {
         });
         return ret;
     }
-    public static findAvgInArray(array: any[], eachkey: any) {
-        let sum = new Decimal(0);
+    public static findAvgInArray(array: any[], eachkey: any): number {
+        let sum = new Decimal(0.0);
         array.forEach((eachrow) => {
             let value = new Decimal(eachrow[eachkey]);
-            sum.add(value);
+            sum = sum.add(value);
         });
         let avg = sum.toNumber() / array.length;
         let ret = Number(avg.toFixed(2));
         return ret;
     }
-    public static findCountInArray(array: any[], eachkey: any) {
+    public static findCountInArray(array: any[], eachkey: any): number {
         return array.length;
     }
     public static cmptAcrsEachrowinGroup(array: any[], realapplyobj: any) {
@@ -187,5 +187,52 @@ export default class RowsSelector {
             }
         });
         return ret;
+    }
+    public sortRowsWithOneOrder(rowsbeforesorting: any[], order: string): any[] {
+        if (order !== undefined) {
+            let fullorder = order;
+            rowsbeforesorting.sort(function (a, b) {
+                let A = a[fullorder];
+                let B = b[fullorder];
+                if (A < B) { return -1; }
+                if (A > B) {return 1; }
+                return 0;
+            });
+        }
+        return rowsbeforesorting;
+    }
+    public sortRowsWithObjOrder(rowsbeforesorting: any[], order: any): any {
+        let direc = 1;
+        if (order["dir"] === "DOWN") {
+            direc = -1;
+        }
+        let primarykey = order["keys"][0];
+        rowsbeforesorting.sort(function (objA, objB) {
+            if (objA[primarykey] > objB[primarykey]) {
+                return direc;
+            } else if (objA[primarykey] < objB[primarykey]) {
+                return 0 - direc;
+            } else {
+                return 0;
+            }
+        });
+        for (let i = 1; i < order["keys"].length; i++) {
+            let key = order["keys"][i];
+            rowsbeforesorting.sort(function (objA, objB) {
+                for (let j = 0; j < i; j++) {
+                    if (objA[order["keys"][j]] !== objB[order["keys"][j]]) {
+                        return 0;
+                    }
+                }
+                if (objA[key] > objB[key]) {
+                    return direc;
+                } else if (objA[key] < objB[key]) {
+                    return 0 - direc;
+                } else {
+                    return 0;
+                }
+            });
+        }
+        return rowsbeforesorting;
     }
 }

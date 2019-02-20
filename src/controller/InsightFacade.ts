@@ -7,11 +7,10 @@ import Queryparser from "./Queryparser";
 import { acceptParser } from "restify";
 import * as JSZip from "jszip";
 import * as fs from "fs-extra";
-import { checkValidDatabase, saveDatasetList, parseFileNamesIfCoursesOrRoomstype, checkDuplicateIDs, processBasedonInsightType } from "./HelperAddDataset";
+import { checkValidDatabase,processCoursesFile, saveDatasetList, parseFileNamesIfCoursesOrRoomstype, checkDuplicateIDs, processBasedonInsightType } from "./HelperAddDataset";
 const parse5 = require("parse5");
 import { addListener } from "cluster";
 import QueryValidator from "./QueryValidator";
-import { checkValidDatabase, processCoursesFile, saveDatasetList } from "./HelperAddDataset";
 
 /**
  * This is the main programmatic entry point for the project.

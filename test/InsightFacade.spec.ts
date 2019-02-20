@@ -374,8 +374,9 @@ describe("InsightFacade Add/Remove Dataset", function () {
 // You should not need to modify it; instead, add additional files to the queries directory.
 describe("InsightFacade PerformQuery", () => {
     const datasetsToQuery: { [id: string]: string } = {
-        smalldataset: "./test/data/smalldataset.zip",
-        courses: "./test/data/courses.zip"
+        //smalldataset: "./test/data/smalldataset.zip",
+        courses: "./test/data/courses.zip",
+        rooms: "./test/data/rooms.zip"
         // cpsccourses2: "./test/data/cpsccourses2.zip",
         // only1validcourse: "./test/data/only1validcourse.zip"
     };

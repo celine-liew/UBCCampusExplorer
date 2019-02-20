@@ -44,7 +44,7 @@ export class QueryInfo {
             } else {
                 flwstrings = eachcolumn.match(self.rerooms);
             }
-            if (flwstrings === null) {
+            if (flwstrings === null && self.applykeys.size !== 0) {
                 if (self.applykeys.has(eachcolumn)) {
                     self.columnsToDisp.add(eachcolumn);
                 } else {
@@ -56,8 +56,19 @@ export class QueryInfo {
                 let s3 = flwstrings[0].split("_");
                 if ( self.databasename !== s3[0]) {
                     throw new InsightError("Cannot query more than one dataset");
-                } else if (!self.applykeys.has(flwstrings[0]) && !self.groupKeys.has(flwstrings[0])) {
-                    throw new InsightError("Keys in COLUMNS must be in GROUP or APPLY when TRANSFORMATIONS is present");
+                }
+                if (!self.groupKeys.has(flwstrings[0])) {
+                    if (self.applykeys.size !== 0) {
+                        if (!self.applykeys.has(flwstrings[0])) {
+                            throw new InsightError
+                            ("Keys in COLUMNS must be in GROUP or APPLY when TRANSFORMATIONS is present");
+                        } else {
+                            self.columnsToDisp.add(eachcolumn);
+                        }
+                    } else {
+                        throw new InsightError
+                            ("Keys in COLUMNS must be in GROUP or APPLY when TRANSFORMATIONS is present");
+                    }
                 } else {
                     self.columnsToDisp.add(eachcolumn);
                 }
@@ -112,8 +123,6 @@ export class QueryInfo {
     public validateApply() {
         let self = this;
         let applykey: string;
-        let applytoken: string;
-        let applytokenreg = new RegExp(/^(MAX|MIN|AVG|COUNT|SUM)$/g);
         this.query["TRANSFORMATIONS"]["APPLY"].forEach((applyRule: any) => {
             if (typeof applyRule !== "object") {
                 throw new InsightError("APPLYRULES should be json objects");
@@ -127,17 +136,35 @@ export class QueryInfo {
                 let l: number = Object.keys(applyRule[applykey]).length;
                 throw new InsightError("Apply body should only have 1 key, has " + l);
             } else {
-                applytoken = Object.keys(applyRule[applykey])[0];
+                let applytokenreg = new RegExp(/^(MAX|MIN|AVG|COUNT|SUM)$/);
+                let applytoken = Object.keys(applyRule[applykey])[0];
                 if (!applytokenreg.test(applytoken)) {
                     throw new InsightError("Wrong Apply Token");
                 } else if (typeof applyRule[applykey][applytoken] !== "string") {
                     throw new InsightError("apply should excute on string");
                 } else {
-                    if (!(self.isCourse && self.recourses.test(applyRule[applykey][applytoken]))) {
-                        throw new InsightError("key to apply is mismatched");
+                    if (self.isCourse) {
+                        let renumcourses = new RegExp(/[^_]+_(avg|pass|fail|audit|year)$/);
+                        let recourses = new RegExp(/[^_]+_(avg|pass|fail|audit|year|dept|id|instructor|title|uuid)$/);
+                        if (applytoken !== "COUNT") {
+                            if (! renumcourses.test(applyRule[applykey][applytoken])) {
+                                throw new InsightError("key to apply is mismatched");
+                            }
+                        } else if (! recourses.test(applyRule[applykey][applytoken])) {
+                            throw new InsightError("key to apply is mismatched");
+                        }
                     }
-                    if (!(!self.isCourse && self.rerooms.test(applyRule[applykey][applytoken]))) {
-                        throw new InsightError("key to apply is mismatched");
+                    if (!self.isCourse) {
+                        let rerooms =
+                new RegExp(/[^_]+_(lat|lon|seats|fullname|shortname|number|name|address|type|furniture|href)$/);
+                        let renumrooms = new RegExp(/[^_]+_(lat|lon|seats)$/);
+                        if (applytoken !== "COUNT") {
+                            if (! renumrooms.test(applyRule[applykey][applytoken])) {
+                                throw new InsightError("key to apply is mismatched");
+                            }
+                        } else if (! rerooms.test(applyRule[applykey][applytoken])) {
+                            throw new InsightError("key to apply is mismatched");
+                        }
                     }
                 }
             }

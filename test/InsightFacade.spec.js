@@ -387,8 +387,8 @@ describe("InsightFacade Add/Remove Dataset", function () {
 });
 describe("InsightFacade PerformQuery", () => {
     const datasetsToQuery = {
-        smalldataset: "./test/data/smalldataset.zip",
-        courses: "./test/data/courses.zip"
+        courses: "./test/data/courses.zip",
+        rooms: "./test/data/rooms.zip"
     };
     let insightFacade;
     let testQueries = [];

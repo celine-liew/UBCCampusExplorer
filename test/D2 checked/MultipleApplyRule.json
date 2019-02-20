@@ -14,6 +14,10 @@
                 "overallAvg": {
                     "AVG": "courses_avg"
                 }
+            },{
+                "JSDFSDF": {
+                    "MAX": "courses_pass"
+                }
             }]
         }
     },
