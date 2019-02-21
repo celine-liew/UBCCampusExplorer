@@ -127,9 +127,10 @@ export default class RowsSelector {
         return ret;
     }
     public static findSumInArray(array: any[], eachkey: any): number {
-        let sum = 0;
+        let sum = new Decimal(0.0);
         array.forEach((eachrow) => {
-            sum += eachrow[eachkey];
+            let value = new Decimal(eachrow[eachkey]);
+            sum = sum.add(value);
         });
         return Number(sum.toFixed(2));
     }
@@ -162,7 +163,11 @@ export default class RowsSelector {
         return ret;
     }
     public static findCountInArray(array: any[], eachkey: any): number {
-        return array.length;
+        let testset: Set<any> = new Set();
+        array.forEach((eachrow) => {
+            testset.add(eachrow[eachkey]);
+        });
+        return testset.size;
     }
     public static cmptAcrsEachrowinGroup(array: any[], realapplyobj: any) {
         let ret = array[0];

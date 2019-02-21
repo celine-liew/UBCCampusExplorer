@@ -1,0 +1,48 @@
+{
+    "title": "SELECT dept, id, avg WHERE one AND branch avg > 99 ORDER BY avg",
+    "query": {
+        "WHERE": {
+            "AND": [{"OR": [{"AND": [{"OR": [{"GT": {
+                "courses_fail": 99
+            }}]}]}]},
+                {
+                    "NOT": {
+                        "LT": {
+                            "courses_avg": 72
+                        }
+                    }
+
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "MINAvg",
+                "suAvg"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": ["courses_dept","MINAvg"]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["courses_title","courses_dept"],
+            "APPLY": [{
+                "suAvg": {
+                    "COUNT": "courses_instructor"
+                }
+            },{
+                "MINAvg": {
+                    "MIN": "courses_avg"
+                }
+            }]
+        }
+    },
+    "isQueryValid": true,
+    "result":[{"courses_dept":"phys","MINAvg":74.98,"suAvg":1},
+        {"courses_dept":"cpsc","MINAvg":72.28,"suAvg":1},
+        {"courses_dept":"comm","MINAvg":72.25,"suAvg":1},
+        {"courses_dept":"chem","MINAvg":72.83,"suAvg":1},
+        {"courses_dept":"chem","MINAvg":72.1,"suAvg":1},
+        {"courses_dept":"apsc","MINAvg":72.08,"suAvg":1}]}
