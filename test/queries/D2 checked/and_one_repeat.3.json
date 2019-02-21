@@ -34,10 +34,10 @@
                 }
             },{
                 "MINAvg": {
-                    "SUM": "courses_year"
+                    "SUM": "courses_avg"
                 }
             }]
         }
     },
     "isQueryValid": true,
-    "result":[{"courses_dept":"phys","MINAvg":1900,"suAvg":1},{"courses_dept":"cpsc","MINAvg":5700,"suAvg":1},{"courses_dept":"comm","MINAvg":1900,"suAvg":1},{"courses_dept":"chem","MINAvg":1900,"suAvg":1},{"courses_dept":"chem","MINAvg":1900,"suAvg":1},{"courses_dept":"apsc","MINAvg":9500,"suAvg":1}]}
+    "result":[{"courses_dept":"phys","MINAvg":74.98,"suAvg":1},{"courses_dept":"cpsc","MINAvg":218.16,"suAvg":1},{"courses_dept":"comm","MINAvg":72.25,"suAvg":1},{"courses_dept":"chem","MINAvg":72.83,"suAvg":1},{"courses_dept":"chem","MINAvg":72.1,"suAvg":1},{"courses_dept":"apsc","MINAvg":368.18,"suAvg":1}]}

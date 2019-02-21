@@ -9,8 +9,7 @@ export default class Queryparser  {
     private realapplyobj: any = {};
     private queryinfo: QueryInfo;
     constructor(queryinfo: QueryInfo) {
-        this.queryinfo = queryinfo;
-    }
+        this.queryinfo = queryinfo; }
     public executeQuery(query: any, addHash: IHash): any[] {
         if (Object.keys(query["WHERE"]).length === 0) {
             if (addHash[this.queryinfo.databasename].length >= 5000) {
@@ -190,22 +189,27 @@ export default class Queryparser  {
         let rowsbeforetrans: any[] = [];
         rowsbeforcolumnseclection.forEach((eachrow) => {
             let copiedelement: any = {};
-            Object.keys(eachrow).forEach((keytoexamine) => {
-                let keytoexaminefull = self.queryinfo.databasename + "_" + keytoexamine;
-                if (self.queryinfo.groupKeys.has(keytoexaminefull)) {
-                    copiedelement[keytoexaminefull] = eachrow[keytoexamine]; }
-                self.queryinfo.columnsToDisp.forEach((potentialkey: any) => {
+            self.queryinfo.columnsToDisp.forEach((requestCol) => {
+                if (!requestCol.includes("_")) {
                     self.queryinfo.query["TRANSFORMATIONS"]["APPLY"].forEach((applyrule: any) => {
-                        if (self.queryinfo.applykeys.size !== 0 && applyrule.hasOwnProperty(potentialkey)) {
-                            let applykey = Object.keys(applyrule)[0];
+                        let applykey = Object.keys(applyrule)[0];
+                        if (requestCol === applykey) {
+                            let applytokenobj = applyrule[applykey];
+                            let referredattr = applytokenobj[Object.keys(applytokenobj)[0]];
+                            let splittedreferredattr = referredattr.split("_");
                             self.realapplyobj[applykey] = applyrule[applykey];
-                            let a: any = applyrule[potentialkey];
-                            if (a[Object.keys(a)[0]] === keytoexaminefull) {
-                                copiedelement[potentialkey] = eachrow[keytoexamine];
-                            }
+                            copiedelement[requestCol] = eachrow[splittedreferredattr[1]];
                         }
                     });
-                });
+                } else {
+                    copiedelement[requestCol] = eachrow[requestCol.split("_")[1]];
+                }
+            });
+            Object.keys(eachrow).forEach((keytoexamine) => {
+                let keytoexaminefull = self.queryinfo.databasename + "_" + keytoexamine;
+                if (self.queryinfo.groupKeys.has(keytoexaminefull)
+                && !self.queryinfo.columnsToDisp.has(keytoexaminefull)) {
+                    copiedelement[keytoexaminefull] = eachrow[keytoexamine]; }
             });
             rowsbeforetrans.push(copiedelement);
         });
@@ -222,16 +226,13 @@ export default class Queryparser  {
         if (Object.keys(self.realapplyobj).length !== 0) {
             rowsafterapply = this.trimcolumn(this.applykeyop(rowsbeforeapply));
         } else {
-            rowsafterapply = this.trimcolumn(rowsbeforeapply);
-        }
+            rowsafterapply = this.trimcolumn(rowsbeforeapply); }
         if (typeof this.queryinfo.order === "string") {
             return this.rowselctr.sortRowsWithOneOrder(rowsafterapply, this.queryinfo.order);
         } else {
             if (Object.keys(this.queryinfo.order).length === 0 ) {
-                return rowsafterapply;
-            }
-            return this.rowselctr.sortRowsWithObjOrder(rowsafterapply, this.queryinfo.order);
-        }
+                return rowsafterapply; }
+            return this.rowselctr.sortRowsWithObjOrder(rowsafterapply, this.queryinfo.order); }
     }
     private groupRows(rowsbeforetrans: any[], groupkeyarray: any): any {
         if (Object.keys(this.realapplyobj).length === 0) {
