@@ -9,7 +9,8 @@ export default class Queryparser  {
     private realapplyobj: any = {};
     private queryinfo: QueryInfo;
     constructor(queryinfo: QueryInfo) {
-        this.queryinfo = queryinfo; }
+        this.queryinfo = queryinfo;
+    }
     public executeQuery(query: any, addHash: IHash): any[] {
         if (Object.keys(query["WHERE"]).length === 0) {
             if (addHash[this.queryinfo.databasename].length >= 5000) {
@@ -265,7 +266,8 @@ export default class Queryparser  {
             let rowtobepushedin: any = {};
             Object.keys(eachrow).forEach((eachkey) => {
                 if (this.queryinfo.columnsToDisp.has(eachkey)) {
-                    rowtobepushedin[eachkey] = eachrow[eachkey]; }
+                    rowtobepushedin[eachkey] = eachrow[eachkey];
+                }
             });
             ret.push(rowtobepushedin);
         });

@@ -458,7 +458,7 @@ describe("InsightFacade PerformQuery", () => {
     // Dynamically create and run a test for each query in testQueries
     it.only("Should run test queries", function () {
         describe("Dynamic InsightFacade PerformQuery tests", function () {
-            for (const test of testQueries.slice(0,1)) {
+            for (const test of testQueries) {
                 it(`[${test.filename}] ${test.title}`, async function () {
                     let response: any[];
 
@@ -470,7 +470,7 @@ describe("InsightFacade PerformQuery", () => {
                         if (test.isQueryValid) {
                             expect(response).to.deep.include.members(test.result);
                             expect(response.length).to.deep.equal(test.result.length);
-                            // expect(response).to.deep.equal(test.result);
+                            expect(response).to.deep.equal(test.result);
                         } else {
                             switch (test.result) {
                                 case "InsightError":

@@ -8,7 +8,7 @@ export default class RowsSelector {
         this.allrows = allrows;
         this.databasename = databasename;
     }
-    public static helper(databaseinfo: string, userinput: string): boolean {
+    public static wildCardHelper(databaseinfo: string, userinput: string): boolean {
        if (databaseinfo === "" || userinput === "") {
            return false;
        }
@@ -120,7 +120,7 @@ export default class RowsSelector {
             throw new InsightError("key doesn't match");
         } else {
             self.allrows.forEach((element) => {
-                if (RowsSelector.helper(element[key], value)) {
+                if (RowsSelector.wildCardHelper(element[key], value)) {
                     ret.push(element); }
             });
         }

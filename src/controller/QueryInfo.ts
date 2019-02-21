@@ -131,11 +131,12 @@ export class QueryInfo {
                 throw new InsightError("Apply rule should only have 1 key, has " + Object.keys(applyRule).length);
             } else {
                 applykey = Object.keys(applyRule)[0];
-                if (!applykey.includes("_")) {
-                    self.applykeys.add(applykey);
-                } else {
+                if (self.applykeys.has(applykey)) {
+                    throw new InsightError("Cannot have duplicate applyrule identifier");
+                } else if (applykey.includes("_"))  {
                     throw new InsightError("Cannot have underscore in applyKey");
-                }
+                } else {
+                    self.applykeys.add(applykey); }
             }
             if (Object.keys(applyRule[applykey]).length !== 1) {
                 let l: number = Object.keys(applyRule[applykey]).length;
