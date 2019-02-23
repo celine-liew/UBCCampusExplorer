@@ -320,6 +320,24 @@ describe("InsightFacade Add/Remove Dataset", function () {
             }
         });
     });
+    it("Should remove the room dataset only", function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            const id = "courses";
+            const id2 = "rooms";
+            let response;
+            try {
+                yield insightFacade.addDataset(id, datasets[id], IInsightFacade_1.InsightDatasetKind.Courses);
+                yield insightFacade.addDataset(id2, datasets[id2], IInsightFacade_1.InsightDatasetKind.Rooms);
+                response = yield insightFacade.removeDataset(id2);
+            }
+            catch (err) {
+                response = err;
+            }
+            finally {
+                chai_1.expect(response).to.deep.equal(id2);
+            }
+        });
+    });
     it("Should expect an error with null input", function () {
         return __awaiter(this, void 0, void 0, function* () {
             const id = null;
