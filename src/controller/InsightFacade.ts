@@ -85,19 +85,38 @@ public addedDatabase: InsightDataset[] = [];
 
 
     public removeDataset(id: string): Promise<string> {
+        // if (!id){
+        //     throw new InsightError ("null input");
+        // } if (!this.datasetsHash.courses || this.datasetsHash.courses && !this.datasetsHash.courses[id]){
+        //     throw new NotFoundError ("dataset not in list.");
+        // } else { try {
+        //     delete this.datasetsHash.courses[id];
+        //     this.addedDatabase = this.addedDatabase.filter(name => id != id);
+        //     return Promise.resolve(id);
+        //     } catch (err) {
+        //             if (err instanceof Error) {
+        //                 throw new InsightError(err);
+        //             } return err;
+        //     }
+        // }
         if (!id){
             throw new InsightError ("null input");
-        } if (!this.datasetsHash.courses || this.datasetsHash.courses && !this.datasetsHash.courses[id]){
+        } if ((!this.datasetsHash.courses || this.datasetsHash.courses && !this.datasetsHash.courses[id]) && (
+            !this.datasetsHash.rooms || this.datasetsHash.rooms && !this.datasetsHash.rooms[id])){
             throw new NotFoundError ("dataset not in list.");
-        } else { try {
-            delete this.datasetsHash.courses[id];
-            this.addedDatabase = this.addedDatabase.filter(name => id != id);
-            return Promise.resolve(id);
-            } catch (err) {
-                    if (err instanceof Error) {
-                        throw new InsightError(err);
-                    } return err;
-            }
+        } else{ try {
+                if (this.datasetsHash.courses && this.datasetsHash.courses[id]){
+                delete this.datasetsHash.courses[id];
+                } else if (this.datasetsHash.rooms && this.datasetsHash.rooms[id]){
+                delete this.datasetsHash.rooms[id];
+                }
+                this.addedDatabase = this.addedDatabase.filter(name => id != id);
+                return Promise.resolve(id);
+                } catch (err) {
+                        if (err instanceof Error) {
+                            throw new InsightError(err);
+                        } return err;
+                }
         }
     }
 

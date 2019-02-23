@@ -304,7 +304,21 @@ describe("InsightFacade Add/Remove Dataset", function () {
         }
 
     });
+    it("Should remove the room dataset only", async function () {
+        const id: string = "courses";
+        const id2: string = "rooms";
+        let response: string;
 
+        try {
+            await insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+            await insightFacade.addDataset(id2, datasets[id2], InsightDatasetKind.Rooms);
+            response = await insightFacade.removeDataset(id2);
+        } catch (err) {
+            response = err;
+        } finally {
+            expect(response).to.deep.equal(id2);
+        }
+    });
     it("Should expect an error with null input", async function () {
         const id: string = null;
         let response: string;
