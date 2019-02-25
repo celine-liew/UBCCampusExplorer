@@ -199,8 +199,12 @@ export default class RowsSelector {
             rowsbeforesorting.sort(function (a, b) {
                 let A = a[fullorder];
                 let B = b[fullorder];
-                if (A < B) { return -1; }
-                if (A > B) {return 1; }
+                if (A < B) {
+                    return -1;
+                }
+                if (A > B) {
+                    return 1;
+                }
                 return 0;
             });
         }
