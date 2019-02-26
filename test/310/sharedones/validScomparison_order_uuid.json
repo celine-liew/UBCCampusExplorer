@@ -1,0 +1,258 @@
+{
+    "title": "SELECT dept, id, avg WHERE avg == 95 || avg > 90 && dept == 'adhe' ORDER BY avg",
+    "query":{
+        "WHERE": {
+            "AND": [
+                {
+                    "IS": {
+                        "courses_dept": "*a*"
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_id": "*0*"
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_instructor": "*p"
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_title": "*"
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_uuid": "*6*"
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_instructor",
+                "courses_title",
+                "courses_uuid",
+                "courses_avg"
+            ],
+            "ORDER": "courses_uuid"
+        }
+    },
+    "isQueryValid": true,
+
+    "result":[
+        {
+            "courses_dept":"visa",
+            "courses_id":"220",
+            "courses_instructor":"mccrum, phillip",
+            "courses_title":"drawing",
+            "courses_uuid":"14663",
+            "courses_avg":75.76
+        },
+        {
+            "courses_dept":"visa",
+            "courses_id":"230",
+            "courses_instructor":"mccrum, phillip",
+            "courses_title":"painting",
+            "courses_uuid":"14667",
+            "courses_avg":74.05
+        },
+        {
+            "courses_dept":"visa",
+            "courses_id":"330",
+            "courses_instructor":"mccrum, phillip",
+            "courses_title":"intrmd paint i",
+            "courses_uuid":"14697",
+            "courses_avg":76.95
+        },
+        {
+            "courses_dept":"visa",
+            "courses_id":"330",
+            "courses_instructor":"mccrum, phillip",
+            "courses_title":"intrmd paint i",
+            "courses_uuid":"14698",
+            "courses_avg":76.75
+        },
+        {
+            "courses_dept":"basm",
+            "courses_id":"502",
+            "courses_instructor":"atwal, perdip",
+            "courses_title":"corporate strtgy",
+            "courses_uuid":"3586",
+            "courses_avg":82.69
+        },
+        {
+            "courses_dept":"baen",
+            "courses_id":"550",
+            "courses_instructor":"atwal, perdip",
+            "courses_title":"fund entrpreneur",
+            "courses_uuid":"46851",
+            "courses_avg":82.7
+        },
+        {
+            "courses_dept":"visa",
+            "courses_id":"110",
+            "courses_instructor":"mccrum, phillip",
+            "courses_title":"fnd comp vis art",
+            "courses_uuid":"52467",
+            "courses_avg":75.87
+        },
+        {
+            "courses_dept":"visa",
+            "courses_id":"380",
+            "courses_instructor":"mccrum, phillip",
+            "courses_title":"studio theory i",
+            "courses_uuid":"52536",
+            "courses_avg":76.52
+        },
+        {
+            "courses_dept":"visa",
+            "courses_id":"330",
+            "courses_instructor":"mccrum, phillip",
+            "courses_title":"intrmd paint i",
+            "courses_uuid":"5767",
+            "courses_avg":80.5
+        },
+        {
+            "courses_dept":"basm",
+            "courses_id":"501",
+            "courses_instructor":"atwal, perdip",
+            "courses_title":"bus strategy",
+            "courses_uuid":"58776",
+            "courses_avg":83.83
+        },
+        {
+            "courses_dept":"visa",
+            "courses_id":"220",
+            "courses_instructor":"mccrum, phillip",
+            "courses_title":"drawing",
+            "courses_uuid":"60192",
+            "courses_avg":77.94
+        },
+        {
+            "courses_dept":"visa",
+            "courses_id":"220",
+            "courses_instructor":"fernandez rodriguez, antonio e;mccrum, phillip",
+            "courses_title":"drawing",
+            "courses_uuid":"60193",
+            "courses_avg":75.25
+        },
+        {
+            "courses_dept":"visa",
+            "courses_id":"380",
+            "courses_instructor":"mccrum, phillip",
+            "courses_title":"studio theory i",
+            "courses_uuid":"60241",
+            "courses_avg":77.5
+        },
+        {
+            "courses_dept":"math",
+            "courses_id":"340",
+            "courses_instructor":"loewen, philip",
+            "courses_title":"intro lin prog",
+            "courses_uuid":"61305",
+            "courses_avg":70.66
+        },
+        {
+            "courses_dept":"baen",
+            "courses_id":"505",
+            "courses_instructor":"wal van lierop",
+            "courses_title":"vent cptl fin&in",
+            "courses_uuid":"6526",
+            "courses_avg":85.87
+        },
+        {
+            "courses_dept":"basm",
+            "courses_id":"501",
+            "courses_instructor":"atwal, perdip",
+            "courses_title":"bus strategy",
+            "courses_uuid":"66605",
+            "courses_avg":84.71
+        },
+        {
+            "courses_dept":"basm",
+            "courses_id":"501",
+            "courses_instructor":"atwal, perdip",
+            "courses_title":"bus strategy",
+            "courses_uuid":"66606",
+            "courses_avg":83.06
+        },
+        {
+            "courses_dept":"basm",
+            "courses_id":"502",
+            "courses_instructor":"atwal, perdip",
+            "courses_title":"corporate strtgy",
+            "courses_uuid":"66609",
+            "courses_avg":84.71
+        },
+        {
+            "courses_dept":"basm",
+            "courses_id":"502",
+            "courses_instructor":"atwal, perdip",
+            "courses_title":"corporate strtgy",
+            "courses_uuid":"66610",
+            "courses_avg":83.06
+        },
+        {
+            "courses_dept":"atsc",
+            "courses_id":"405",
+            "courses_instructor":"austin, philip",
+            "courses_title":"cloud phys&chem",
+            "courses_uuid":"7646",
+            "courses_avg":74.47
+        },
+        {
+            "courses_dept":"atsc",
+            "courses_id":"405",
+            "courses_instructor":"austin, philip",
+            "courses_title":"cloud phys&chem",
+            "courses_uuid":"77576",
+            "courses_avg":75.87
+        },
+        {
+            "courses_dept":"basm",
+            "courses_id":"501",
+            "courses_instructor":"atwal, perdip",
+            "courses_title":"bus strategy",
+            "courses_uuid":"8066",
+            "courses_avg":83.54
+        },
+        {
+            "courses_dept":"basm",
+            "courses_id":"501",
+            "courses_instructor":"atwal, perdip",
+            "courses_title":"bus strategy",
+            "courses_uuid":"8067",
+            "courses_avg":81.19
+        },
+        {
+            "courses_dept":"atsc",
+            "courses_id":"405",
+            "courses_instructor":"austin, philip",
+            "courses_title":"cloud phys&chem",
+            "courses_uuid":"83561",
+            "courses_avg":78.14
+        },
+        {
+            "courses_dept":"atsc",
+            "courses_id":"409",
+            "courses_instructor":"allen, susan elizabeth;austin, philip",
+            "courses_title":"num tch oc,at&er",
+            "courses_uuid":"83565",
+            "courses_avg":84.8
+        },
+        {
+            "courses_dept":"atsc",
+            "courses_id":"500",
+            "courses_instructor":"austin, philip",
+            "courses_title":"bndry-lyr metrly",
+            "courses_uuid":"83567",
+            "courses_avg":87.5
+        }
+    ]
+
+}

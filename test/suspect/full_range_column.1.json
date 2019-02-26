@@ -1,0 +1,47 @@
+{
+    "title": "SELECT all possible columns WHERE avg > 97",
+    "query": {
+        "WHERE": {
+            "OR": [
+                {
+                    "AND": [
+                        {
+                            "GT": {
+                                "courses_avg": 80
+                            }
+                        },
+                        {
+                            "IS": {
+                                "courses_dept": "cpsc"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "IS": {
+                        "courses_dept": "geog"
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "sumPass",
+                "courses_id"
+            ],
+            "ORDER": {
+                "dir": "UP",
+                "keys": ["sumPass","courses_id"]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["courses_id"],
+            "APPLY": [{
+                "sumPass": {
+                    "SUM": "courses_pass"
+                }
+            }]
+        }
+    },
+    "isQueryValid": true,
+    "result":[{"sumPass":26,"courses_id":"444"},{"sumPass":36,"courses_id":"589"},{"sumPass":54,"courses_id":"515"},{"sumPass":68,"courses_id":"535"},{"sumPass":70,"courses_id":"501"},{"sumPass":80,"courses_id":"485"},{"sumPass":84,"courses_id":"430"},{"sumPass":84,"courses_id":"547"},{"sumPass":93,"courses_id":"210"},{"sumPass":96,"courses_id":"525"},{"sumPass":100,"courses_id":"509"},{"sumPass":102,"courses_id":"418"},{"sumPass":102,"courses_id":"522"},{"sumPass":104,"courses_id":"449"},{"sumPass":118,"courses_id":"527"},{"sumPass":120,"courses_id":"507"},{"sumPass":124,"courses_id":"313"},{"sumPass":126,"courses_id":"503"},{"sumPass":126,"courses_id":"513"},{"sumPass":128,"courses_id":"213"},{"sumPass":136,"courses_id":"543"},{"sumPass":145,"courses_id":"314"},{"sumPass":152,"courses_id":"429"},{"sumPass":154,"courses_id":"416"},{"sumPass":182,"courses_id":"411"},{"sumPass":192,"courses_id":"490"},{"sumPass":205,"courses_id":"599"},{"sumPass":220,"courses_id":"520"},{"sumPass":232,"courses_id":"445"},{"sumPass":236,"courses_id":"502"},{"sumPass":242,"courses_id":"426"},{"sumPass":242,"courses_id":"521"},{"sumPass":246,"courses_id":"419"},{"sumPass":252,"courses_id":"446"},{"sumPass":270,"courses_id":"110"},{"sumPass":276,"courses_id":"544"},{"sumPass":328,"courses_id":"500"},{"sumPass":344,"courses_id":"424"},{"sumPass":368,"courses_id":"404"},{"sumPass":380,"courses_id":"495"},{"sumPass":384,"courses_id":"412"},{"sumPass":396,"courses_id":"457"},{"sumPass":404,"courses_id":"450"},{"sumPass":510,"courses_id":"344"},{"sumPass":520,"courses_id":"423"},{"sumPass":544,"courses_id":"221"},{"sumPass":584,"courses_id":"281"},{"sumPass":610,"courses_id":"318"},{"sumPass":634,"courses_id":"340"},{"sumPass":650,"courses_id":"220"},{"sumPass":656,"courses_id":"540"},{"sumPass":788,"courses_id":"304"},{"sumPass":822,"courses_id":"362"},{"sumPass":826,"courses_id":"410"},{"sumPass":876,"courses_id":"211"},{"sumPass":892,"courses_id":"391"},{"sumPass":896,"courses_id":"380"},{"sumPass":910,"courses_id":"497"},{"sumPass":946,"courses_id":"311"},{"sumPass":948,"courses_id":"353"},{"sumPass":970,"courses_id":"361"},{"sumPass":974,"courses_id":"321"},{"sumPass":1008,"courses_id":"250"},{"sumPass":1026,"courses_id":"364"},{"sumPass":1044,"courses_id":"371"},{"sumPass":1060,"courses_id":"345"},{"sumPass":1190,"courses_id":"329"},{"sumPass":1242,"courses_id":"327"},{"sumPass":1258,"courses_id":"374"},{"sumPass":1284,"courses_id":"395"},{"sumPass":1296,"courses_id":"290"},{"sumPass":1386,"courses_id":"357"},{"sumPass":1394,"courses_id":"301"},{"sumPass":1418,"courses_id":"316"},{"sumPass":1700,"courses_id":"319"},{"sumPass":1724,"courses_id":"328"},{"sumPass":1750,"courses_id":"352"},{"sumPass":2290,"courses_id":"312"},{"sumPass":3796,"courses_id":"350"},{"sumPass":5587,"courses_id":"121"},{"sumPass":5644,"courses_id":"122"},{"sumPass":6782,"courses_id":"310"}]}

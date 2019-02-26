@@ -405,6 +405,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
 });
 describe("InsightFacade PerformQuery", () => {
     const datasetsToQuery = {
+        smalldataset: "./test/data/smalldataset.zip",
         rooms: "./test/data/rooms.zip",
         courses: "./test/data/courses.zip"
     };
