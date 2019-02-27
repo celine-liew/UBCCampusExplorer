@@ -10,7 +10,8 @@ export default class Queryparser  {
     private whereparser: QueryWhereParser;
     private sorter: RowSorter = new RowSorter();
     constructor(queryinfo: QueryInfo) {
-        this.queryinfo = queryinfo; }
+        this.queryinfo = queryinfo;
+    }
     public executeQuery(query: any, addHash: IHash): any[] {
         if (Object.keys(query["WHERE"]).length === 0) {
             if (addHash[this.queryinfo.databasename].length >= 5000 && !this.queryinfo.hasTransformation) {
@@ -139,7 +140,8 @@ export default class Queryparser  {
             return this.sorter.sortRowsWithOneOrder(rowsbeforesort, this.queryinfo.order);
         } else {
             if (Object.keys(this.queryinfo.order).length === 0 ) {
-                return rowsbeforesort; }
+                return rowsbeforesort;
+            }
             return this.sorter.sortRowsWithObjOrder(rowsbeforesort, this.queryinfo.order);
         }
     }

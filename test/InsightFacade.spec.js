@@ -471,7 +471,7 @@ describe("InsightFacade PerformQuery", () => {
     afterEach(function () {
         Util_1.default.test(`AfterTest: ${this.currentTest.title}`);
     });
-    it.only("Should run test queries", function () {
+    it("Should run test queries", function () {
         describe("Dynamic InsightFacade PerformQuery tests", function () {
             for (const test of testQueries) {
                 it(`[${test.filename}] ${test.title}`, function () {
@@ -487,7 +487,6 @@ describe("InsightFacade PerformQuery", () => {
                             if (test.isQueryValid) {
                                 chai_1.expect(response).to.deep.include.members(test.result);
                                 chai_1.expect(response.length).to.deep.equal(test.result.length);
-                                chai_1.expect(response).to.deep.equal(test.result);
                             }
                             else {
                                 switch (test.result) {
