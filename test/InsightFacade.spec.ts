@@ -438,6 +438,9 @@ describe("InsightFacade PerformQuery", () => {
                 if (id === "courses") {
                     responsePromises.push(insightFacade.addDataset(id, content, InsightDatasetKind.Courses));
                 }
+                if (id === "smalldataset") {
+                    responsePromises.push(insightFacade.addDataset(id, content, InsightDatasetKind.Courses));
+                }
                 if (id === "rooms") {
                     responsePromises.push(insightFacade.addDataset(id, content, InsightDatasetKind.Rooms));
                 }

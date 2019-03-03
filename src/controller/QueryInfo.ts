@@ -199,17 +199,9 @@ export class QueryInfo {
         let s = firstelement.match(this.recourses);
         if (s !== null) {
             if (s.length !== 1 || s[0] !== firstelement) {
-                s = firstelement.match(this.rerooms);
-                if (s !== null) {
-                    if (s.length !== 1 || s[0] !== firstelement) {
-                        if (!this.hasTransformation) {
-                            throw new InsightError("invalid key in column");
-                        }
-                    } else {
-                        this.isCourse = false;
-                        this.isCourseIsSet = true;
-                    }
-                }
+                // if (!this.hasTransformation) {
+                    throw new InsightError("invalid key in column");
+                // }
             } else {
                 this.isCourse = true;
                 this.isCourseIsSet = true;
@@ -218,9 +210,9 @@ export class QueryInfo {
             s = firstelement.match(this.rerooms);
             if (s !== null) {
                 if (s.length !== 1 || s[0] !== firstelement) {
-                    if (!this.hasTransformation) {
+                    // if (!this.hasTransformation) {
                         throw new InsightError("invalid key in column");
-                    }
+                    // }
                 } else {
                     this.isCourse = false;
                     this.isCourseIsSet = true;

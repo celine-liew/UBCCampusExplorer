@@ -9,34 +9,34 @@
                 }
             }, {
                 "GT": {
-                    "rooms_seats": 300
+                    "roomse_seats": 100
                 }
             }]
         },
         "OPTIONS": {
             "COLUMNS": [
-                "rooms_shortname",
-                "maxSeats",
+                "COUNT",
                 "sumSeats"
             ],
             "ORDER": {
                 "dir": "DOWN",
-                "keys": ["maxSeats","sumSeats"]
+                "keys": ["COUNT","sumSeats"]
             }
         },
         "TRANSFORMATIONS": {
-            "GROUP": ["rooms_shortname","rooms_href"],
+            "GROUP": 5,
             "APPLY": [{
-                "maxSeats": {
-                    "COUNT": "rooms_seats"
+                "COUNT": {
+                    "COUNT": "rooms_type"
                 }
             },{
                 "sumSeats": {
-                    "SUM": "rooms_shortname"
+                    "SUM": "rooms_seats"
                 }
             }]
         }
     },
     "isQueryValid": false,
     "result":"InsightError"
+
 }

@@ -1,0 +1,56 @@
+{
+    "title": "SELECT dept, id, avg WHERE one AND branch avg > 99 ORDER BY avg",
+    "query": {
+        "WHERE": {
+            "AND": [{"OR": [{"AND": [{"OR": [{"GT": {
+                "courses_fail": 99
+            }}]}]}]},
+                {
+                    "NOT": {
+                        "LT": {
+                            "courses_avg": 72
+                        }
+                    }
+
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_id",
+                "courses_avg",
+                "sumAvg",
+                "courses_dept",
+                "suAvg"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": ["courses_dept","courses_avg","courses_id","sumAvg"]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["courses_title","courses_dept","courses_avg","courses_id"],
+            "APPLY": [{
+                "suAvg": {
+                    "COUNT": "courses_instructor"
+                }
+            },{
+                "sumAvg": {
+                    "SUM": "courses_avg"
+                }
+            }]
+        }
+    },
+    "isQueryValid": true,
+    "result":[{"courses_id":"101","courses_avg":74.98,"sumAvg":74.98,"courses_dept":"phys","suAvg":1},
+        {"courses_id":"110","courses_avg":73.25,"sumAvg":73.25,"courses_dept":"cpsc","suAvg":1},
+        {"courses_id":"110","courses_avg":72.63,"sumAvg":72.63,"courses_dept":"cpsc","suAvg":1},
+        {"courses_id":"110","courses_avg":72.28,"sumAvg":72.28,"courses_dept":"cpsc","suAvg":1},
+        {"courses_id":"290","courses_avg":72.25,"sumAvg":72.25,"courses_dept":"comm","suAvg":1},
+        {"courses_id":"123","courses_avg":72.83,"sumAvg":72.83,"courses_dept":"chem","suAvg":1},
+        {"courses_id":"123","courses_avg":72.1,"sumAvg":72.1,"courses_dept":"chem","suAvg":1},
+        {"courses_id":"160","courses_avg":75.46,"sumAvg":75.46,"courses_dept":"apsc","suAvg":1},
+        {"courses_id":"160","courses_avg":74.96,"sumAvg":74.96,"courses_dept":"apsc","suAvg":1},
+        {"courses_id":"160","courses_avg":73.39,"sumAvg":73.39,"courses_dept":"apsc","suAvg":1},
+        {"courses_id":"160","courses_avg":72.29,"sumAvg":72.29,"courses_dept":"apsc","suAvg":1},
+        {"courses_id":"160","courses_avg":72.08,"sumAvg":72.08,"courses_dept":"apsc","suAvg":1}]}

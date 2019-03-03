@@ -16,23 +16,18 @@
         "OPTIONS": {
             "COLUMNS": [
                 "rooms_shortname",
-                "maxSeats",
-                "sumSeats"
+                "maxSeats"
             ],
             "ORDER": {
                 "dir": "DOWN",
-                "keys": ["maxSeats","sumSeats"]
+                "keys": "maxSeats"
             }
         },
         "TRANSFORMATIONS": {
-            "GROUP": ["rooms_shortname","rooms_href"],
+            "GROUP": ["rooms_shortname"],
             "APPLY": [{
                 "maxSeats": {
-                    "COUNT": "rooms_seats"
-                }
-            },{
-                "sumSeats": {
-                    "SUM": "rooms_shortname"
+                    "MAX": "rooms_seats"
                 }
             }]
         }

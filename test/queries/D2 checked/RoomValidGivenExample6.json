@@ -19,18 +19,6 @@
                 "sumSeats"
             ],
             "ORDER": "max_Seats"
-        },
-        "TRANSFORMATIONS": {
-            "GROUP": ["rooms_shortname","rooms_href"],
-            "APPLY": [{
-                "max_Seats": {
-                    "COUNT": "rooms_seats"
-                }
-            },{
-                "sumSeats": {
-                    "SUM": "rooms_seats"
-                }
-            }]
         }
     },
     "isQueryValid": false,
