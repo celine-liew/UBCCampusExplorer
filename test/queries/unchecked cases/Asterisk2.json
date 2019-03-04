@@ -1,0 +1,32 @@
+{
+    "title": "SELECT dept, id, avg, instructor WHERE instructor == '*ason' && audit == 1 ORDER by avg",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "EQ": {
+                        "courses_audit":1
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_instructor": "*ason"
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg",
+                "courses_instructor"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        { "courses_dept": "econ", "courses_id": "337", "courses_avg": 72.57, "courses_instructor": "long, jason" }
+    ]
+}

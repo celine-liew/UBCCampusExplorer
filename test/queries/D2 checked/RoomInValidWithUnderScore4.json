@@ -1,0 +1,37 @@
+{
+    "title": "room given example",
+
+    "query": {
+        "WHERE": {
+            "AND": [{
+                "IS": {
+                    "rooms_name": "*DMP*"
+                }
+            }, {
+                "GT": {
+                    "rooms_seats": 100
+                }
+            }]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "rooms_shortname",
+                "max_Seats"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": ["max_Seats"]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["rooms_shortname"],
+            "APPLY": [{
+                "max_Seats": {
+                    "COUNT": "rooms_name"
+                }
+            }]
+        }
+    },
+    "isQueryValid": false,
+    "result":  "InsightError"
+}

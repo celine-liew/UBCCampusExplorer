@@ -1,0 +1,22 @@
+{
+    "title": "SELECT dept, id WHERE avg = 1000 - nonexistent EQ",
+    "query": {
+        "WHERE": {
+            "EQ": {
+                "courses_avg": 1000
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+
+    ]
+
+}

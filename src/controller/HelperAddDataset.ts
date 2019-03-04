@@ -1,7 +1,11 @@
+// tslint:disable
 import {IInsightFacade, InsightDataset, InsightDatasetKind, ResultTooLargeError} from "./IInsightFacade";
 import {InsightError, NotFoundError} from "./IInsightFacade";
 import * as fs from "fs-extra";
 import { EHash } from "./InsightFacade";
+import * as JSZip from "jszip";
+import { findTableInIndex, findBuildingNameFromFile, addRoomsPerBuilding, processIfTrNode } from "./GetBuildingInfoHelper";
+const parse5 = require("parse5");
 
 export const checkValidDatabase = (id: string, content: string, kind: InsightDatasetKind): boolean => {
     if (!id || id === "") {
@@ -10,8 +14,7 @@ export const checkValidDatabase = (id: string, content: string, kind: InsightDat
     if (!content) {
         throw new InsightError( "Can't find database");
     }
-    if (kind !== InsightDatasetKind.Courses && kind !== InsightDatasetKind.Rooms) {
-        throw new InsightError("invalid InsightDatasetKind");
+    if (kind !== InsightDatasetKind.Courses && kind !== InsightDatasetKind.Rooms) { throw new InsightError("invalid InsightDatasetKind");
     }
     return true;
 };
@@ -52,7 +55,65 @@ export const processCoursesFile = (files: string[], coursesKeys: string[], valid
                 });
             }
         });
+        return validCourseSections;
     };
+
+export const  parseFileNamesIfCoursesOrRoomstype = (path: string, object: JSZip.JSZipObject,
+                                                    files: Array<Promise<string>>, fileNames: string[]) => {
+        if ((path.startsWith("courses/") || path.startsWith("rooms/")) && !object.dir) {
+            files.push(object.async("text")); // take files from courses folder only
+            const allNamesSplit = object.name.split("/");
+            fileNames.push(allNamesSplit.pop());
+        }
+};
+
+export const processBasedonInsightType = async (kind: InsightDatasetKind, files: string[], coursesKeys: string[],
+    validSectionsOrRooms: any[], fileNames: string[]) => {
+    switch (kind) {
+        case InsightDatasetKind.Courses:
+            processCoursesFile(files, coursesKeys, validSectionsOrRooms);
+            break;
+        case InsightDatasetKind.Rooms:
+            await this.processRoomsfiles(files, fileNames, validSectionsOrRooms);
+    }
+};
+
+export const processRoomsfiles = async (files: any[], fileNames: string[], buildingValidRooms: any[])  =>{
+    const listofBuildings: any = [];
+    const tableToCheck = findTableInIndex(files, fileNames);
+    for (const trNode of tableToCheck.childNodes) {
+        let building: any = {};
+        await processIfTrNode(trNode, building, listofBuildings);
+    }
+        files.forEach( (file) => {
+            let listofRooms: any = [];
+            let validRoomTemplate = {};
+            const checkFile = parse5.parse(file);
+            const fullname = findBuildingNameFromFile(checkFile, "");
+            let inINdexHTM = false;
+            let index = 0;
+            for (let i = 0; i < listofBuildings.length; i++) {
+                if (listofBuildings[i]["fullname"] === fullname) {
+                    inINdexHTM = true;
+                    index = i;
+                }
+            }
+            if (inINdexHTM) {
+                    validRoomTemplate = {
+                        fullname: listofBuildings[index]["fullname"],
+                        shortname: listofBuildings[index]["shortname"],
+                        address: listofBuildings[index]["address"],
+                        lat: listofBuildings[index]["lat"],
+                        lon: listofBuildings[index]["lon"],
+                    };
+                    listofRooms =  addRoomsPerBuilding(checkFile, listofRooms, validRoomTemplate);
+                    if (listofRooms.length > 0){
+                        Array.prototype.push.apply(buildingValidRooms, listofRooms);
+                    } else return;
+                }
+    });
+    return buildingValidRooms;
+}
 
 export const saveDatasetList = async (data: EHash) => {
     const outputFile = Object.keys(data).map((kind) => {
@@ -64,7 +125,6 @@ export const saveDatasetList = async (data: EHash) => {
         await fs.ensureDir(dir);
         await fs.writeJSON(filePath, outputFile);
     } catch (err) {
-        // console.error(err);
         throw err;
     }
 };

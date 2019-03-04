@@ -1,0 +1,59 @@
+{
+  "title": "room query",
+  "query": {
+    "WHERE": {
+      "AND": [
+        {
+          "IS": {
+            "rooms_name": "SRC_220B"
+          }
+        },
+        {
+          "GT": {
+            "rooms_seats": 100
+          }
+        }
+      ]
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "rooms_shortname",
+        "rooms_lat",
+        "rooms_lon",
+        "rooms_furniture",
+        "countNum"
+      ],
+      "ORDER": {
+        "dir": "DOWN",
+        "keys": [
+          "countNum"
+        ]
+      }
+    },
+    "TRANSFORMATIONS": {
+      "GROUP": [
+        "rooms_shortname",
+        "rooms_lat",
+        "rooms_lon",
+        "rooms_furniture"
+      ],
+      "APPLY": [
+        {
+          "countNum": {
+            "COUNT": "rooms_number"
+          }
+        }
+      ]
+    }
+  },
+  "isQueryValid": true,
+  "result": [
+    {
+      "rooms_shortname": "SRC",
+      "rooms_lat": 49.2683,
+      "rooms_lon": -123.24894,
+      "rooms_furniture": "Classroom-Movable Tables & Chairs",
+      "countNum": 1
+    }
+  ]
+}

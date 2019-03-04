@@ -1,0 +1,18 @@
+{
+    "title": "Simple IS no child left astricks",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_instructor": "*pat"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_avg",
+                "courses_instructor"
+            ]
+        }
+    },
+    "isQueryValid": true,
+    "result":[{"courses_avg":88.88,"courses_instructor":"mirenda, pat"},{"courses_avg":91.57,"courses_instructor":"mirenda, pat"},{"courses_avg":87.1,"courses_instructor":"mirenda, pat"},{"courses_avg":87.3,"courses_instructor":"mirenda, pat"},{"courses_avg":87.22,"courses_instructor":"mirenda, pat"},{"courses_avg":89.5,"courses_instructor":"mirenda, pat"},{"courses_avg":86.25,"courses_instructor":"mirenda, pat"},{"courses_avg":86.93,"courses_instructor":"mirenda, pat"},{"courses_avg":86.92,"courses_instructor":"mirenda, pat"},{"courses_avg":83.64,"courses_instructor":"mirenda, pat"},{"courses_avg":78.95,"courses_instructor":"mirenda, pat"},{"courses_avg":87.9,"courses_instructor":"mirenda, pat"},{"courses_avg":87.61,"courses_instructor":"mirenda, pat"},{"courses_avg":91.5,"courses_instructor":"mirenda, pat"},{"courses_avg":86.86,"courses_instructor":"mirenda, pat"},{"courses_avg":87.21,"courses_instructor":"mirenda, pat"},{"courses_avg":74.64,"courses_instructor":"cramond, pat"},{"courses_avg":68.88,"courses_instructor":"cramond, pat"},{"courses_avg":75.95,"courses_instructor":"cramond, pat"},{"courses_avg":72.68,"courses_instructor":"cramond, pat"},{"courses_avg":78,"courses_instructor":"cramond, pat"},{"courses_avg":76.45,"courses_instructor":"cramond, pat"},{"courses_avg":84.17,"courses_instructor":"cramond, pat"}]
+}

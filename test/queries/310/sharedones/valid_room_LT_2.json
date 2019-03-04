@@ -1,0 +1,71 @@
+{
+  "title": "room query",
+  "query": {
+    "WHERE": {
+      "AND": [
+        {
+          "IS": {
+            "rooms_furniture": "*Tables*"
+          }
+        },
+        {
+          "LT": {
+            "rooms_seats": 8
+          }
+        }
+      ]
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "rooms_shortname",
+        "rooms_seats"
+      ],
+      "ORDER": {
+        "dir": "UP",
+        "keys": [
+          "rooms_seats"
+        ]
+      }
+    }
+  },
+  "isQueryValid": true,
+  "result": [
+    {
+      "rooms_shortname": "MCML",
+      "rooms_seats": 6
+    },
+    {
+      "rooms_shortname": "MCML",
+      "rooms_seats": 6
+    },
+
+      {
+          "rooms_shortname": "PHRM",
+          "rooms_seats": 7
+      },
+      {
+          "rooms_shortname": "PHRM",
+          "rooms_seats": 7
+      },
+      {
+          "rooms_shortname": "PHRM",
+          "rooms_seats": 7
+      },
+      {
+          "rooms_shortname": "PHRM",
+          "rooms_seats": 7
+      },
+      {
+          "rooms_shortname": "PHRM",
+          "rooms_seats": 7
+      },
+      {
+          "rooms_shortname": "PHRM",
+          "rooms_seats": 7
+      },
+      {
+          "rooms_shortname": "PHRM",
+          "rooms_seats": 7
+      }
+  ]
+}

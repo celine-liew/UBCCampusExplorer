@@ -1,0 +1,185 @@
+{
+  "title": "room query",
+  "query": {
+    "WHERE": {
+      "AND": [
+        {
+          "LT": {
+            "rooms_lat": 49.2683
+          }
+        },
+        {
+          "GT": {
+            "rooms_lon": -123.24894
+          }
+        }
+      ]
+    },
+    "OPTIONS": {
+      "COLUMNS": [
+        "rooms_shortname",
+        "rooms_lat",
+        "rooms_lon",
+        "rooms_type",
+        "countNum"
+      ],
+      "ORDER": {
+        "dir": "DOWN",
+        "keys": [
+          "countNum"
+        ]
+      }
+    },
+    "TRANSFORMATIONS": {
+      "GROUP": [
+        "rooms_shortname",
+        "rooms_lat",
+        "rooms_lon",
+        "rooms_type"
+      ],
+      "APPLY": [
+        {
+          "countNum": {
+            "COUNT": "rooms_fullname"
+          }
+        }
+      ]
+    }
+  },
+  "isQueryValid": true,
+  "result": [
+    {
+      "rooms_shortname": "PHRM",
+      "rooms_lat": 49.26229,
+      "rooms_lon": -123.24342,
+      "rooms_type": "Tiered Large Group",
+      "countNum": 1
+    },
+    {
+      "rooms_shortname": "CHBE",
+      "rooms_lat": 49.26228,
+      "rooms_lon": -123.24718,
+      "rooms_type": "Tiered Large Group",
+      "countNum": 1
+    },
+    {
+      "rooms_shortname": "FSC",
+      "rooms_lat": 49.26044,
+      "rooms_lon": -123.24886,
+      "rooms_type": "Case Style",
+      "countNum": 1
+    },
+    {
+      "rooms_shortname": "FSC",
+      "rooms_lat": 49.26044,
+      "rooms_lon": -123.24886,
+      "rooms_type": "Small Group",
+      "countNum": 1
+    },
+    {
+      "rooms_shortname": "FSC",
+      "rooms_lat": 49.26044,
+      "rooms_lon": -123.24886,
+      "rooms_type": "Tiered Large Group",
+      "countNum": 1
+    },
+    {
+      "rooms_shortname": "FRDM",
+      "rooms_lat": 49.26541,
+      "rooms_lon": -123.24608,
+      "rooms_type": "Tiered Large Group",
+      "countNum": 1
+    },
+    {
+      "rooms_shortname": "DMP",
+      "rooms_lat": 49.26125,
+      "rooms_lon": -123.24807,
+      "rooms_type": "Small Group",
+      "countNum": 1
+    },
+    {
+      "rooms_shortname": "DMP",
+      "rooms_lat": 49.26125,
+      "rooms_lon": -123.24807,
+      "rooms_type": "Tiered Large Group",
+      "countNum": 1
+    },
+    {
+      "rooms_shortname": "LSC",
+      "rooms_lat": 49.26236,
+      "rooms_lon": -123.24494,
+      "rooms_type": "Tiered Large Group",
+      "countNum": 1
+    },
+    {
+      "rooms_shortname": "CHBE",
+      "rooms_lat": 49.26228,
+      "rooms_lon": -123.24718,
+      "rooms_type": "Open Design General Purpose",
+      "countNum": 1
+    },
+    {
+      "rooms_shortname": "PHRM",
+      "rooms_lat": 49.26229,
+      "rooms_lon": -123.24342,
+      "rooms_type": "Small Group",
+      "countNum": 1
+    },
+    {
+      "rooms_shortname": "PHRM",
+      "rooms_lat": 49.26229,
+      "rooms_lon": -123.24342,
+      "rooms_type": "Open Design General Purpose",
+      "countNum": 1
+    },
+    {
+      "rooms_shortname": "OSBO",
+      "rooms_lat": 49.26047,
+      "rooms_lon": -123.24467,
+      "rooms_type": "Small Group",
+      "countNum": 1
+    },
+    {
+      "rooms_shortname": "OSBO",
+      "rooms_lat": 49.26047,
+      "rooms_lon": -123.24467,
+      "rooms_type": "Open Design General Purpose",
+      "countNum": 1
+    },
+    {
+      "rooms_shortname": "SPPH",
+      "rooms_lat": 49.2642,
+      "rooms_lon": -123.24842,
+      "rooms_type": "Small Group",
+      "countNum": 1
+    },
+    {
+      "rooms_shortname": "SPPH",
+      "rooms_lat": 49.2642,
+      "rooms_lon": -123.24842,
+      "rooms_type": "Open Design General Purpose",
+      "countNum": 1
+    },
+    {
+      "rooms_shortname": "MGYM",
+      "rooms_lat": 49.2663,
+      "rooms_lon": -123.2466,
+      "rooms_type": "Open Design General Purpose",
+      "countNum": 1
+    },
+    {
+      "rooms_shortname": "WOOD",
+      "rooms_lat": 49.26478,
+      "rooms_lon": -123.24673,
+      "rooms_type": "Tiered Large Group",
+      "countNum": 1
+    },
+    {
+      "rooms_shortname": "WOOD",
+      "rooms_lat": 49.26478,
+      "rooms_lon": -123.24673,
+      "rooms_type": "Small Group",
+      "countNum": 1
+    }
+  ]
+}

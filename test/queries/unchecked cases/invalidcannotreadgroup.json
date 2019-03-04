@@ -1,0 +1,17 @@
+{
+    "title": "Invalid Cannot read property 'GROUP' of undefined",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_id": "100"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                ""
+            ]
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

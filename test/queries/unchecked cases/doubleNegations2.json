@@ -1,0 +1,40 @@
+{
+    "title": "SELECT dept, id, avg WHERE !(!(audit < 1)) && id == '310' && avg > 88 ORDER by audit - all equal",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "NOT": {
+                        "NOT": {
+                            "LT": {
+                                "courses_audit": 1
+                            }
+                        }
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_id": "310"
+                    }
+                },
+                {
+                    "GT": {
+                        "courses_avg": 88
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result":[
+        {"courses_dept":"midw","courses_id":"310","courses_avg":89.46},{"courses_dept":"midw","courses_id":"310","courses_avg":89.46}
+    ]
+}

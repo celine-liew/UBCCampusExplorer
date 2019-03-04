@@ -37,7 +37,8 @@ describe("InsightFacade Add/Remove Dataset", function () {
         notZIP: "./test/data/notZIP.txt",
         wrongfile: "./test/data/wrongfile.png",
         only1validcourse: "./test/data/only1validcourse.zip",
-        smalldataset: "./test/data/smalldataset.zip"
+        smalldataset: "./test/data/smalldataset.zip",
+        rooms: "./test/data/rooms.zip"
     };
     let insightFacade: InsightFacade;
     let datasets: { [id: string]: string };
@@ -81,8 +82,21 @@ describe("InsightFacade Add/Remove Dataset", function () {
         Log.test(`AfterTest: ${this.currentTest.title}`);
     });
 
+    // TEST TEST
+    it("TEST Should add a room dataset", async function () {
+        const id: string = "rooms";
+        let response: string[];
+
+        try {
+            response = await insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms);
+        } catch (err) {
+            response = err;
+        } finally {
+            expect(response).to.deep.equal([id]);
+        }
+    });
     // 1
-    it("Should add a valid dataset", async function () {
+    it("Should add a valid course small dataset", async function () {
         const id: string = "smalldataset";
         let response: string[];
 
@@ -110,7 +124,6 @@ describe("InsightFacade Add/Remove Dataset", function () {
     it("Shouldn't add a duplicate dataset", async function () {
         const id: string = "courses";
         const id2: string = "courses";
-        let response: string[];
         let response2: string[];
 
         try {
@@ -248,6 +261,23 @@ describe("InsightFacade Add/Remove Dataset", function () {
 
     });
 
+    it("Should remove the room dataset only", async function () {
+        const id: string = "courses";
+        const id2: string = "rooms";
+        let response: string;
+
+        try {
+            await insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+            await insightFacade.addDataset(id2, datasets[id2], InsightDatasetKind.Rooms);
+            response = await insightFacade.removeDataset(id2);
+        } catch (err) {
+            response = err;
+        } finally {
+            expect(response).to.deep.equal(id2);
+        }
+
+    });
+
     it("Shouldn't remove the same existing courses dataset more than once", async function () {
         const id: string = "courses";
         let response: string;
@@ -291,7 +321,21 @@ describe("InsightFacade Add/Remove Dataset", function () {
         }
 
     });
+    it("Should remove the room dataset only", async function () {
+        const id: string = "courses";
+        const id2: string = "rooms";
+        let response: string;
 
+        try {
+            await insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+            await insightFacade.addDataset(id2, datasets[id2], InsightDatasetKind.Rooms);
+            response = await insightFacade.removeDataset(id2);
+        } catch (err) {
+            response = err;
+        } finally {
+            expect(response).to.deep.equal(id2);
+        }
+    });
     it("Should expect an error with null input", async function () {
         const id: string = null;
         let response: string;
@@ -362,6 +406,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
 describe("InsightFacade PerformQuery", () => {
     const datasetsToQuery: { [id: string]: string } = {
         smalldataset: "./test/data/smalldataset.zip",
+        rooms: "./test/data/rooms.zip",
         courses: "./test/data/courses.zip"
         // cpsccourses2: "./test/data/cpsccourses2.zip",
         // only1validcourse: "./test/data/only1validcourse.zip"
@@ -407,7 +452,11 @@ describe("InsightFacade PerformQuery", () => {
             const responsePromises: Array<Promise<string[]>> = [];
             const datasets: { [id: string]: string } = Object.assign({}, ...loadedDatasets);
             for (const [id, content] of Object.entries(datasets)) {
-                responsePromises.push(insightFacade.addDataset(id, content, InsightDatasetKind.Courses));
+                if (id === "courses" ||id === "smalldataset" ) {
+                    responsePromises.push(insightFacade.addDataset(id, content, InsightDatasetKind.Courses));
+                }if (id === "rooms") {
+                  responsePromises.push(insightFacade.addDataset(id, content, InsightDatasetKind.Rooms));
+                }
             }
 
             // This try/catch is a hack to let your dynamic tests execute even if the addDataset method fails.
@@ -445,7 +494,6 @@ describe("InsightFacade PerformQuery", () => {
 
                     try {
                         response = await insightFacade.performQuery(test.query);
-                        // console.log(response);
                     } catch (err) {
                         response = err;
                     } finally {

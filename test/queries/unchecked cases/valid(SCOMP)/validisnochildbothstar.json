@@ -1,0 +1,551 @@
+{
+    "title": "Simple IS both star",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_id": "*560*"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_avg",
+                "courses_instructor"
+            ]
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_avg": 82.71,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 82.71,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 83.75,
+            "courses_instructor": "mancuso, lara"
+        },
+        {
+            "courses_avg": 83.75,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 80.89,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 82.4,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 84.48,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 82.57,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 82.93,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 83.84,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 84.69,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 79.65,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 82.76,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 81.96,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 80.78,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 81.43,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 80.96,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 80.69,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 80.83,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 84.25,
+            "courses_instructor": "piret, james"
+        },
+        {
+            "courses_avg": 84.25,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 78,
+            "courses_instructor": "piret, james"
+        },
+        {
+            "courses_avg": 78,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 84,
+            "courses_instructor": "piret, james"
+        },
+        {
+            "courses_avg": 84,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 82.38,
+            "courses_instructor": "piret, james"
+        },
+        {
+            "courses_avg": 82.38,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 84.2,
+            "courses_instructor": "piret, james"
+        },
+        {
+            "courses_avg": 84.2,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 93.33,
+            "courses_instructor": "green, david"
+        },
+        {
+            "courses_avg": 93.33,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 83.13,
+            "courses_instructor": "fortin, nicole"
+        },
+        {
+            "courses_avg": 83.13,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 88.11,
+            "courses_instructor": "hoffmann, florian"
+        },
+        {
+            "courses_avg": 88.11,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 81.5,
+            "courses_instructor": "fortin, nicole"
+        },
+        {
+            "courses_avg": 81.5,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 86.25,
+            "courses_instructor": "fortin, nicole;lemieux, thomas"
+        },
+        {
+            "courses_avg": 86.25,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 88.4,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 88.4,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 86.86,
+            "courses_instructor": "green, david"
+        },
+        {
+            "courses_avg": 86.86,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 90.13,
+            "courses_instructor": "hoffmann, florian"
+        },
+        {
+            "courses_avg": 90.13,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 89,
+            "courses_instructor": "fortin, nicole"
+        },
+        {
+            "courses_avg": 89,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 87.27,
+            "courses_instructor": "marti, jose"
+        },
+        {
+            "courses_avg": 87.27,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 83.72,
+            "courses_instructor": "marti, jose"
+        },
+        {
+            "courses_avg": 83.72,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 85.45,
+            "courses_instructor": "marti, jose"
+        },
+        {
+            "courses_avg": 85.45,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 76.5,
+            "courses_instructor": "marti, jose"
+        },
+        {
+            "courses_avg": 76.5,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 90.25,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 90.25,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 85.6,
+            "courses_instructor": "marti, jose"
+        },
+        {
+            "courses_avg": 85.6,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 83.45,
+            "courses_instructor": "marti, jose"
+        },
+        {
+            "courses_avg": 83.45,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 91.13,
+            "courses_instructor": "marti, jose"
+        },
+        {
+            "courses_avg": 91.13,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 85.25,
+            "courses_instructor": "marti, jose"
+        },
+        {
+            "courses_avg": 85.25,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 92.27,
+            "courses_instructor": "kozak, robert antal;panwar, rajat"
+        },
+        {
+            "courses_avg": 92.27,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 86,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 86,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 82.2,
+            "courses_instructor": "brook, timothy"
+        },
+        {
+            "courses_avg": 82.2,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 82.67,
+            "courses_instructor": "brook, timothy"
+        },
+        {
+            "courses_avg": 82.67,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 87.29,
+            "courses_instructor": "nappi, carla"
+        },
+        {
+            "courses_avg": 87.29,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 86.38,
+            "courses_instructor": "brook, timothy"
+        },
+        {
+            "courses_avg": 86.38,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 78.5,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 78.13,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 80.33,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 78.25,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 81.75,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 78.79,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 93.29,
+            "courses_instructor": "ayas, najib"
+        },
+        {
+            "courses_avg": 93.29,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 86.38,
+            "courses_instructor": "ayas, najib"
+        },
+        {
+            "courses_avg": 86.38,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 88,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 88,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 88.6,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 88.6,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 93,
+            "courses_instructor": "ayas, najib"
+        },
+        {
+            "courses_avg": 93,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 89.22,
+            "courses_instructor": "ayas, najib"
+        },
+        {
+            "courses_avg": 89.22,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 85.75,
+            "courses_instructor": "ayas, najib"
+        },
+        {
+            "courses_avg": 85.75,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 90.75,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 90.75,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 80.57,
+            "courses_instructor": "merminga, nikolitsa"
+        },
+        {
+            "courses_avg": 80.57,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 87.75,
+            "courses_instructor": "johnston, charlotte"
+        },
+        {
+            "courses_avg": 87.75,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 89.2,
+            "courses_instructor": "woody, sheila"
+        },
+        {
+            "courses_avg": 89.2,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 88.71,
+            "courses_instructor": "woody, sheila"
+        },
+        {
+            "courses_avg": 88.71,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 89.29,
+            "courses_instructor": "klonsky, elisha"
+        },
+        {
+            "courses_avg": 89.29,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 91.6,
+            "courses_instructor": "klonsky, elisha"
+        },
+        {
+            "courses_avg": 91.6,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 89.57,
+            "courses_instructor": "woody, sheila"
+        },
+        {
+            "courses_avg": 89.57,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 89.33,
+            "courses_instructor": "klonsky, elisha"
+        },
+        {
+            "courses_avg": 89.33,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 88.89,
+            "courses_instructor": "woody, sheila"
+        },
+        {
+            "courses_avg": 88.89,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 82.5,
+            "courses_instructor": "zamar, ruben"
+        },
+        {
+            "courses_avg": 82.5,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 87,
+            "courses_instructor": "zamar, ruben"
+        },
+        {
+            "courses_avg": 87,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 78.75,
+            "courses_instructor": "chen, jiahua"
+        },
+        {
+            "courses_avg": 78.75,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 87.93,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 88.2,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 94.7,
+            "courses_instructor": "zamar, ruben"
+        },
+        {
+            "courses_avg": 94.7,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 92,
+            "courses_instructor": "zamar, ruben"
+        },
+        {
+            "courses_avg": 92,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 87.33,
+            "courses_instructor": "zamar, ruben"
+        },
+        {
+            "courses_avg": 87.33,
+            "courses_instructor": ""
+        },
+        {
+            "courses_avg": 89.83,
+            "courses_instructor": "bouchard-cote, alexandre"
+        },
+        {
+            "courses_avg": 89.83,
+            "courses_instructor": ""
+        }
+    ]
+}

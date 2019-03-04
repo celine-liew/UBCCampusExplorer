@@ -26,7 +26,8 @@ describe("InsightFacade Add/Remove Dataset", function () {
         notZIP: "./test/data/notZIP.txt",
         wrongfile: "./test/data/wrongfile.png",
         only1validcourse: "./test/data/only1validcourse.zip",
-        smalldataset: "./test/data/smalldataset.zip"
+        smalldataset: "./test/data/smalldataset.zip",
+        rooms: "./test/data/rooms.zip"
     };
     let insightFacade;
     let datasets;
@@ -68,7 +69,22 @@ describe("InsightFacade Add/Remove Dataset", function () {
     afterEach(function () {
         Util_1.default.test(`AfterTest: ${this.currentTest.title}`);
     });
-    it("Should add a valid dataset", function () {
+    it("TEST Should add a room dataset", function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            const id = "rooms";
+            let response;
+            try {
+                response = yield insightFacade.addDataset(id, datasets[id], IInsightFacade_1.InsightDatasetKind.Rooms);
+            }
+            catch (err) {
+                response = err;
+            }
+            finally {
+                chai_1.expect(response).to.deep.equal([id]);
+            }
+        });
+    });
+    it("Should add a valid course small dataset", function () {
         return __awaiter(this, void 0, void 0, function* () {
             const id = "smalldataset";
             let response;
@@ -102,7 +118,6 @@ describe("InsightFacade Add/Remove Dataset", function () {
         return __awaiter(this, void 0, void 0, function* () {
             const id = "courses";
             const id2 = "courses";
-            let response;
             let response2;
             try {
                 yield insightFacade.addDataset(id, datasets[id], IInsightFacade_1.InsightDatasetKind.Courses);
@@ -258,6 +273,24 @@ describe("InsightFacade Add/Remove Dataset", function () {
             }
         });
     });
+    it("Should remove the room dataset only", function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            const id = "courses";
+            const id2 = "rooms";
+            let response;
+            try {
+                yield insightFacade.addDataset(id, datasets[id], IInsightFacade_1.InsightDatasetKind.Courses);
+                yield insightFacade.addDataset(id2, datasets[id2], IInsightFacade_1.InsightDatasetKind.Rooms);
+                response = yield insightFacade.removeDataset(id2);
+            }
+            catch (err) {
+                response = err;
+            }
+            finally {
+                chai_1.expect(response).to.deep.equal(id2);
+            }
+        });
+    });
     it("Shouldn't remove the same existing courses dataset more than once", function () {
         return __awaiter(this, void 0, void 0, function* () {
             const id = "courses";
@@ -302,6 +335,24 @@ describe("InsightFacade Add/Remove Dataset", function () {
             }
             finally {
                 chai_1.expect(response).to.be.instanceOf(IInsightFacade_1.NotFoundError);
+            }
+        });
+    });
+    it("Should remove the room dataset only", function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            const id = "courses";
+            const id2 = "rooms";
+            let response;
+            try {
+                yield insightFacade.addDataset(id, datasets[id], IInsightFacade_1.InsightDatasetKind.Courses);
+                yield insightFacade.addDataset(id2, datasets[id2], IInsightFacade_1.InsightDatasetKind.Rooms);
+                response = yield insightFacade.removeDataset(id2);
+            }
+            catch (err) {
+                response = err;
+            }
+            finally {
+                chai_1.expect(response).to.deep.equal(id2);
             }
         });
     });
@@ -373,6 +424,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
 describe("InsightFacade PerformQuery", () => {
     const datasetsToQuery = {
         smalldataset: "./test/data/smalldataset.zip",
+        rooms: "./test/data/rooms.zip",
         courses: "./test/data/courses.zip"
     };
     let insightFacade;
@@ -408,7 +460,12 @@ describe("InsightFacade PerformQuery", () => {
                 const responsePromises = [];
                 const datasets = Object.assign({}, ...loadedDatasets);
                 for (const [id, content] of Object.entries(datasets)) {
-                    responsePromises.push(insightFacade.addDataset(id, content, IInsightFacade_1.InsightDatasetKind.Courses));
+                    if (id === "courses" || id === "smalldataset") {
+                        responsePromises.push(insightFacade.addDataset(id, content, IInsightFacade_1.InsightDatasetKind.Courses));
+                    }
+                    if (id === "rooms") {
+                        responsePromises.push(insightFacade.addDataset(id, content, IInsightFacade_1.InsightDatasetKind.Rooms));
+                    }
                 }
                 try {
                     const responses = yield Promise.all(responsePromises);

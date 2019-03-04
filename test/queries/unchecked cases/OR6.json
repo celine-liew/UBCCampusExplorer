@@ -1,0 +1,33 @@
+{
+    "title": "SELECT dept, id, avg, year WHERE avg == 99 || avg == 98  ORDER by avg",
+    "query": {
+        "WHERE": {
+            "OR": [
+                {
+                    "EQ": {
+                        "courses_avg": 99
+                    }
+                },
+                {
+                    "EQ": {
+                        "courses_avg": 98
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg",
+                "courses_year"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        { "courses_dept": "crwr", "courses_id": "599", "courses_avg": 98, "courses_year": 2013 },
+        { "courses_dept": "crwr", "courses_id": "599", "courses_avg": 98, "courses_year": 2013 }
+    ]
+}

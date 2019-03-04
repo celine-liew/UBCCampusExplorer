@@ -1,0 +1,25 @@
+{
+    "title": "SELECT dept, id, avg, pass, uuid, audit WHERE fail > 250 - large number GT",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_fail": 9999999999999999999
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg",
+                "courses_pass",
+                "courses_uuid",
+                "courses_audit"
+            ],
+            "ORDER": "courses_pass"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+
+    ]
+}

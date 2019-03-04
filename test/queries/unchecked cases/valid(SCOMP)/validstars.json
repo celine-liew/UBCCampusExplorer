@@ -1,0 +1,91 @@
+{
+    "title": "Simple IS both star",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_instructor": "*black, *"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_avg",
+                "courses_instructor"
+            ]
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_avg": 71.88,
+            "courses_instructor": "black, thomas andrew;christen, andreas"
+        },
+        {
+            "courses_avg": 72.24,
+            "courses_instructor": "black, thomas andrew;christen, andreas"
+        },
+        {
+            "courses_avg": 74.6,
+            "courses_instructor": "black, thomas andrew;christen, andreas"
+        },
+        {
+            "courses_avg": 65.89,
+            "courses_instructor": "black, thomas andrew;christen, andreas"
+        },
+        {
+            "courses_avg": 73.74,
+            "courses_instructor": "black, thomas andrew;stewart, iain"
+        },
+        {
+            "courses_avg": 67.48,
+            "courses_instructor": "black, thomas andrew;christen, andreas"
+        },
+        {
+            "courses_avg": 69.63,
+            "courses_instructor": "black, thomas andrew;christen, andreas"
+        },
+        {
+            "courses_avg": 69.84,
+            "courses_instructor": "black, thomas andrew;christen, andreas"
+        },
+        {
+            "courses_avg": 73.44,
+            "courses_instructor": "black, thomas andrew;christen, andreas"
+        },
+        {
+            "courses_avg": 72.56,
+            "courses_instructor": "black, thomas andrew;christen, andreas"
+        },
+        {
+            "courses_avg": 67.04,
+            "courses_instructor": "black, thomas andrew;christen, andreas"
+        },
+        {
+            "courses_avg": 68.64,
+            "courses_instructor": "black, thomas andrew;christen, andreas"
+        },
+        {
+            "courses_avg": 75.03,
+            "courses_instructor": "black, thomas andrew;christen, andreas"
+        },
+        {
+            "courses_avg": 73.11,
+            "courses_instructor": "black, thomas andrew;christen, andreas"
+        },
+        {
+            "courses_avg": 71.23,
+            "courses_instructor": "black, thomas andrew;stewart, iain"
+        },
+        {
+            "courses_avg": 69.38,
+            "courses_instructor": "black, thomas andrew;christen, andreas"
+        },
+        {
+            "courses_avg": 82.17,
+            "courses_instructor": "black, charlyn;homewood, susan"
+        },
+        {
+            "courses_avg": 84.5,
+            "courses_instructor": "black, charlyn;homewood, susan"
+        }
+    ]
+}

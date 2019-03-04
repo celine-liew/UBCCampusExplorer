@@ -1,0 +1,34 @@
+{
+    "title": "SELECT dept, id, avg, year, pass WHERE  98 = avg > 97 ORDER BY pass",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "GT": {
+                        "courses_avg": 97
+                    }
+                },
+                {
+                    "EQ": {
+                        "courses_avg": 98
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg",
+                "courses_year",
+                "courses_pass"
+            ],
+            "ORDER": "courses_pass"
+        }
+    },
+    "isQueryValid": true,
+    "result":[
+        {"courses_dept":"crwr","courses_id":"599","courses_avg":98,"courses_year":2013,"courses_pass":1},
+        {"courses_dept":"crwr","courses_id":"599","courses_avg":98,"courses_year":2013,"courses_pass":1}
+    ]
+}

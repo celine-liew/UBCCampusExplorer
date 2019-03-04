@@ -1,0 +1,27 @@
+{
+    "title": "ORDER KEYS must be non-empty array",
+
+    "query": {
+        "WHERE": {
+          "GT": {
+            "courses_avg": 97
+          }
+        },
+        "OPTIONS": {
+          "COLUMNS": [
+            "courses_dept",
+            "courses_id",
+            "courses_avg",
+            "courses_year"
+          ],
+          "ORDER": {
+            "dir": "DOWN",
+            "keys": [
+
+            ]
+          }
+        }
+      },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

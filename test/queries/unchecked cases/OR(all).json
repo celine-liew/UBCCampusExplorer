@@ -1,0 +1,39 @@
+{
+    "title": "SELECT dept, id, avg, fail WHERE avg > 98 || fail > 200  ORDER by avg",
+    "query": {
+        "WHERE": {
+            "OR": [
+                {
+                    "GT": {
+                        "courses_avg": 98
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_instructor": "souto clement, juan"
+                    }
+                },
+                {
+                    "LT":{
+                        "courses_pass": 1
+                    }
+                },{
+                    "EQ":{
+                        "courses_fail":213
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg",
+                "courses_fail"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result":[{"courses_dept":"frst","courses_id":"202","courses_avg":0,"courses_fail":1},{"courses_dept":"lfs","courses_id":"100","courses_avg":0,"courses_fail":1},{"courses_dept":"lfs","courses_id":"100","courses_avg":0,"courses_fail":1},{"courses_dept":"wood","courses_id":"475","courses_avg":1,"courses_fail":2},{"courses_dept":"busi","courses_id":"330","courses_avg":4,"courses_fail":1},{"courses_dept":"busi","courses_id":"330","courses_avg":4,"courses_fail":1},{"courses_dept":"fopr","courses_id":"362","courses_avg":4.5,"courses_fail":4},{"courses_dept":"math","courses_id":"310","courses_avg":57.78,"courses_fail":8},{"courses_dept":"chem","courses_id":"233","courses_avg":63.33,"courses_fail":213},{"courses_dept":"math","courses_id":"221","courses_avg":69.44,"courses_fail":13},{"courses_dept":"epse","courses_id":"421","courses_avg":98.08,"courses_fail":0},{"courses_dept":"nurs","courses_id":"509","courses_avg":98.21,"courses_fail":0},{"courses_dept":"nurs","courses_id":"509","courses_avg":98.21,"courses_fail":0},{"courses_dept":"epse","courses_id":"421","courses_avg":98.36,"courses_fail":0},{"courses_dept":"epse","courses_id":"519","courses_avg":98.45,"courses_fail":0},{"courses_dept":"epse","courses_id":"519","courses_avg":98.45,"courses_fail":0},{"courses_dept":"nurs","courses_id":"578","courses_avg":98.5,"courses_fail":0},{"courses_dept":"nurs","courses_id":"578","courses_avg":98.5,"courses_fail":0},{"courses_dept":"nurs","courses_id":"578","courses_avg":98.58,"courses_fail":0},{"courses_dept":"epse","courses_id":"449","courses_avg":98.58,"courses_fail":0},{"courses_dept":"nurs","courses_id":"578","courses_avg":98.58,"courses_fail":0},{"courses_dept":"epse","courses_id":"449","courses_avg":98.58,"courses_fail":0},{"courses_dept":"epse","courses_id":"421","courses_avg":98.7,"courses_fail":0},{"courses_dept":"nurs","courses_id":"509","courses_avg":98.71,"courses_fail":0},{"courses_dept":"nurs","courses_id":"509","courses_avg":98.71,"courses_fail":0},{"courses_dept":"eece","courses_id":"541","courses_avg":98.75,"courses_fail":0},{"courses_dept":"eece","courses_id":"541","courses_avg":98.75,"courses_fail":0},{"courses_dept":"epse","courses_id":"449","courses_avg":98.76,"courses_fail":0},{"courses_dept":"epse","courses_id":"449","courses_avg":98.76,"courses_fail":0},{"courses_dept":"epse","courses_id":"449","courses_avg":98.8,"courses_fail":0},{"courses_dept":"spph","courses_id":"300","courses_avg":98.98,"courses_fail":0},{"courses_dept":"spph","courses_id":"300","courses_avg":98.98,"courses_fail":0},{"courses_dept":"cnps","courses_id":"574","courses_avg":99.19,"courses_fail":0},{"courses_dept":"math","courses_id":"527","courses_avg":99.78,"courses_fail":0},{"courses_dept":"math","courses_id":"527","courses_avg":99.78,"courses_fail":0}]
+}

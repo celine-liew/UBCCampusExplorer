@@ -1,0 +1,76 @@
+{
+    "title": "SELECT dept, avg WHERE avg > 97",
+    "query":{
+        "WHERE": {
+            "AND": [
+                {
+                    "AND": [
+                        {
+                            "IS": {
+                                "courses_dept": "c*"
+                            }
+                        },
+                        {
+                            "GT": {
+                                "courses_pass": 50
+                            }
+                        }
+                    ]
+                },
+                {
+                    "AND": [
+                        {
+                            "IS": {
+                                "courses_id": "*0"
+                            }
+                        },
+                        {
+                            "GT": {
+                                "courses_avg": 90
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg",
+                "courses_pass"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+
+    "result":[
+        {
+            "courses_dept":"cpsc",
+            "courses_id":"540",
+            "courses_avg":90.53,
+            "courses_pass":59
+        },
+        {
+            "courses_dept":"cpsc",
+            "courses_id":"540",
+            "courses_avg":90.53,
+            "courses_pass":59
+        },
+        {
+            "courses_dept":"cpsc",
+            "courses_id":"540",
+            "courses_avg":91.22,
+            "courses_pass":54
+        },
+        {
+            "courses_dept":"cpsc",
+            "courses_id":"540",
+            "courses_avg":91.22,
+            "courses_pass":54
+        }
+    ]
+
+
+}
