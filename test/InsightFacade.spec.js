@@ -460,14 +460,7 @@ describe("InsightFacade PerformQuery", () => {
                 const responsePromises = [];
                 const datasets = Object.assign({}, ...loadedDatasets);
                 for (const [id, content] of Object.entries(datasets)) {
-<<<<<<< HEAD
-                    if (id === "courses") {
-                        responsePromises.push(insightFacade.addDataset(id, content, IInsightFacade_1.InsightDatasetKind.Courses));
-                    }
-                    if (id === "smalldataset") {
-=======
                     if (id === "courses" || id === "smalldataset") {
->>>>>>> fcfccc7facc211541e4c8549b1a2251fc2682501
                         responsePromises.push(insightFacade.addDataset(id, content, IInsightFacade_1.InsightDatasetKind.Courses));
                     }
                     if (id === "rooms") {
