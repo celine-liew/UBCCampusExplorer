@@ -4,6 +4,7 @@ import {QueryInfo} from "./QueryInfo";
 import QueryWhereParser from "./QueryWhereParser";
 import RowSorter from "./RowSorter";
 import ApplyAggregater from "./ApplyAggregater";
+
 export default class Queryparser  {
     private realapplyobj: any = {};
     private queryinfo: QueryInfo;
@@ -16,7 +17,7 @@ export default class Queryparser  {
         if (Object.keys(query["WHERE"]).length === 0) {
             if (addHash[this.queryinfo.databasename].length >= 5000 && !this.queryinfo.hasTransformation) {
                 throw new ResultTooLargeError();
-            } else if (addHash[this.queryinfo.databasename].length < 5000) {
+            } else if (addHash[this.queryinfo.databasename].length < 5000 && !this.queryinfo.hasTransformation) {
                 return this.applyOptionswthotTrans(addHash[this.queryinfo.databasename]);
             } else {
                 return this.applyOptionswthTrans(addHash[this.queryinfo.databasename]);
@@ -36,6 +37,7 @@ export default class Queryparser  {
     private applyOptionswthTrans(rowsbeforcolumnseclection: any[]): any[] {
         let self = this;
         let rowsbeforetrans: any[] = [];
+        // rowsbeforcolumnseclection
         rowsbeforcolumnseclection.forEach((eachrow) => {
             let copiedelement: any = {};
             self.queryinfo.columnsToDisp.forEach((requestCol) => {

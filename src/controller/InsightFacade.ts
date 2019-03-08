@@ -41,8 +41,8 @@ public addedDatabase: InsightDataset[] = [];
         const fileNames: string[] = [];
         checkValidDatabase(id, content, kind);
         if (this.datasetsHash && this.datasetsHash[kind] && this.datasetsHash[kind][id]) {
-                throw new InsightError("duplicate dataset id.");
-            }
+            throw new InsightError("duplicate dataset id.");
+        }
         return JSZip.loadAsync(content, {base64: true}).then((zip) => {
             const files: Promise<string>[] = [];
             zip.forEach((path, object) => {
@@ -71,16 +71,16 @@ public addedDatabase: InsightDataset[] = [];
 
     private addValidFilesonly = async (files: string[], fileNames: string[],
         coursesKeys: string[], validSectionsOrRooms: any[], kind: InsightDatasetKind, id: string) => {
-                await processBasedonInsightType(kind, files, coursesKeys, validSectionsOrRooms, fileNames);
-                if (validSectionsOrRooms.length === 0) {
-                    throw new InsightError("no valid sections in dataset.");
-                } else {
-                    if (!this.datasetsHash[kind]) {
-                        this.datasetsHash[kind] = {};
-                    }
-                    this.datasetsHash[kind][id] = validSectionsOrRooms;
-                    return saveDatasetList(this.datasetsHash);
+            await processBasedonInsightType(kind, files, coursesKeys, validSectionsOrRooms, fileNames);
+            if (validSectionsOrRooms.length === 0) {
+                throw new InsightError("no valid sections in dataset.");
+            } else {
+                if (!this.datasetsHash[kind]) {
+                    this.datasetsHash[kind] = {};
                 }
+                this.datasetsHash[kind][id] = validSectionsOrRooms;
+                return saveDatasetList(this.datasetsHash);
+            }
     };
 
 
