@@ -14,8 +14,7 @@ export const checkValidDatabase = (id: string, content: string, kind: InsightDat
     if (!content) {
         throw new InsightError( "Can't find database");
     }
-    if (kind !== InsightDatasetKind.Courses && kind !== InsightDatasetKind.Rooms) {
-        throw new InsightError("invalid InsightDatasetKind");
+    if (kind !== InsightDatasetKind.Courses && kind !== InsightDatasetKind.Rooms) { throw new InsightError("invalid InsightDatasetKind");
     }
     return true;
 };
@@ -68,6 +67,7 @@ export const  parseFileNamesIfCoursesOrRoomstype = (path: string, object: JSZip.
         }
 };
 
+<<<<<<< HEAD
 export const checkDuplicateIDs = (kind: InsightDatasetKind, id: string) => {
         if (this.datasetsHash && this.datasetsHash[kind] && this.datasetsHash[kind][id]) {
             throw new InsightError("duplicate dataset id.");
@@ -75,6 +75,8 @@ export const checkDuplicateIDs = (kind: InsightDatasetKind, id: string) => {
     };
 
 
+=======
+>>>>>>> fcfccc7facc211541e4c8549b1a2251fc2682501
 export const processBasedonInsightType = async (kind: InsightDatasetKind, files: string[], coursesKeys: string[],
     validSectionsOrRooms: any[], fileNames: string[]) => {
     switch (kind) {
@@ -133,7 +135,6 @@ export const saveDatasetList = async (data: EHash) => {
         await fs.ensureDir(dir);
         await fs.writeJSON(filePath, outputFile);
     } catch (err) {
-        // console.error(err);
         throw err;
     }
 };

@@ -68,9 +68,7 @@ export default class RowsSelector {
     }
     public reverse(array1: any[]) {
         let self = this;
-        if (array1.length === 0) {
-            return self.allrows;
-        } else {
+        if (array1 === null) { return self.allrows; } else {
             let set = new Set();
             let ret: any[] = [];
             array1.forEach((element) => {
@@ -114,12 +112,8 @@ export default class RowsSelector {
         if (value === "*" || value === "**") { return self.allrows; }
         let ret: any[] = [];
         let regexp = new RegExp(/^[*]?[^*]*[*]?$/g);
-        let s = value.match(regexp);
-        if (s === null) {
-            throw new InsightError("IS no match");
-        }
-        if (s.length !== 1 || s[0] !== value) {
-            throw new InsightError("key doesn't match");
+        let s = value.match(regexp); if (s === null) { throw new InsightError("IS no match"); }
+        if (s.length !== 1 || s[0] !== value) { throw new InsightError("key doesn't match");
         } else {
             self.allrows.forEach((element) => {
                 if (RowsSelector.wildCardHelper(element[key], value)) {

@@ -4,7 +4,6 @@ import {QueryInfo} from "./QueryInfo";
 import QueryWhereParser from "./QueryWhereParser";
 import RowSorter from "./RowSorter";
 import ApplyAggregater from "./ApplyAggregater";
-
 export default class Queryparser  {
     private realapplyobj: any = {};
     private queryinfo: QueryInfo;
@@ -24,7 +23,7 @@ export default class Queryparser  {
             }
         }
         if (Object.keys(query["WHERE"]).length >= 2) {
-            throw new InsightError("More than one key");
+            throw new InsightError("WHERE should only have 1 key, has 2");
         }
         this.whereparser = new QueryWhereParser(this.queryinfo);
         this.whereparser.AST = this.whereparser.traverseFilterGenAst(query["WHERE"], null);
@@ -37,7 +36,6 @@ export default class Queryparser  {
     private applyOptionswthTrans(rowsbeforcolumnseclection: any[]): any[] {
         let self = this;
         let rowsbeforetrans: any[] = [];
-        // rowsbeforcolumnseclection
         rowsbeforcolumnseclection.forEach((eachrow) => {
             let copiedelement: any = {};
             self.queryinfo.columnsToDisp.forEach((requestCol) => {

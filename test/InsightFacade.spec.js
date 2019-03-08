@@ -273,6 +273,24 @@ describe("InsightFacade Add/Remove Dataset", function () {
             }
         });
     });
+    it("Should remove the room dataset only", function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            const id = "courses";
+            const id2 = "rooms";
+            let response;
+            try {
+                yield insightFacade.addDataset(id, datasets[id], IInsightFacade_1.InsightDatasetKind.Courses);
+                yield insightFacade.addDataset(id2, datasets[id2], IInsightFacade_1.InsightDatasetKind.Rooms);
+                response = yield insightFacade.removeDataset(id2);
+            }
+            catch (err) {
+                response = err;
+            }
+            finally {
+                chai_1.expect(response).to.deep.equal(id2);
+            }
+        });
+    });
     it("Shouldn't remove the same existing courses dataset more than once", function () {
         return __awaiter(this, void 0, void 0, function* () {
             const id = "courses";
@@ -442,10 +460,14 @@ describe("InsightFacade PerformQuery", () => {
                 const responsePromises = [];
                 const datasets = Object.assign({}, ...loadedDatasets);
                 for (const [id, content] of Object.entries(datasets)) {
+<<<<<<< HEAD
                     if (id === "courses") {
                         responsePromises.push(insightFacade.addDataset(id, content, IInsightFacade_1.InsightDatasetKind.Courses));
                     }
                     if (id === "smalldataset") {
+=======
+                    if (id === "courses" || id === "smalldataset") {
+>>>>>>> fcfccc7facc211541e4c8549b1a2251fc2682501
                         responsePromises.push(insightFacade.addDataset(id, content, IInsightFacade_1.InsightDatasetKind.Courses));
                     }
                     if (id === "rooms") {

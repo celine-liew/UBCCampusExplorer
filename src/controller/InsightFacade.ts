@@ -7,7 +7,11 @@ import Queryparser from "./Queryparser";
 import { acceptParser } from "restify";
 import * as JSZip from "jszip";
 import * as fs from "fs-extra";
+<<<<<<< HEAD
 import { checkValidDatabase,processCoursesFile, saveDatasetList, parseFileNamesIfCoursesOrRoomstype, checkDuplicateIDs, processBasedonInsightType } from "./HelperAddDataset";
+=======
+import { checkValidDatabase,processCoursesFile, saveDatasetList, parseFileNamesIfCoursesOrRoomstype, processBasedonInsightType } from "./HelperAddDataset";
+>>>>>>> fcfccc7facc211541e4c8549b1a2251fc2682501
 const parse5 = require("parse5");
 import { addListener } from "cluster";
 import QueryValidator from "./QueryValidator";
@@ -41,8 +45,13 @@ public addedDatabase: InsightDataset[] = [];
         const fileNames: string[] = [];
         checkValidDatabase(id, content, kind);
         if (this.datasetsHash && this.datasetsHash[kind] && this.datasetsHash[kind][id]) {
+<<<<<<< HEAD
             throw new InsightError("duplicate dataset id.");
         }
+=======
+                throw new InsightError("duplicate dataset id.");
+            }
+>>>>>>> fcfccc7facc211541e4c8549b1a2251fc2682501
         return JSZip.loadAsync(content, {base64: true}).then((zip) => {
             const files: Promise<string>[] = [];
             zip.forEach((path, object) => {
@@ -71,6 +80,7 @@ public addedDatabase: InsightDataset[] = [];
 
     private addValidFilesonly = async (files: string[], fileNames: string[],
         coursesKeys: string[], validSectionsOrRooms: any[], kind: InsightDatasetKind, id: string) => {
+<<<<<<< HEAD
             await processBasedonInsightType(kind, files, coursesKeys, validSectionsOrRooms, fileNames);
             if (validSectionsOrRooms.length === 0) {
                 throw new InsightError("no valid sections in dataset.");
@@ -81,10 +91,23 @@ public addedDatabase: InsightDataset[] = [];
                 this.datasetsHash[kind][id] = validSectionsOrRooms;
                 return saveDatasetList(this.datasetsHash);
             }
+=======
+                await processBasedonInsightType(kind, files, coursesKeys, validSectionsOrRooms, fileNames);
+                if (validSectionsOrRooms.length === 0) {
+                    throw new InsightError("no valid sections in dataset.");
+                } else {
+                    if (!this.datasetsHash[kind]) {
+                        this.datasetsHash[kind] = {};
+                    }
+                    this.datasetsHash[kind][id] = validSectionsOrRooms;
+                    return saveDatasetList(this.datasetsHash);
+                }
+>>>>>>> fcfccc7facc211541e4c8549b1a2251fc2682501
     };
 
 
     public removeDataset(id: string): Promise<string> {
+<<<<<<< HEAD
         // if (!id){
         //     throw new InsightError ("null input");
         // } if (!this.datasetsHash.courses || this.datasetsHash.courses && !this.datasetsHash.courses[id]){
@@ -105,6 +128,14 @@ public addedDatabase: InsightDataset[] = [];
             !this.datasetsHash.rooms || this.datasetsHash.rooms && !this.datasetsHash.rooms[id])){
             throw new NotFoundError ("dataset not in list.");
         } else{ try {
+=======
+        if (!id){ throw new InsightError ("null input");}
+        if ((!this.datasetsHash.courses || this.datasetsHash.courses && !this.datasetsHash.courses[id]) && (
+            !this.datasetsHash.rooms || this.datasetsHash.rooms && !this.datasetsHash.rooms[id])){
+            throw new NotFoundError ("dataset not in list.");
+        } else {
+            try {
+>>>>>>> fcfccc7facc211541e4c8549b1a2251fc2682501
                 if (this.datasetsHash.courses && this.datasetsHash.courses[id]){
                 delete this.datasetsHash.courses[id];
                 } else if (this.datasetsHash.rooms && this.datasetsHash.rooms[id]){
@@ -121,7 +152,6 @@ public addedDatabase: InsightDataset[] = [];
     }
 
     public listDatasets(): Promise<InsightDataset[]> {
-        // this.addedDatabase.push(dataset);
         const outputList: InsightDataset[] = [];
         Object.keys(this.datasetsHash).forEach( courseOrRm => {
             const setIds = Object.keys(this.datasetsHash[courseOrRm]);

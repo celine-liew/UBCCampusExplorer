@@ -1,0 +1,71 @@
+{
+    "title": "all GROUP all APPLY valid sort UP",
+
+    "query":
+    {
+        "WHERE": {
+          "GT": {
+            "courses_avg": 97
+          }
+        },
+        "OPTIONS": {
+          "COLUMNS": [
+            "courses_title",
+            "overallAvg",
+            "maxAVG",
+            "sumPASS",
+            "countINSTRUCT"
+          ],
+          "ORDER": {
+            "dir": "UP",
+            "keys": [
+              "overallAvg",
+              "maxAVG"
+            ]
+          }
+        },
+        "TRANSFORMATIONS": {
+          "GROUP": [
+            "courses_title",
+            "courses_id",
+            "courses_avg",
+            "courses_pass",
+            "courses_fail",
+            "courses_audit",
+            "courses_year",
+            "courses_dept",
+            "courses_id",
+            "courses_instructor",
+            "courses_uuid"
+          ],
+          "APPLY": [
+            {
+              "overallAvg": {
+                "AVG": "courses_avg"
+              }
+            },
+            {
+              "maxAVG": {
+                "MAX": "courses_avg"
+              }
+            },
+            {
+              "minAVG": {
+                "MIN": "courses_avg"
+              }
+            },
+            {
+              "sumPASS": {
+                "SUM": "courses_pass"
+              }
+            },
+            {
+              "countINSTRUCT": {
+                "COUNT": "courses_instructor"
+              }
+            }
+          ]
+        }
+      },
+  "isQueryValid": true,
+  "result":[{"courses_title":"cor des ed res","overallAvg":97.09,"maxAVG":97.09,"sumPASS":11,"countINSTRUCT":1},{"courses_title":"harmonic anal i","overallAvg":97.09,"maxAVG":97.09,"sumPASS":11,"countINSTRUCT":1},{"courses_title":"harmonic anal i","overallAvg":97.09,"maxAVG":97.09,"sumPASS":11,"countINSTRUCT":1},{"courses_title":"cor des ed res","overallAvg":97.09,"maxAVG":97.09,"sumPASS":11,"countINSTRUCT":1},{"courses_title":"diff geometry i","overallAvg":97.25,"maxAVG":97.25,"sumPASS":4,"countINSTRUCT":1},{"courses_title":"diff geometry i","overallAvg":97.25,"maxAVG":97.25,"sumPASS":4,"countINSTRUCT":1},{"courses_title":"assess lrn diffi","overallAvg":97.29,"maxAVG":97.29,"sumPASS":14,"countINSTRUCT":1},{"courses_title":"assess lrn diffi","overallAvg":97.29,"maxAVG":97.29,"sumPASS":14,"countINSTRUCT":1},{"courses_title":"eth&profl issues","overallAvg":97.33,"maxAVG":97.33,"sumPASS":12,"countINSTRUCT":1},{"courses_title":"eth&profl issues","overallAvg":97.33,"maxAVG":97.33,"sumPASS":12,"countINSTRUCT":1},{"courses_title":"educ stds autism","overallAvg":97.41,"maxAVG":97.41,"sumPASS":17,"countINSTRUCT":1},{"courses_title":"acad assess schl","overallAvg":97.41,"maxAVG":97.41,"sumPASS":17,"countINSTRUCT":1},{"courses_title":"career planning","overallAvg":97.47,"maxAVG":97.47,"sumPASS":15,"countINSTRUCT":1},{"courses_title":"career planning","overallAvg":97.47,"maxAVG":97.47,"sumPASS":15,"countINSTRUCT":1},{"courses_title":"algb geometry i","overallAvg":97.48,"maxAVG":97.48,"sumPASS":21,"countINSTRUCT":1},{"courses_title":"algb geometry i","overallAvg":97.48,"maxAVG":97.48,"sumPASS":21,"countINSTRUCT":1},{"courses_title":"res mthd in educ","overallAvg":97.5,"maxAVG":97.5,"sumPASS":14,"countINSTRUCT":1},{"courses_title":"fam nrs pract","overallAvg":97.53,"maxAVG":97.53,"sumPASS":17,"countINSTRUCT":1},{"courses_title":"fam nrs pract","overallAvg":97.53,"maxAVG":97.53,"sumPASS":17,"countINSTRUCT":1},{"courses_title":"coll&uni teachng","overallAvg":97.67,"maxAVG":97.67,"sumPASS":9,"countINSTRUCT":1},{"courses_title":"sem in autism","overallAvg":97.69,"maxAVG":97.69,"sumPASS":16,"countINSTRUCT":1},{"courses_title":"acad assess schl","overallAvg":97.78,"maxAVG":97.78,"sumPASS":9,"countINSTRUCT":1},{"courses_title":"thesis","overallAvg":98,"maxAVG":98,"sumPASS":1,"countINSTRUCT":1},{"courses_title":"thesis","overallAvg":98,"maxAVG":98,"sumPASS":1,"countINSTRUCT":1},{"courses_title":"assess lrn diffi","overallAvg":98.08,"maxAVG":98.08,"sumPASS":12,"countINSTRUCT":1},{"courses_title":"cl pro prim care","overallAvg":98.21,"maxAVG":98.21,"sumPASS":14,"countINSTRUCT":1},{"courses_title":"cl pro prim care","overallAvg":98.21,"maxAVG":98.21,"sumPASS":14,"countINSTRUCT":1},{"courses_title":"assess lrn diffi","overallAvg":98.36,"maxAVG":98.36,"sumPASS":22,"countINSTRUCT":1},{"courses_title":"dev el sk df&hrd","overallAvg":98.45,"maxAVG":98.45,"sumPASS":11,"countINSTRUCT":1},{"courses_title":"dev el sk df&hrd","overallAvg":98.45,"maxAVG":98.45,"sumPASS":11,"countINSTRUCT":1},{"courses_title":"fam nrs pract","overallAvg":98.5,"maxAVG":98.5,"sumPASS":16,"countINSTRUCT":1},{"courses_title":"fam nrs pract","overallAvg":98.5,"maxAVG":98.5,"sumPASS":16,"countINSTRUCT":1},{"courses_title":"educ stds autism","overallAvg":98.58,"maxAVG":98.58,"sumPASS":24,"countINSTRUCT":1},{"courses_title":"fam nrs pract","overallAvg":98.58,"maxAVG":98.58,"sumPASS":12,"countINSTRUCT":1},{"courses_title":"fam nrs pract","overallAvg":98.58,"maxAVG":98.58,"sumPASS":12,"countINSTRUCT":1},{"courses_title":"educ stds autism","overallAvg":98.58,"maxAVG":98.58,"sumPASS":24,"countINSTRUCT":1},{"courses_title":"assess lrn diffi","overallAvg":98.7,"maxAVG":98.7,"sumPASS":10,"countINSTRUCT":1},{"courses_title":"cl pro prim care","overallAvg":98.71,"maxAVG":98.71,"sumPASS":14,"countINSTRUCT":1},{"courses_title":"cl pro prim care","overallAvg":98.71,"maxAVG":98.71,"sumPASS":14,"countINSTRUCT":1},{"courses_title":"multimedia sys","overallAvg":98.75,"maxAVG":98.75,"sumPASS":12,"countINSTRUCT":1},{"courses_title":"multimedia sys","overallAvg":98.75,"maxAVG":98.75,"sumPASS":12,"countINSTRUCT":1},{"courses_title":"educ stds autism","overallAvg":98.76,"maxAVG":98.76,"sumPASS":17,"countINSTRUCT":1},{"courses_title":"educ stds autism","overallAvg":98.76,"maxAVG":98.76,"sumPASS":17,"countINSTRUCT":1},{"courses_title":"educ stds autism","overallAvg":98.8,"maxAVG":98.8,"sumPASS":25,"countINSTRUCT":1},{"courses_title":"work int health","overallAvg":98.98,"maxAVG":98.98,"sumPASS":82,"countINSTRUCT":1},{"courses_title":"work int health","overallAvg":98.98,"maxAVG":98.98,"sumPASS":82,"countINSTRUCT":1},{"courses_title":"career planning","overallAvg":99.19,"maxAVG":99.19,"sumPASS":16,"countINSTRUCT":1},{"courses_title":"algb topology i","overallAvg":99.78,"maxAVG":99.78,"sumPASS":9,"countINSTRUCT":1},{"courses_title":"algb topology i","overallAvg":99.78,"maxAVG":99.78,"sumPASS":9,"countINSTRUCT":1}]}

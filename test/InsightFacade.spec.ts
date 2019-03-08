@@ -262,6 +262,23 @@ describe("InsightFacade Add/Remove Dataset", function () {
 
     });
 
+    it("Should remove the room dataset only", async function () {
+        const id: string = "courses";
+        const id2: string = "rooms";
+        let response: string;
+
+        try {
+            await insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+            await insightFacade.addDataset(id2, datasets[id2], InsightDatasetKind.Rooms);
+            response = await insightFacade.removeDataset(id2);
+        } catch (err) {
+            response = err;
+        } finally {
+            expect(response).to.deep.equal(id2);
+        }
+
+    });
+
     it("Shouldn't remove the same existing courses dataset more than once", async function () {
         const id: string = "courses";
         let response: string;
@@ -436,6 +453,7 @@ describe("InsightFacade PerformQuery", () => {
             const responsePromises: Array<Promise<string[]>> = [];
             const datasets: { [id: string]: string } = Object.assign({}, ...loadedDatasets);
             for (const [id, content] of Object.entries(datasets)) {
+<<<<<<< HEAD
                 if (id === "courses") {
                     responsePromises.push(insightFacade.addDataset(id, content, InsightDatasetKind.Courses));
                 }
@@ -444,6 +462,12 @@ describe("InsightFacade PerformQuery", () => {
                 }
                 if (id === "rooms") {
                     responsePromises.push(insightFacade.addDataset(id, content, InsightDatasetKind.Rooms));
+=======
+                if (id === "courses" ||id === "smalldataset" ) {
+                    responsePromises.push(insightFacade.addDataset(id, content, InsightDatasetKind.Courses));
+                }if (id === "rooms") {
+                  responsePromises.push(insightFacade.addDataset(id, content, InsightDatasetKind.Rooms));
+>>>>>>> fcfccc7facc211541e4c8549b1a2251fc2682501
                 }
             }
 
