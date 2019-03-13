@@ -53,8 +53,5 @@
         "test": "mocha --require ts-node/register --timeout 10000",
         "test:frontend": "karma start",
         "start": "node src/App.js"
-    },
-    "dependencies": {
-        "express": "^4.16.4"
     }
 }

@@ -1,4 +1,6 @@
 import Server from "../src/rest/Server";
+
+
 import TestUtil from "./TestUtil";
 import Log from "../src/Util";
 
@@ -8,6 +10,7 @@ import { expect } from "chai";
 
 import chaiHttp = require("chai-http");
 import { InsightDatasetKind } from "../src/controller/IInsightFacade";
+
 
 describe("Facade D3", function () {
 
@@ -19,11 +22,13 @@ describe("Facade D3", function () {
     before(function () {
         facade = new InsightFacade();
         server = new Server(4321);
+
         try {
             return server.start();
         } catch (err) {
             expect. fail("fail to start the server");
         }
+
         // TODO: start server here once and handle errors properly
     });
 
@@ -34,6 +39,7 @@ describe("Facade D3", function () {
 
     beforeEach(function () {
         Log.test(`BeforeTest: ${this.currentTest.title}`);
+
         // might want to add some process logging here to keep track of what"s going on
     });
 
@@ -76,6 +82,7 @@ describe("Facade D3", function () {
             //         // some logging here please!
             //         expect.fail();
             //     });
+
         } catch (err) {
             // and some more logging here!
         }
