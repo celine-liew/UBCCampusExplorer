@@ -219,7 +219,9 @@ export class QueryInfo {
             s = firstelement.match(this.rerooms);
             if (s !== null) {
                 if (s.length !== 1 || s[0] !== firstelement) {
-                    if (!this.hasTransformation) { throw new InsightError("invalid key in column");}
+                    if (!this.hasTransformation) {
+                        throw new InsightError("invalid key in column");
+                    }
                 } else {
                     this.isCourse = false;
                     this.isCourseIsSet = true;
@@ -236,10 +238,14 @@ export class QueryInfo {
     }
     public setDbNameisCourseByGroup(): string {
         let groupkeys = this.query["TRANSFORMATIONS"]["GROUP"];
-        if (!Array.isArray(groupkeys)) { throw new InsightError("Group must be an non-empty array");}
-        if (groupkeys.length === 0) { throw new InsightError("Group must be an non-empty array");
-        } else { let firstgroupkey = groupkeys[0];
-            if (typeof firstgroupkey !== "string") { throw new InsightError("Group must be an non-empty array of string");
+        if (!Array.isArray(groupkeys)) {
+            throw new InsightError("Group must be an non-empty array");
+        } else if (groupkeys.length === 0) {
+            throw new InsightError("Group must be an non-empty array");
+        } else {
+            let firstgroupkey = groupkeys[0];
+            if (typeof firstgroupkey !== "string") {
+                throw new InsightError("Group must be an non-empty array of string");
             } else {
                 if (this.recourses.test(firstgroupkey)) {
                     this.isCourse = true;
@@ -249,7 +255,8 @@ export class QueryInfo {
                     this.isCourse = false;
                     this.isCourseIsSet = true;
                     return firstgroupkey;
-                } else { throw new InsightError("Invalid group key string");
+                } else {
+                    throw new InsightError("Invalid group key string");
                 }
             }
         }

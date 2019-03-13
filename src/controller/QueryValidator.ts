@@ -7,7 +7,8 @@ export default class QueryValidator  {
         this.queryinfo = new QueryInfo(query);
         let keys: string[];
         keys = Object.keys(query);
-        if (keys.length >= 4) { throw new InsightError("Excess keys in query");
+        if (keys.length >= 4) {
+            throw new InsightError("Excess keys in query");
         } else {
             if (!query.hasOwnProperty("WHERE")) {
                 throw new InsightError("Missing Where");
@@ -51,7 +52,8 @@ export default class QueryValidator  {
             let keys = Object.keys(optionpart);
             if (!optionpart.hasOwnProperty("COLUMNS")) {
                 throw new InsightError("Missing Columns");
-            } else if (!Array.isArray(optionpart["COLUMNS"])) { throw new InsightError("Invalid query string 0");
+            } else if (!Array.isArray(optionpart["COLUMNS"])) {
+                throw new InsightError("Invalid query string 0");
             } else if (optionpart["COLUMNS"].length === 0) {
                 throw new InsightError("COLUMNS must be non-empty");
             }
@@ -106,8 +108,9 @@ export default class QueryValidator  {
         if (order["dir"] !== "UP" && order["dir"] !== "DOWN") {
             throw new InsightError("invalid order direction");
         }
-        if (!Array.isArray(order["keys"])) { throw new InsightError("invalid order, keys should be an array"); }
-        if (order["keys"].length === 0) {
+        if (!Array.isArray(order["keys"])) {
+            throw new InsightError("invalid order, keys should be an array");
+        } else if (order["keys"].length === 0) {
             throw new InsightError("invalid order, keys should be an non-empty array");
         } else {
             order["keys"].forEach((orderKey: any) => {
@@ -117,7 +120,8 @@ export default class QueryValidator  {
                         flag = true;
                     }
                 });
-                if (!flag) { throw new InsightError("ORDER key must be in COLUMNS");
+                if (!flag) {
+                    throw new InsightError("ORDER key must be in COLUMNS");
                 }
             });
         }

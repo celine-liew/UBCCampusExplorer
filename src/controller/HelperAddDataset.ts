@@ -67,6 +67,13 @@ export const  parseFileNamesIfCoursesOrRoomstype = (path: string, object: JSZip.
         }
 };
 
+export const checkDuplicateIDs = (kind: InsightDatasetKind, id: string) => {
+        if (this.datasetsHash && this.datasetsHash[kind] && this.datasetsHash[kind][id]) {
+            throw new InsightError("duplicate dataset id.");
+        }
+    };
+
+
 export const processBasedonInsightType = async (kind: InsightDatasetKind, files: string[], coursesKeys: string[],
     validSectionsOrRooms: any[], fileNames: string[]) => {
     switch (kind) {

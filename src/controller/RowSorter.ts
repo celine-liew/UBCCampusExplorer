@@ -1,19 +1,17 @@
 export default class RowSorter {
     public sortRowsWithOneOrder(rowsbeforesorting: any[], order: string): any[] {
-        if (order !== undefined) {
-            let fullorder = order;
-            rowsbeforesorting.sort(function (a, b) {
-                let A = a[fullorder];
-                let B = b[fullorder];
-                if (A < B) {
-                    return -1;
-                }
-                if (A > B) {
-                    return 1;
-                }
-                return 0;
-            });
-        }
+        let fullorder = order;
+        rowsbeforesorting.sort(function (a, b) {
+            let A = a[fullorder];
+            let B = b[fullorder];
+            if (A < B) {
+                return -1;
+            }
+            if (A > B) {
+                return 1;
+            }
+            return 0;
+        });
         return rowsbeforesorting;
     }
     public sortRowsWithObjOrder(rowsbeforesorting: any[], order: any): any {

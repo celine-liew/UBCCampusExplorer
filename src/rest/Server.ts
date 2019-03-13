@@ -6,6 +6,8 @@ import fs = require("fs");
 import restify = require("restify");
 import Log from "../Util";
 
+import Handlers from "./Handlers";
+
 /**
  * This configures the REST endpoints for the server.
  */
@@ -65,6 +67,12 @@ export default class Server {
 
                 // NOTE: your endpoints should go here
 
+                // buf.toString("base64");
+                let handlers: Handlers = new Handlers();
+                that.rest.put("/dataset/:id/:kind", handlers.putDataset);
+                that.rest.del("/dataset/:id/:kind", handlers.delDataset);
+                that.rest.post("/query", handlers.postQuery);
+                that.rest.get("/datasets", handlers.getDataset);
                 // This must be the last endpoint!
                 that.rest.get("/.*", Server.getStatic);
 

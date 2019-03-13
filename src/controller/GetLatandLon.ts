@@ -21,11 +21,13 @@ export const latAndLon = (address: string): Promise<any> => {
                 data += chunk;
             });
             resp.on('end', () => {
-                if (resp.statusCode !== 200) { reject(JSON.parse(data));
+                if (resp.statusCode !== 200) {
+                    reject(JSON.parse(data));
                 }
                 resolve(JSON.parse(data));
             });
-        }).on("error", (err: any) => { console.log(err);
+        }).on("error", (err: any) => {
+            console.log(err);
             reject(err);
         });
     })
