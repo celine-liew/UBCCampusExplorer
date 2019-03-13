@@ -60,6 +60,13 @@ describe("Facade D3", function () {
     });
     it("PUT test for courses dataset", function () {
         try {
+            return chai.request("http://localhost:4321")
+                .put("/dataset/smalldataset/courses")
+                .attach("body", datasets["smalldataset"], "./test/data/smalldataset.zip")
+                .then()
+                .catch(function (err) {
+                chai_1.expect.fail();
+            });
         }
         catch (err) {
         }

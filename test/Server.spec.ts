@@ -64,18 +64,20 @@ describe("Facade D3", function () {
 
     it("PUT test for courses dataset", function () {
         try {
-            // return chai.request("http://localhost:4321")
-            //     .put("/dataset/smalldataset/courses")
-            //     .attach("body", datasets["smalldataset"], "./test/data/smalldataset.zip")
-            //     .then(function (res: Response) {
-            //         // some logging here please!
-            //         res = await facade.addDataset()
-            //         expect(res.status).to.be.equal(204);
-            //     })
-            //     .catch(function (err) {
-            //         // some logging here please!
-            //         expect.fail();
-            //     });
+            return chai.request("http://localhost:4321")
+                .put("/dataset/smalldataset/courses")
+                .attach("body", datasets["smalldataset"], "./test/data/smalldataset.zip")
+                .then(
+                //     function (res: Response) {
+                //     // some logging here please!
+                //     res = await facade.addDataset()
+                //     expect(res.status).to.be.equal(204);
+                // }
+                )
+                .catch(function (err) {
+                    // some logging here please!
+                    expect.fail();
+                });
         } catch (err) {
             // and some more logging here!
         }

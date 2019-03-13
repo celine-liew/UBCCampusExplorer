@@ -1,4 +1,3 @@
-// tslint:disable
 import {InsightError} from "./IInsightFacade";
 
 export class QueryInfo {
@@ -33,7 +32,7 @@ export class QueryInfo {
     public getquery(): any {
         return this.query;
     }
-
+    // This class might have some problem??
     public checkcolumnsWithTrans() {
         let self = this;
         this.setDbNameisCourseByFirstColumn();
