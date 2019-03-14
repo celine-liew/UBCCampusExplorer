@@ -1,0 +1,45 @@
+{
+    "title": "room given example",
+
+    "query": {
+        "WHERE": {
+            "AND": [{
+                "IS": {
+                    "rooms_furniture": "*Tables*"
+                }
+            }, {
+                "GT": {
+                    "rooms_seats": 100
+                }
+            }]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "COUNT",
+                "sumSeats",
+                "rooms_href"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": ["COUNT","sumSeats"]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["rooms_shortname","rooms_href"],
+            "APPLY": [{
+                "COUNT": {
+                    "COUNT": "rooms_type"
+                }
+            },{
+                "sumSeats": {
+                    "SUM": "rooms_seats"
+                }
+            },{
+                "sumSeats": {
+                    "MIN": "rooms_seats"
+                }
+            }]
+        }
+    },
+    "isQueryValid": true,
+    "result":[{"COUNT":1,"sumSeats":442,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/OSBO-A"},{"COUNT":1,"sumSeats":375,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/HEBB-100"},{"COUNT":1,"sumSeats":350,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/LSC-1001"},{"COUNT":1,"sumSeats":350,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/LSC-1002"},{"COUNT":1,"sumSeats":299,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/SRC-220C"},{"COUNT":1,"sumSeats":299,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/SRC-220B"},{"COUNT":1,"sumSeats":299,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/SRC-220A"},{"COUNT":1,"sumSeats":260,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/ANGU-098"},{"COUNT":1,"sumSeats":236,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/PHRM-1101"},{"COUNT":1,"sumSeats":205,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/LSK-200"},{"COUNT":1,"sumSeats":200,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/CHBE-101"},{"COUNT":1,"sumSeats":190,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/SWNG-222"},{"COUNT":1,"sumSeats":190,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/SWNG-221"},{"COUNT":1,"sumSeats":188,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/SWNG-122"},{"COUNT":1,"sumSeats":187,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/SWNG-121"},{"COUNT":1,"sumSeats":183,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/LSK-201"},{"COUNT":1,"sumSeats":167,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/PHRM-1201"},{"COUNT":1,"sumSeats":160,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/FRDM-153"},{"COUNT":1,"sumSeats":160,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/DMP-310"},{"COUNT":1,"sumSeats":154,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/IBLC-182"},{"COUNT":1,"sumSeats":136,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/MCLD-228"},{"COUNT":1,"sumSeats":125,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/LSC-1003"},{"COUNT":1,"sumSeats":123,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/MCLD-202"},{"COUNT":1,"sumSeats":120,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/WOOD-1"},{"COUNT":1,"sumSeats":120,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/WOOD-4"},{"COUNT":1,"sumSeats":120,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/WOOD-5"},{"COUNT":1,"sumSeats":120,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/DMP-110"},{"COUNT":1,"sumSeats":112,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/IBLC-261"},{"COUNT":1,"sumSeats":108,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/BUCH-A203"},{"COUNT":1,"sumSeats":108,"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/BUCH-A202"}]}

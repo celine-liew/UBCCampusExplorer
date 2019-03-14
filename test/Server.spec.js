@@ -41,7 +41,8 @@ describe("Facade D3", function () {
     });
     const datasetsToLoad = {
         courses: "./test/data/courses.zip",
-        rooms: "./test/data/rooms.zip"
+        rooms: "./test/data/rooms.zip",
+        smalldataset: "./test/data/smalldataset.zip"
     };
     let datasets;
     before(function () {
@@ -63,12 +64,118 @@ describe("Facade D3", function () {
             return chai.request("http://localhost:4321")
                 .put("/dataset/smalldataset/courses")
                 .attach("body", datasets["smalldataset"], "./test/data/smalldataset.zip")
-                .then()
+                .then((res) => {
+                Util_1.default.test(`PUT test for courses dataset OK`);
+                chai_1.expect(res.status).to.be.equal(200);
+            })
                 .catch(function (err) {
-                chai_1.expect.fail();
+                chai_1.expect.fail("Put dataset should not fail if the implementation is correct");
             });
         }
         catch (err) {
+            chai_1.expect.fail("PUT test for courses dataset should be OK");
+        }
+    });
+    it("PUT duplicate courses dataset should reject", function () {
+        try {
+            return chai.request("http://localhost:4321")
+                .put("/dataset/courses/courses")
+                .attach("body", datasets["courses"], "./test/data/courses.zip")
+                .then((res) => {
+                Util_1.default.test(`PUT test for duplicate courses dataset should be rejected`);
+                chai_1.expect(res.status).to.be.equal(400);
+            })
+                .catch(function (err) {
+                chai_1.expect.fail("Put dataset should not fail if the implementation is correct");
+            });
+        }
+        catch (err) {
+            chai_1.expect.fail("PUT test for courses dataset should be OK");
+        }
+    });
+    it("PUT invalid courses dataset should reject - wrong content", function () {
+        try {
+            return chai.request("http://localhost:4321")
+                .put("/dataset/courses/courses")
+                .attach("body", datasets["rooms"], "./test/data/courses.zip")
+                .then((res) => {
+                Util_1.default.test(`PUT test for wrong content in courses dataset should be rejected`);
+                chai_1.expect(res.status).to.be.equal(400);
+            })
+                .catch(function (err) {
+                chai_1.expect.fail("Put dataset should not fail if the implementation is correct");
+            });
+        }
+        catch (err) {
+            chai_1.expect.fail("PUT test for courses dataset should be OK");
+        }
+    });
+    it("PUT invalid courses dataset should reject - wrong path", function () {
+        try {
+            return chai.request("http://localhost:4321")
+                .put("/dataset/courses/courses")
+                .attach("body", datasets["courses"], "./test/data/rooms.zip")
+                .then((res) => {
+                Util_1.default.test(`PUT test for wrong path in courses dataset should be rejected`);
+                chai_1.expect(res.status).to.be.equal(400);
+            })
+                .catch(function (err) {
+                chai_1.expect.fail("Put dataset should not fail if the implementation is correct");
+            });
+        }
+        catch (err) {
+            chai_1.expect.fail("PUT test for courses dataset should be OK");
+        }
+    });
+    it("PUT invalid courses dataset should reject - wrong URI", function () {
+        try {
+            return chai.request("http://localhost:4321")
+                .put("/dataset/courses/rooms")
+                .attach("body", datasets["courses"], "./test/data/courses.zip")
+                .then((res) => {
+                Util_1.default.test(`PUT test for wrong URI in courses dataset should be rejected`);
+                chai_1.expect(res.status).to.be.equal(400);
+            })
+                .catch(function (err) {
+                chai_1.expect.fail("Put dataset should not fail if the implementation is correct");
+            });
+        }
+        catch (err) {
+            chai_1.expect.fail("PUT test for courses dataset should be OK");
+        }
+    });
+    it("PUT test for courses dataset", function () {
+        try {
+            return chai.request("http://localhost:4321")
+                .put("/dataset/smalldataset/courses")
+                .attach("body", datasets["smalldataset"], "./test/data/smalldataset.zip")
+                .then((res) => {
+                Util_1.default.test(`PUT test for courses dataset OK`);
+                chai_1.expect(res.status).to.be.equal(200);
+            })
+                .catch(function (err) {
+                chai_1.expect.fail("Put dataset should not fail if the implementation is correct");
+            });
+        }
+        catch (err) {
+            chai_1.expect.fail("PUT test for courses dataset should be OK");
+        }
+    });
+    it("PUT test for courses dataset", function () {
+        try {
+            return chai.request("http://localhost:4321")
+                .put("/dataset/smalldataset/courses")
+                .attach("body", datasets["smalldataset"], "./test/data/smalldataset.zip")
+                .then((res) => {
+                Util_1.default.test(`PUT test for courses dataset OK`);
+                chai_1.expect(res.status).to.be.equal(200);
+            })
+                .catch(function (err) {
+                chai_1.expect.fail("Put dataset should not fail if the implementation is correct");
+            });
+        }
+        catch (err) {
+            chai_1.expect.fail("PUT test for courses dataset should be OK");
         }
     });
 });
