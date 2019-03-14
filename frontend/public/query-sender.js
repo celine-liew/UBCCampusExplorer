@@ -7,17 +7,15 @@
  */ https://javascript.info/xmlhttprequest#events-onload-onerror-etc
 CampusExplorer.sendQuery = function(query) {
     return new Promise(function(fulfill, reject) {
-        // TODO: implement!
-        var ajaxReq = new XMLHttpRequest();
+        const ajaxReq = new XMLHttpRequest();
         ajaxReq.open('POST', '/query'); // TODO to confirm what is the link to post to.
-        ajaxReq.send();
+        ajaxReq.send(JSON.stringify(query));
         ajaxReq.onload = function() {
             if (ajaxReq.status != 200) {
                 reject(ajaxReq.status + ': ' + ajaxReq.statusText); //e.g. 404 Not Found
             }
             else {
-                console.log("ajaxsubmit success");
-                alert(ajaxReq.responseText);
+                fulfill(ajaxReq.responseText);
             }
         };
     });
