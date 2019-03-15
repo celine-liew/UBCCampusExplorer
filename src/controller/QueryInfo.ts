@@ -8,7 +8,6 @@ export class QueryInfo {
     public hasTransformation: boolean;
     public databasename: string;
     public isCourse: boolean;
-    public isCourseIsSet: boolean = false;
     public order: any;
     public recourses = new RegExp(/[^_]+_(avg|pass|fail|audit|year|dept|id|instructor|title|uuid)$/g);
     public rerooms =
@@ -37,40 +36,34 @@ export class QueryInfo {
         this.setDbNameisCourseByFirstColumn();
         this.validateTransForm();
         this.columnsToDisp = new Set<string>();
-        this.query["OPTIONS"]["COLUMNS"].forEach((eachcolumn: any) => {
-            let flwstrings: string[] = [];
-            if (self.isCourse) {
-                flwstrings = eachcolumn.match(self.recourses);
-            } else {
-                flwstrings = eachcolumn.match(self.rerooms);
-            }
-            if (flwstrings === null && self.applykeys.size !== 0) {
-                if (self.applykeys.has(eachcolumn)) {
-                    self.columnsToDisp.add(eachcolumn);
+        this.query["OPTIONS"]["COLUMNS"].forEach((eachcolumn: string) => {
+            if (!eachcolumn.includes("_")) {
+                if (self.applykeys.size === 0 || !self.applykeys.has(eachcolumn)) {
+                    throw new InsightError("invalid key " + eachcolumn + " in columns");
                 } else {
-                    throw new InsightError("Keys in COLUMNS must be in GROUP or APPLY when TRANSFORMATIONS is present");
+                    self.columnsToDisp.add(eachcolumn);
                 }
-            } else if (flwstrings.length !== 1 || flwstrings[0] !== eachcolumn) {
-                throw new InsightError("key doesn't match, being wrong key, or intertwining rooms and courses");
             } else {
-                let s3 = flwstrings[0].split("_");
-                if ( self.databasename !== s3[0]) {
-                    throw new InsightError("Cannot query more than one dataset");
+                let flwstrings: string[] = [];
+                if (self.isCourse) {
+                    flwstrings = eachcolumn.match(self.recourses);
+                } else {
+                    flwstrings = eachcolumn.match(self.rerooms);
                 }
-                if (!self.groupKeys.has(flwstrings[0])) {
-                    if (self.applykeys.size !== 0) {
-                        if (!self.applykeys.has(flwstrings[0])) {
-                            throw new InsightError
-                            ("Keys in COLUMNS must be in GROUP or APPLY when TRANSFORMATIONS is present");
-                        } else {
-                            self.columnsToDisp.add(eachcolumn);
-                        }
-                    } else {
+                if ( flwstrings === null ) {
+                    throw new InsightError("invalid key " + eachcolumn + " in columns, with underscore");
+                } else if (flwstrings.length !== 1 || flwstrings[0] !== eachcolumn) {
+                    throw new InsightError("key doesn't match, being wrong key, or intertwining rooms and courses");
+                } else {
+                    let s3 = flwstrings[0].split("_");
+                    if ( self.databasename !== s3[0]) {
+                        throw new InsightError("Cannot query more than one dataset");
+                    } else if (!self.groupKeys.has(flwstrings[0])) {
                         throw new InsightError
-                            ("Keys in COLUMNS must be in GROUP or APPLY when TRANSFORMATIONS is present");
+                            ("Keys in COLUMNS must be in GROUP or APPLY when TRANSFORMATIONS is present 3");
+                    } else {
+                        self.columnsToDisp.add(eachcolumn);
                     }
-                } else {
-                    self.columnsToDisp.add(eachcolumn);
                 }
             }
         });
@@ -133,10 +126,7 @@ export class QueryInfo {
                 if (self.applykeys.has(applykey)) {
                     throw new InsightError("Cannot have duplicate applyrule identifier");
                 } else if (applykey.includes("_"))  {
-                    throw new InsightError("Cannot have underscore in applyKey");
-                } else {
-                    self.applykeys.add(applykey); }
-            }
+                    throw new InsightError("Cannot have underscore in applyKey"); }}
             if (Object.keys(applyRule[applykey]).length !== 1) {
                 let l: number = Object.keys(applyRule[applykey]).length;
                 throw new InsightError("Apply body should only have 1 key, has " + l);
@@ -165,9 +155,12 @@ export class QueryInfo {
                                 throw new InsightError("key to apply is mismatched"); }
                         } else if (! rerooms.test(applyRule[applykey][applytoken])) {
                             throw new InsightError("key to apply is mismatched"); }
-                        }
                     }
+                    let s3 = applyRule[applykey][applytoken].split("_");
+                    if (s3[0] !== self.databasename) { throw new InsightError("Cannot query more than one database"); }
                 }
+            }
+            self.applykeys.add(applykey);
         });
     }
     public checkcolumnsWithoutTrans() {
@@ -195,44 +188,30 @@ export class QueryInfo {
     public setDbNameisCourseByFirstColumn() {
         let self = this;
         let firstelement = self.query["OPTIONS"]["COLUMNS"][0];
-        let s = firstelement.match(this.recourses);
-        if (s !== null) {
-            if (s.length !== 1 || s[0] !== firstelement) {
-                s = firstelement.match(this.rerooms);
-                if (s !== null) {
-                    if (s.length !== 1 || s[0] !== firstelement) {
-                        if (!this.hasTransformation) {
-                            throw new InsightError("invalid key in column");
-                        }
-                    } else {
-                        this.isCourse = false;
-                        this.isCourseIsSet = true;
-                    }
-                }
-            } else {
+        if (firstelement.includes("_")) {
+            let recourses = new RegExp(/[^_]+_(avg|pass|fail|audit|year|dept|id|instructor|title|uuid)$/);
+            let rerooms =
+                new RegExp(/[^_]+_(lat|lon|seats|fullname|shortname|number|name|address|type|furniture|href)$/);
+            if (recourses.test(firstelement)) {
+                let s3 = firstelement.split("_");
+                this.databasename = s3[0];
                 this.isCourse = true;
-                this.isCourseIsSet = true;
+            } else if (rerooms.test(firstelement)) {
+                let s3 = firstelement.split("_");
+                this.databasename = s3[0];
+                this.isCourse = false;
+            } else {
+                throw new InsightError("invalid first key in column");
             }
         } else {
-            s = firstelement.match(this.rerooms);
-            if (s !== null) {
-                if (s.length !== 1 || s[0] !== firstelement) {
-                    if (!this.hasTransformation) {
-                        throw new InsightError("invalid key in column");
-                    }
-                } else {
-                    this.isCourse = false;
-                    this.isCourseIsSet = true;
-                }
+            if (!this.hasTransformation) {
+                throw new InsightError("invalid first key in column");
+            } else {
+                firstelement = this.setDbNameisCourseByGroup();
+                let s3 = firstelement.split("_");
+                this.databasename = s3[0];
             }
         }
-        if (!this.isCourseIsSet && !this.hasTransformation) {
-            throw new InsightError("column invalid!");
-        } else if (!this.isCourseIsSet && this.hasTransformation) {
-            firstelement = this.setDbNameisCourseByGroup();
-        }
-        let s2 = firstelement.split("_");
-        this.databasename = s2[0];
     }
     public setDbNameisCourseByGroup(): string {
         let groupkeys = this.query["TRANSFORMATIONS"]["GROUP"];
@@ -247,11 +226,9 @@ export class QueryInfo {
             } else {
                 if (this.recourses.test(firstgroupkey)) {
                     this.isCourse = true;
-                    this.isCourseIsSet = true;
                     return firstgroupkey;
                 } else if (this.rerooms.test(firstgroupkey)) {
                     this.isCourse = false;
-                    this.isCourseIsSet = true;
                     return firstgroupkey;
                 } else {
                     throw new InsightError("Invalid group key string");

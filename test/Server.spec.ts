@@ -23,6 +23,7 @@ describe("Facade D3", function () {
         server = new Server(4321);
 
         try {
+            Log.test(`Start the Server!!`);
             return server.start();
         } catch (err) {
             expect. fail("fail to start the server");
@@ -33,7 +34,7 @@ describe("Facade D3", function () {
 
     after(function () {
         // TODO: stop server here once!
-        return server.stop();
+        server.stop();
     });
 
     beforeEach(function () {
@@ -57,7 +58,7 @@ describe("Facade D3", function () {
         cpsccourses2: "./test/data/cpsccourses2.zip"
     };
     let datasets: { [id: string]: string };
-    before(async function () {
+    before (async function () {
         // TODO: read your courses and rooms datasets here once!
         const loadDatasetPromises: Array<Promise<Buffer>> = [];
         for (const [id, path] of Object.entries(datasetsToLoad)) {
@@ -69,7 +70,7 @@ describe("Facade D3", function () {
         datasets = Object.assign({}, ...loadedDatasets);
         await facade.addDataset("courses", datasets["courses"], InsightDatasetKind.Courses);
         await facade.addDataset("rooms", datasets["rooms"], InsightDatasetKind.Rooms);
-        await facade.addDataset("courses", datasets["cpsccourses2"], InsightDatasetKind.Courses);
+        // await facade.addDataset("cpsccourses2", datasets["cpsccourses2"], InsightDatasetKind.Courses);
     });
     // Hint on how to test PUT requests
 
@@ -112,7 +113,8 @@ describe("Facade D3", function () {
                     expect.fail("Put dataset should not fail if the implementation is correct");
                 });
         } catch (err) {
-            expect.fail("PUT test for courses dataset should be OK");
+            Log.test(`PUT test for duplicate courses dataset should be rejected`);
+            // expect.fail("PUT test for courses dataset should be OK");
             // and some more logging here!
         }
     });

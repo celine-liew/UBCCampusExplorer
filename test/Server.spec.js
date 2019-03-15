@@ -24,6 +24,7 @@ describe("Facade D3", function () {
         facade = new InsightFacade_1.default();
         server = new Server_1.default(4321);
         try {
+            Util_1.default.test(`Start the Server!!`);
             return server.start();
         }
         catch (err) {
@@ -31,7 +32,7 @@ describe("Facade D3", function () {
         }
     });
     after(function () {
-        return server.stop();
+        server.stop();
     });
     beforeEach(function () {
         Util_1.default.test(`BeforeTest: ${this.currentTest.title}`);
@@ -61,7 +62,6 @@ describe("Facade D3", function () {
             datasets = Object.assign({}, ...loadedDatasets);
             yield facade.addDataset("courses", datasets["courses"], IInsightFacade_1.InsightDatasetKind.Courses);
             yield facade.addDataset("rooms", datasets["rooms"], IInsightFacade_1.InsightDatasetKind.Rooms);
-            yield facade.addDataset("courses", datasets["cpsccourses2"], IInsightFacade_1.InsightDatasetKind.Courses);
         });
     });
     it("PUT test for courses dataset", function () {
@@ -95,7 +95,7 @@ describe("Facade D3", function () {
             });
         }
         catch (err) {
-            chai_1.expect.fail("PUT test for courses dataset should be OK");
+            Util_1.default.test(`PUT test for duplicate courses dataset should be rejected`);
         }
     });
     it("PUT invalid courses dataset should reject - wrong content", function () {
