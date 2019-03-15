@@ -194,8 +194,7 @@ export class QueryInfo {
         });
     }
     public setDbNameisCourseByFirstColumn() {
-        let self = this;
-        let firstelement = self.query["OPTIONS"]["COLUMNS"][0];
+        let firstelement = this.query["OPTIONS"]["COLUMNS"][0];
         if (firstelement.includes("_")) {
             let recourses = new RegExp(/[^_]+_(avg|pass|fail|audit|year|dept|id|instructor|title|uuid)$/);
             let rerooms =
@@ -223,6 +222,9 @@ export class QueryInfo {
     }
     public setDbNameisCourseByGroup(): string {
         let groupkeys = this.query["TRANSFORMATIONS"]["GROUP"];
+        let recourses = new RegExp(/[^_]+_(avg|pass|fail|audit|year|dept|id|instructor|title|uuid)$/);
+        let rerooms =
+                new RegExp(/[^_]+_(lat|lon|seats|fullname|shortname|number|name|address|type|furniture|href)$/);
         if (!Array.isArray(groupkeys)) {
             throw new InsightError("Group must be an non-empty array");
         } else if (groupkeys.length === 0) {
@@ -232,10 +234,10 @@ export class QueryInfo {
             if (typeof firstgroupkey !== "string") {
                 throw new InsightError("Group must be an non-empty array of string");
             } else {
-                if (this.recourses.test(firstgroupkey)) {
+                if (recourses.test(firstgroupkey)) {
                     this.isCourse = true;
                     return firstgroupkey;
-                } else if (this.rerooms.test(firstgroupkey)) {
+                } else if (rerooms.test(firstgroupkey)) {
                     this.isCourse = false;
                     return firstgroupkey;
                 } else {
