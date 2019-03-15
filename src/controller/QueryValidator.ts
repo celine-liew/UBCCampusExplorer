@@ -12,7 +12,6 @@ export default class QueryValidator  {
         } else {
             if (!query.hasOwnProperty("WHERE")) {
                 throw new InsightError("Missing Where");
-                // There must be property of "WHERE", but for a small dataset < 5000 rows, it may be empty
             } else if (!query.hasOwnProperty("OPTIONS")) {
                 throw new InsightError("Missing Options");
             } else if (!(query["OPTIONS"].hasOwnProperty("COLUMNS"))) {
@@ -23,25 +22,19 @@ export default class QueryValidator  {
                 throw new InsightError("Missing Transformation, has some wrong key");
             } else if (query.hasOwnProperty("TRANSFORMATIONS")) {
                 this.queryinfo.hasTransformation = true;
-                this.validateWhere(query["WHERE"]);
-                this.validateOptions(query["OPTIONS"]);
-                return this.queryinfo.isCourse;
             } else {
                 this.queryinfo.hasTransformation = false;
-                this.validateWhere(query["WHERE"]);
-                this.validateOptions(query["OPTIONS"]);
-                return this.queryinfo.isCourse;
             }
+            this.validateWhere(query["WHERE"]);
+            this.validateOptions(query["OPTIONS"]);
+            return this.queryinfo.isCourse;
         }
     }
     public validateWhere(wherepart: any) {
-        if (typeof wherepart !== "object") { throw new InsightError("Where must be an object");
-        // } else if (wherepart.length === 0) {
-            // throw new InsightError("Where must be non-empty");
+        if (typeof wherepart !== "object") {
+            throw new InsightError("Where must be an object");
         } else if (Object.keys(wherepart).length > 1) {
             throw new InsightError("Excess keys in where");
-        } else {
-            return;
         }
     }
     public validateOptions(optionpart: any) {
@@ -49,14 +42,14 @@ export default class QueryValidator  {
         if (typeof optionpart !== "object") {
             throw new InsightError("Options must be an object");
         } else {
-            let keys = Object.keys(optionpart);
             if (!optionpart.hasOwnProperty("COLUMNS")) {
                 throw new InsightError("Missing Columns");
             } else if (!Array.isArray(optionpart["COLUMNS"])) {
-                throw new InsightError("Invalid query string 0");
+                throw new InsightError("Columns must be an array");
             } else if (optionpart["COLUMNS"].length === 0) {
-                throw new InsightError("COLUMNS must be non-empty");
+                throw new InsightError("COLUMNS must be non-empty array");
             }
+            let keys = Object.keys(optionpart);
             if ((keys.length === 2 && !optionpart.hasOwnProperty("ORDER")) || keys.length >= 3) {
                 throw new InsightError("Invalid keys in OPTIONS");
             }
@@ -67,7 +60,7 @@ export default class QueryValidator  {
             }
             optionpart["COLUMNS"].forEach((element: any) => {
                 if (typeof element !== "string") {
-                    throw new InsightError("Invalid query string 1");
+                    throw new InsightError("Elements in columns must be string");
                 }
             });
             if (self.queryinfo.hasTransformation) {

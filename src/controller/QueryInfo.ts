@@ -39,7 +39,7 @@ export class QueryInfo {
         this.query["OPTIONS"]["COLUMNS"].forEach((eachcolumn: string) => {
             if (!eachcolumn.includes("_")) {
                 if (self.applykeys.size === 0 || !self.applykeys.has(eachcolumn)) {
-                    throw new InsightError("invalid key " + eachcolumn + " in columns");
+                    throw new InsightError("Keys in COLUMNS must be in GROUP or APPLY when TRANSFORMATIONS is present");
                 } else {
                     self.columnsToDisp.add(eachcolumn);
                 }
@@ -60,7 +60,7 @@ export class QueryInfo {
                         throw new InsightError("Cannot query more than one dataset");
                     } else if (!self.groupKeys.has(flwstrings[0])) {
                         throw new InsightError
-                            ("Keys in COLUMNS must be in GROUP or APPLY when TRANSFORMATIONS is present 3");
+                            ("Keys in COLUMNS must be in GROUP or APPLY when TRANSFORMATIONS is present");
                     } else {
                         self.columnsToDisp.add(eachcolumn);
                     }
@@ -123,10 +123,10 @@ export class QueryInfo {
                 throw new InsightError("Apply rule should only have 1 key, has " + Object.keys(applyRule).length);
             } else {
                 applykey = Object.keys(applyRule)[0];
-                if (self.applykeys.has(applykey)) {
-                    throw new InsightError("Cannot have duplicate applyrule identifier");
-                } else if (applykey.includes("_"))  {
-                    throw new InsightError("Cannot have underscore in applyKey"); }}
+                if (applykey.includes("_")) {
+                    throw new InsightError("Cannot have underscore in applyKey");
+                }
+            }
             if (Object.keys(applyRule[applykey]).length !== 1) {
                 let l: number = Object.keys(applyRule[applykey]).length;
                 throw new InsightError("Apply body should only have 1 key, has " + l);
@@ -138,30 +138,38 @@ export class QueryInfo {
                 } else if (typeof applyRule[applykey][applytoken] !== "string") {
                     throw new InsightError("apply should excute on string");
                 } else {
-                    if (self.isCourse) {
-                        let renumcourses = new RegExp(/[^_]+_(avg|pass|fail|audit|year)$/);
-                        let recourses = new RegExp(/[^_]+_(avg|pass|fail|audit|year|dept|id|instructor|title|uuid)$/);
-                        if (applytoken !== "COUNT") {
-                            if (! renumcourses.test(applyRule[applykey][applytoken])) {
-                                throw new InsightError("key to apply is mismatched"); }
-                        } else if (! recourses.test(applyRule[applykey][applytoken])) {
-                            throw new InsightError("key to apply is mismatched"); }}
-                    if (!self.isCourse) {
-                        let rerooms =
-                new RegExp(/[^_]+_(lat|lon|seats|fullname|shortname|number|name|address|type|furniture|href)$/);
-                        let renumrooms = new RegExp(/[^_]+_(lat|lon|seats)$/);
-                        if (applytoken !== "COUNT") {
-                            if (! renumrooms.test(applyRule[applykey][applytoken])) {
-                                throw new InsightError("key to apply is mismatched"); }
-                        } else if (! rerooms.test(applyRule[applykey][applytoken])) {
-                            throw new InsightError("key to apply is mismatched"); }
-                    }
-                    let s3 = applyRule[applykey][applytoken].split("_");
-                    if (s3[0] !== self.databasename) { throw new InsightError("Cannot query more than one database"); }
+                    self.validateTokenCounterPart(applytoken, applyRule, applykey);
                 }
+            }
+            if (self.applykeys.has(applykey)) {
+                throw new InsightError("Cannot have duplicate applyrule identifier");
             }
             self.applykeys.add(applykey);
         });
+    }
+    public validateTokenCounterPart(applytoken: any, applyRule: any, applykey: any) {
+        if (this.isCourse) {
+            let renumcourses = new RegExp(/[^_]+_(avg|pass|fail|audit|year)$/);
+            let recourses = new RegExp(/[^_]+_(avg|pass|fail|audit|year|dept|id|instructor|title|uuid)$/);
+            if (applytoken !== "COUNT") {
+                if (! renumcourses.test(applyRule[applykey][applytoken])) {
+                    throw new InsightError("key to apply is mismatched"); }
+            } else if (! recourses.test(applyRule[applykey][applytoken])) {
+                throw new InsightError("key to apply is mismatched"); }}
+        if (!this.isCourse) {
+            let rerooms =
+    new RegExp(/[^_]+_(lat|lon|seats|fullname|shortname|number|name|address|type|furniture|href)$/);
+            let renumrooms = new RegExp(/[^_]+_(lat|lon|seats)$/);
+            if (applytoken !== "COUNT") {
+                if (! renumrooms.test(applyRule[applykey][applytoken])) {
+                    throw new InsightError("key to apply is mismatched"); }
+            } else if (! rerooms.test(applyRule[applykey][applytoken])) {
+                throw new InsightError("key to apply is mismatched"); }
+        }
+        let s3 = applyRule[applykey][applytoken].split("_");
+        if (s3[0] !== this.databasename) {
+            throw new InsightError("Cannot query more than one database");
+        }
     }
     public checkcolumnsWithoutTrans() {
         let self = this;
