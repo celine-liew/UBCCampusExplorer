@@ -28,7 +28,6 @@ CampusExplorer.buildQuery = function() {
     // WHERE BODY:
     let objectToAddtoWhere = convertArrayToObject(arrayToAddtoWhere);
     query["WHERE"] = objectToAddtoWhere;
-    console.log(JSON.stringify(query));
 
     // parseOptionsNow
     let arraytoAddtoColumns = [];
@@ -36,13 +35,37 @@ CampusExplorer.buildQuery = function() {
     for (let i = 0; i < fieldsForCOLUMNS.length; i++){
         const keyForColumn = idString + '_' + fieldsForCOLUMNS[i].value;
         arraytoAddtoColumns.push(keyForColumn);
-        console.log(arraytoAddtoColumns);
     }
+    // query["COLUMNS"] = arraytoAddtoColumns;
+    // console.log(query);
 
-
+    //parseOrder
+    // let OrderObject = {};
+    let ORDER = [];
+    const fieldsForOrder = formToBuild.querySelectorAll("div[class = 'form-group order'] option[selected= 'selected']");
+    for (let i = 0; i < fieldsForOrder.length; i++){
+        const keyForOrder = idString + '_' + fieldsForOrder[i].value;
+        ORDER.push(keyForOrder);
+        console.log(ORDER);
+    }
+    let OptionsObject = {}
+    if (ORDER.length == 1){
+        OptionsObject = {
+            "COLUMNS": arraytoAddtoColumns,
+            "ORDER": ORDER[0]
+        }
+    } else {
+        OptionsObject = {
+            "COLUMNS": arraytoAddtoColumns,
+            "ORDER": ORDER
+        }
+    }
+    console.log(OptionsObject);
+    query.OPTIONS = OptionsObject;
+    console.log(query);
 
     // // TODO: implement
-    console.log("CampusExplorer.buildQuery not implemented yet.");
+    // console.log("CampusExplorer.buildQuery not implemented yet.");
     return query;
 }
 
