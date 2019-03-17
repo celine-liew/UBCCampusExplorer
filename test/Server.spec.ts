@@ -1,21 +1,16 @@
 import Server from "../src/rest/Server";
-
 import TestUtil from "./TestUtil";
 import Log from "../src/Util";
-
 import InsightFacade from "../src/controller/InsightFacade";
 import chai = require("chai");
 import { expect } from "chai";
-
 import chaiHttp = require("chai-http");
 import { InsightDatasetKind } from "../src/controller/IInsightFacade";
-import { resolve } from "url";
 
 describe("Facade D3", function () {
 
     let facade: InsightFacade = null;
     let server: Server = null;
-
     chai.use(chaiHttp);
 
     before(function () {
@@ -323,25 +318,25 @@ describe("Facade D3", function () {
             // and some more logging here!
         }
     });
-    it("POST query ", function () {
-        // try {
-        //     return chai.request("http://localhost:4321")
-        //         .post("/query")
-        //         .attach()
-        //         .then(
-        //             (res) => {
-        //             Log.test(`GET test should be OK`);
-        //             expect(res.status).to.be.equal(200);
-        //             }
-        //         )
-        //         .catch(function (err: any) {
-        //             // some logging here please!
-        //             expect.fail("GET dataset should not fail if the implementation is correct");
-        //         });
-        // } catch (err) {
-        //     expect.fail("GET test for courses dataset should be OK");
-        //     // and some more logging here!
-        // }
-    });
+    // it("POST query ", function () {
+    //     // try {
+    //     //     return chai.request("http://localhost:4321")
+    //     //         .post("/query")
+    //     //         .attach()
+    //     //         .then(
+    //     //             (res) => {
+    //     //             Log.test(`GET test should be OK`);
+    //     //             expect(res.status).to.be.equal(200);
+    //     //             }
+    //     //         )
+    //     //         .catch(function (err: any) {
+    //     //             // some logging here please!
+    //     //             expect.fail("GET dataset should not fail if the implementation is correct");
+    //     //         });
+    //     // } catch (err) {
+    //     //     expect.fail("GET test for courses dataset should be OK");
+    //     //     // and some more logging here!
+    //     // }
+    // });
     // The other endpoints work similarly. You should be able to find all instructions at the chai-http documentation
 });
