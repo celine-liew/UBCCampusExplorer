@@ -55,21 +55,18 @@ CampusExplorer.buildQuery = function() {
         ORDER.push(keyForOrder);
         // console.log(ORDER);
     }
-    let OptionsObject = {}
+    let OptionsObject = {};
+    OptionsObject["COLUMNS"] = arraytoAddtoColumns;
+    console.log( "order order: "+ ORDER);
     if (ORDER.length == 1){
-        OptionsObject = {
-            "COLUMNS": arraytoAddtoColumns,
-            "ORDER": ORDER[0]
-        }
-    } else {
-        OptionsObject = {
-            "COLUMNS": arraytoAddtoColumns,
-            "ORDER": ORDER
-        }
+        OptionsObject["ORDER"] = ORDER[0];
+    } else if (ORDER.length > 1) {
+        OptionsObject["ORDER"] = ORDER;
     }
     // console.log(OptionsObject);
     query.OPTIONS = OptionsObject;
     console.log(query);
+    // TO CONTINUE... TRANSFROM AND APPLY.
 
     // // TODO: implement
     // console.log("CampusExplorer.buildQuery not implemented yet.");

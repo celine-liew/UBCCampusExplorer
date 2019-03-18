@@ -16,5 +16,22 @@
             "COLUMNS":["courses_dept","courses_id", "courses_avg"],
             "ORDER":"courses_avg"
         }
+    },
+
+    "d2courseQuerySimple": {
+        "WHERE": {
+            "GT": { "courses_avg": 98 }
+        },
+        "OPTIONS": {
+            "COLUMNS": ["courses_title", "overallAvg"]
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["courses_title"],
+            "APPLY": [{
+                "overallAvg": {
+                    "AVG": "courses_avg"
+                }
+            }]
+        }
     }
 }
