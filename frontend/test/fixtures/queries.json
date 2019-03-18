@@ -1,4 +1,20 @@
 {
-    "query1":{ "WHERE": {"IS": {"courses_dept": "cpsc"} },
-    "OPTIONS": {"COLUMNS": ["courses_dept", "courses_id"], "ORDER": "courses_id"} },
+    "query1":{
+        "WHERE": {"IS": {"courses_dept": "cpsc"} },
+        "OPTIONS": {"COLUMNS": ["courses_dept", "courses_id"],
+        "ORDER": "courses_id"}
+    },
+
+    "complexquery": {
+        "WHERE": {
+                "AND":[
+                    {  "GT": { "courses_avg":90 } },
+                    { "IS":{ "courses_dept":"adhe"}}
+                ]
+        },
+        "OPTIONS": {
+            "COLUMNS":["courses_dept","courses_id", "courses_avg"],
+            "ORDER":"courses_avg"
+        }
+    }
 }
