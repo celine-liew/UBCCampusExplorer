@@ -10,7 +10,6 @@
 CampusExplorer.buildQuery = function() {
     let query = {};
     let formToBuild = document.forms;
-    //courseOrRoomQuery
     let idString = "";
     const COURSES = "courses";
     const ROOMS = "rooms";
@@ -19,58 +18,62 @@ CampusExplorer.buildQuery = function() {
 
     ({ idString, formToBuild } = idStringCoursesOrRooms(idString, COURSES, formToBuild, ROOMS));
 
-    query = queryWHERE(IsLtGtEQ, mOrSKey, formToBuild, idString, query);
-    query = queryOPTIONS(formToBuild, idString, query);
+    query = buildQueryWHERE(IsLtGtEQ, mOrSKey, formToBuild, idString, query);
+    query = buildQueryOPTIONS(formToBuild, idString, query);
     // console.log(query);
-    // TO CONTINUE... TRANSFROM AND APPLY.
+    let arrayForGroup = buildGroupArray(formToBuild, idString);
+    let applyArrayToAdd = buildAPPLYarray(formToBuild, idString);
+    query = buildQueryTRANSFORM(applyArrayToAdd, arrayForGroup, query);
+    return query;
 
-    let arrayForGroup = [];
-    const fieldsForGroup = formToBuild.querySelectorAll("div[class = 'form-group groups'] input[checked= 'checked']");
-    // console.log(fieldsForGroup);
-    if (fieldsForGroup.length > 0) {
-        for (let i = 0; i < fieldsForGroup.length; i++) {
-            const keyForGroup = idString + '_' + fieldsForGroup[i].value;
-            arrayForGroup.push(keyForGroup);
-        }
-        console.log("array for Group: " + arrayForGroup);
-    }
+}
 
-    // for APPLY array
-    let applyArrayToAdd = [];
-    let applyInnerBracket = {};
-    let applyInnerBracketwithLabel = {};
-    const fieldsforApply = formToBuild.querySelectorAll("div[class = 'form-group transformations']");
-    for (let i = 0; i < fieldsforApply.length; i++){
-        const customisedLabel = fieldsforApply[i].querySelectorAll("input[type='text']")
-        const keyAndFieldtoApply = fieldsforApply[i].querySelectorAll("option[selected='selected']");
-        if (customisedLabel.length > 0 && keyAndFieldtoApply.length >0 ){
-            const Label = customisedLabel[0].value;
-            // console.log(Label);
-            const applyKey = keyAndFieldtoApply[0].value;
-            const applyField = keyAndFieldtoApply[1].value;
-            applyInnerBracket[applyKey] = idString + '_' + applyField;
-            applyInnerBracketwithLabel[Label] = applyInnerBracket;
-            applyArrayToAdd.push(applyInnerBracketwithLabel);
-            // console.log(JSON.stringify(applyArrayToAdd));
-        }
-    }
 
-    if (applyArrayToAdd.length > 0 ){
+function buildQueryTRANSFORM(applyArrayToAdd, arrayForGroup, query) {
+    if (applyArrayToAdd.length > 0) {
         let tranObject = {};
         tranObject.GROUP = arrayForGroup;
         tranObject.APPLY = applyArrayToAdd;
         console.log(JSON.stringify(tranObject));
         query["TRANSFORMATIONS"] = tranObject;
     }
-
-    // // TODO: implement
-    // console.log("CampusExplorer.buildQuery not implemented yet.");
     return query;
-
 }
 
+function buildAPPLYarray(formToBuild, idString) {
+    let applyArrayToAdd = [];
+    let applyInnerBracket = {};
+    let applyInnerBracketwithLabel = {};
+    const fieldsforApply = formToBuild.querySelectorAll("div[class = 'form-group transformations']");
+    for (let i = 0; i < fieldsforApply.length; i++) {
+        const customisedLabel = fieldsforApply[i].querySelectorAll("input[type='text']");
+        const keyAndFieldtoApply = fieldsforApply[i].querySelectorAll("option[selected='selected']");
+        if (customisedLabel.length > 0 && keyAndFieldtoApply.length > 0) {
+            const Label = customisedLabel[0].value;
+            const applyKey = keyAndFieldtoApply[0].value;
+            const applyField = keyAndFieldtoApply[1].value;
+            applyInnerBracket[applyKey] = idString + '_' + applyField;
+            applyInnerBracketwithLabel[Label] = applyInnerBracket;
+            applyArrayToAdd.push(applyInnerBracketwithLabel);
+        }
+    }
+    return applyArrayToAdd;
+}
 
-function queryOPTIONS(formToBuild, idString, query) {
+function buildGroupArray(formToBuild, idString) {
+    let arrayForGroup = [];
+    const fieldsForGroup = formToBuild.querySelectorAll("div[class = 'form-group groups'] input[checked= 'checked']");
+    if (fieldsForGroup.length > 0) {
+        for (let i = 0; i < fieldsForGroup.length; i++) {
+            const keyForGroup = idString + '_' + fieldsForGroup[i].value;
+            arrayForGroup.push(keyForGroup);
+        }
+        // console.log("array for Group: " + arrayForGroup);
+    }
+    return arrayForGroup;
+}
+
+function buildQueryOPTIONS(formToBuild, idString, query) {
     let OptionsObject = getColumnANDOrderInOptions(formToBuild, idString);
     query["OPTIONS"] = OptionsObject;
     return query;
@@ -177,7 +180,6 @@ function getKeysForWhereFunction(formToBuild, IsLtGtEQ, mOrSKey, idString) {
         let selectedWhereKeys = {};
         let innerCompareBracket = {};
         let toConverttoNum = false;
-        //keysForWhere should be the same
         IsLtGtEQ = operatorsWhere[i * 2 + 1].value;
         mOrSKey = operatorsWhere[i * 2].value;
         if (mOrSKey == 'avg' || mOrSKey == 'pass' || mOrSKey == 'fail' || mOrSKey == 'audit' || mOrSKey == 'year') {
@@ -189,7 +191,6 @@ function getKeysForWhereFunction(formToBuild, IsLtGtEQ, mOrSKey, idString) {
             innerCompare = Number(innerCompare);
         }
         innerCompareBracket[fullmOrSKey] = innerCompare;
-        // console.log("inner: " + JSON.stringify(innerCompareBracket));
         selectedWhereKeys[IsLtGtEQ] = innerCompareBracket;
         // console.log("selectedWhere: " + JSON.stringify(selectedWhereKeys));
         arrayToAddtoWhere.push(selectedWhereKeys);
