@@ -23,10 +23,17 @@ CampusExplorer.buildQuery = function() {
     let arrayToAddtoWhere;
     ({ keysForWhere, arrayToAddtoWhere, IsLtGtEQ, mOrSKey } = getWhereBodyObjects(formToBuild, IsLtGtEQ, mOrSKey, idString));
 
-    getAllOrNotFirstCondition(formToBuild, keysForWhere);
+    let allOrNot = getAllOrNotFirstCondition(formToBuild, keysForWhere);
+    // console.log(allOrNot);
     // TODO:if allOrNot not empty string, add to arrayToAddtoWhere. TODO
     // WHERE BODY:
-    let objectToAddtoWhere = convertArrayToObject(arrayToAddtoWhere);
+    let objectToAddtoWhere = {};
+    if (allOrNot.length>0){
+        objectToAddtoWhere[allOrNot] = arrayToAddtoWhere;
+        console.log("all or not: " + JSON.stringify(objectToAddtoWhere));
+    } else {
+        objectToAddtoWhere = convertArrayToObject(arrayToAddtoWhere);
+    }
     query["WHERE"] = objectToAddtoWhere;
 
     // parseOptionsNow
@@ -46,23 +53,20 @@ CampusExplorer.buildQuery = function() {
     for (let i = 0; i < fieldsForOrder.length; i++){
         const keyForOrder = idString + '_' + fieldsForOrder[i].value;
         ORDER.push(keyForOrder);
-        console.log(ORDER);
+        // console.log(ORDER);
     }
-    let OptionsObject = {}
+    let OptionsObject = {};
+    OptionsObject["COLUMNS"] = arraytoAddtoColumns;
+    console.log( "order order: "+ ORDER);
     if (ORDER.length == 1){
-        OptionsObject = {
-            "COLUMNS": arraytoAddtoColumns,
-            "ORDER": ORDER[0]
-        }
-    } else {
-        OptionsObject = {
-            "COLUMNS": arraytoAddtoColumns,
-            "ORDER": ORDER
-        }
+        OptionsObject["ORDER"] = ORDER[0];
+    } else if (ORDER.length > 1) {
+        OptionsObject["ORDER"] = ORDER;
     }
-    console.log(OptionsObject);
+    // console.log(OptionsObject);
     query.OPTIONS = OptionsObject;
     console.log(query);
+    // TO CONTINUE... TRANSFROM AND APPLY.
 
     // // TODO: implement
     // console.log("CampusExplorer.buildQuery not implemented yet.");
@@ -76,6 +80,7 @@ function convertArrayToObject(arrayconvert) {
 
 function getAllOrNotFirstCondition(formToBuild, keysForWhere) {
     const conditionsChecked = formToBuild.querySelectorAll('input[name= "conditionType"]');
+    // console.log("key length: " + keysForWhere.length);
     let allOrNot = "";
     const ALL = 'all';
     const OR = 'any';
@@ -100,6 +105,7 @@ function getAllOrNotFirstCondition(formToBuild, keysForWhere) {
             default: allOrNot = "";
         }
     }
+    return allOrNot;
 }
 
 function getWhereBodyObjects(formToBuild, IsLtGtEQ, mOrSKey, idString) {
