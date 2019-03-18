@@ -72,6 +72,7 @@ export default class Handlers {
     // // 4====returns a list of datasets that were added.
     public async getDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
         try {
+            this.insightFacade = new InsightFacade();
             let reply = this.insightFacade.listDatasets();
             res.send(200, {result: reply});
         } catch (err) {
