@@ -71,6 +71,7 @@ export default class Handlers {
         } catch (err) {
             res.send(400, err.message);
         }
+        next();
     }
 
 }

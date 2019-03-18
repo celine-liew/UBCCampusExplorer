@@ -267,7 +267,5 @@ describe("Facade D3", function () {
             chai_1.expect.fail("GET test for courses dataset should be OK");
         }
     });
-    it("POST query ", function () {
-    });
 });
 //# sourceMappingURL=Server.spec.js.map
