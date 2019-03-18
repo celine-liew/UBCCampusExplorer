@@ -6,7 +6,6 @@ import chai = require("chai");
 import { expect } from "chai";
 import chaiHttp = require("chai-http");
 import { InsightDatasetKind } from "../src/controller/IInsightFacade";
-import { doesNotReject } from "assert";
 import * as fs from "fs";
 
 describe("Facade D3", function () {
