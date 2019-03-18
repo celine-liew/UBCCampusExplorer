@@ -19,60 +19,121 @@ CampusExplorer.buildQuery = function() {
 
     ({ idString, formToBuild } = idStringCoursesOrRooms(idString, COURSES, formToBuild, ROOMS));
 
-    let keysForWhere;
-    let arrayToAddtoWhere;
-    ({ keysForWhere, arrayToAddtoWhere, IsLtGtEQ, mOrSKey } = getWhereBodyObjects(formToBuild, IsLtGtEQ, mOrSKey, idString));
-
-    let allOrNot = getAllOrNotFirstCondition(formToBuild, keysForWhere);
-    // console.log(allOrNot);
-    // TODO:if allOrNot not empty string, add to arrayToAddtoWhere. TODO
-    // WHERE BODY:
-    let objectToAddtoWhere = {};
-    if (allOrNot.length>0){
-        objectToAddtoWhere[allOrNot] = arrayToAddtoWhere;
-        console.log("all or not: " + JSON.stringify(objectToAddtoWhere));
-    } else {
-        objectToAddtoWhere = convertArrayToObject(arrayToAddtoWhere);
-    }
-    query["WHERE"] = objectToAddtoWhere;
-
-    // parseOptionsNow
-    let arraytoAddtoColumns = [];
-    const fieldsForCOLUMNS = formToBuild.querySelectorAll("div[class = 'form-group columns'] input[checked= 'checked']");
-    for (let i = 0; i < fieldsForCOLUMNS.length; i++){
-        const keyForColumn = idString + '_' + fieldsForCOLUMNS[i].value;
-        arraytoAddtoColumns.push(keyForColumn);
-    }
-    // query["COLUMNS"] = arraytoAddtoColumns;
+    query = queryWHERE(IsLtGtEQ, mOrSKey, formToBuild, idString, query);
+    query = queryOPTIONS(formToBuild, idString, query);
     // console.log(query);
-
-    //parseOrder
-    // let OrderObject = {};
-    let ORDER = [];
-    const fieldsForOrder = formToBuild.querySelectorAll("div[class = 'form-group order'] option[selected= 'selected']");
-    for (let i = 0; i < fieldsForOrder.length; i++){
-        const keyForOrder = idString + '_' + fieldsForOrder[i].value;
-        ORDER.push(keyForOrder);
-        // console.log(ORDER);
-    }
-    let OptionsObject = {};
-    OptionsObject["COLUMNS"] = arraytoAddtoColumns;
-    console.log( "order order: "+ ORDER);
-    if (ORDER.length == 1){
-        OptionsObject["ORDER"] = ORDER[0];
-    } else if (ORDER.length > 1) {
-        OptionsObject["ORDER"] = ORDER;
-    }
-    // console.log(OptionsObject);
-    query.OPTIONS = OptionsObject;
-    console.log(query);
     // TO CONTINUE... TRANSFROM AND APPLY.
+
+    let arrayForGroup = [];
+    const fieldsForGroup = formToBuild.querySelectorAll("div[class = 'form-group groups'] input[checked= 'checked']");
+    // console.log(fieldsForGroup);
+    if (fieldsForGroup.length > 0) {
+        for (let i = 0; i < fieldsForGroup.length; i++) {
+            const keyForGroup = idString + '_' + fieldsForGroup[i].value;
+            arrayForGroup.push(keyForGroup);
+        }
+        console.log("array for Group: " + arrayForGroup);
+    }
+
+    // for APPLY array
+    let applyArrayToAdd = [];
+    let applyInnerBracket = {};
+    let applyInnerBracketwithLabel = {};
+    const fieldsforApply = formToBuild.querySelectorAll("div[class = 'form-group transformations']");
+    for (let i = 0; i < fieldsforApply.length; i++){
+        const customisedLabel = fieldsforApply[i].querySelectorAll("input[type='text']")
+        const keyAndFieldtoApply = fieldsforApply[i].querySelectorAll("option[selected='selected']");
+        if (customisedLabel.length > 0 && keyAndFieldtoApply.length >0 ){
+            const Label = customisedLabel[0].value;
+            // console.log(Label);
+            const applyKey = keyAndFieldtoApply[0].value;
+            const applyField = keyAndFieldtoApply[1].value;
+            applyInnerBracket[applyKey] = idString + '_' + applyField;
+            applyInnerBracketwithLabel[Label] = applyInnerBracket;
+            applyArrayToAdd.push(applyInnerBracketwithLabel);
+            // console.log(JSON.stringify(applyArrayToAdd));
+        }
+    }
+
+    if (applyArrayToAdd.length > 0 ){
+        let tranObject = {};
+        tranObject.GROUP = arrayForGroup;
+        tranObject.APPLY = applyArrayToAdd;
+        console.log(JSON.stringify(tranObject));
+        query["TRANSFORMATIONS"] = tranObject;
+    }
 
     // // TODO: implement
     // console.log("CampusExplorer.buildQuery not implemented yet.");
     return query;
+
 }
 
+
+function queryOPTIONS(formToBuild, idString, query) {
+    let OptionsObject = getColumnANDOrderInOptions(formToBuild, idString);
+    query["OPTIONS"] = OptionsObject;
+    return query;
+}
+
+function queryWHERE(IsLtGtEQ, mOrSKey, formToBuild, idString, query) {
+    let keysForWhere;
+    let arrayToAddtoWhere;
+    ({ keysForWhere, arrayToAddtoWhere, IsLtGtEQ, mOrSKey } = getKeysForWhereFunction(formToBuild, IsLtGtEQ, mOrSKey, idString));
+    let allOrNot = getAllOrNotFirstCondition(formToBuild, keysForWhere);
+    let objectToAddtoWhere = getWhereObjectContent(allOrNot, arrayToAddtoWhere);
+    query["WHERE"] = objectToAddtoWhere;
+    return query;
+}
+
+function getWhereObjectContent(allOrNot, arrayToAddtoWhere) {
+    let objectToAddtoWhere = {};
+    if (allOrNot.length > 0) {
+        objectToAddtoWhere[allOrNot] = arrayToAddtoWhere;
+    }
+    else {
+        objectToAddtoWhere = convertArrayToObject(arrayToAddtoWhere);
+    }
+    return objectToAddtoWhere;
+}
+
+function getColumnANDOrderInOptions(formToBuild, idString) {
+    let arraytoAddtoColumns = [];
+    const fieldsForCOLUMNS = formToBuild.querySelectorAll("div[class = 'form-group columns'] input[checked= 'checked']");
+    for (let i = 0; i < fieldsForCOLUMNS.length; i++) {
+        let keyForColumn = "";
+        if (fieldsForCOLUMNS[i].id){
+            keyForColumn = idString + '_' + fieldsForCOLUMNS[i].value;
+        } else {
+            keyForColumn = fieldsForCOLUMNS[i].value;
+        }
+        arraytoAddtoColumns.push(keyForColumn);
+    }
+    let ORDER = [];
+    const fieldsForOrder = formToBuild.querySelectorAll("div[class = 'form-group order'] option[selected= 'selected']");
+    for (let i = 0; i < fieldsForOrder.length; i++) {
+        let keyForOrder = "";
+
+        //addIdStringtoFields
+        if (fieldsForOrder[i].class){
+            keyForOrder = fieldsForOrder[i].value;
+        } else {
+            keyForOrder = idString + '_' + fieldsForOrder[i].value;
+        }
+
+        ORDER.push(keyForOrder);
+    }
+    let OptionsObject = {};
+    OptionsObject["COLUMNS"] = arraytoAddtoColumns;
+    // console.log("order order: " + ORDER);
+    if (ORDER.length == 1) {
+        OptionsObject["ORDER"] = ORDER[0];
+    }
+    else if (ORDER.length > 1) {
+        OptionsObject["ORDER"] = ORDER;
+    }
+    return OptionsObject;
+}
 
 function convertArrayToObject(arrayconvert) {
     return arrayconvert.reduce((a, b) => Object.assign(a, b), {});
@@ -108,7 +169,7 @@ function getAllOrNotFirstCondition(formToBuild, keysForWhere) {
     return allOrNot;
 }
 
-function getWhereBodyObjects(formToBuild, IsLtGtEQ, mOrSKey, idString) {
+function getKeysForWhereFunction(formToBuild, IsLtGtEQ, mOrSKey, idString) {
     const operatorsWhere = formToBuild.querySelectorAll("div[class = 'control-group condition'] option[selected]"); // this shows IS and dept
     const keysForWhere = formToBuild.querySelectorAll("div[class = 'control-group condition'] div[class = 'control term']");
     let arrayToAddtoWhere = [];
@@ -128,9 +189,11 @@ function getWhereBodyObjects(formToBuild, IsLtGtEQ, mOrSKey, idString) {
             innerCompare = Number(innerCompare);
         }
         innerCompareBracket[fullmOrSKey] = innerCompare;
+        // console.log("inner: " + JSON.stringify(innerCompareBracket));
         selectedWhereKeys[IsLtGtEQ] = innerCompareBracket;
+        // console.log("selectedWhere: " + JSON.stringify(selectedWhereKeys));
         arrayToAddtoWhere.push(selectedWhereKeys);
-        // console.log(JSON.stringify(arrayToAddtoWhere));
+        // console.log("array for Where" + JSON.stringify(arrayToAddtoWhere));
     }
     return { keysForWhere, arrayToAddtoWhere, IsLtGtEQ, mOrSKey };
 }
