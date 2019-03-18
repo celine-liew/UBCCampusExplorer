@@ -42,12 +42,12 @@ export default class Handlers {
         this.insightFacade = new InsightFacade();
         try {
             let reply = await this.insightFacade.removeDataset(id);
-            res.send(200, reply);
+            res.send(200, {result: reply});
         } catch (err) {
             if (err instanceof InsightError) {
-                res.send(400, err.message);
+                res.send(400, {error: err.message});
             } else {
-                res.send(404, err.message);
+                res.send(404, {error: err.message});
             }
         }
         return next();
@@ -57,14 +57,14 @@ export default class Handlers {
     public async postQuery(req: restify.Request, res: restify.Response, next: restify.Next) {
         let query = req.params.query;
         if (!this.insightFacade.datasetsHash) {
-            res.send(400, "No dataset added!");
+            res.send(400, {error: "No dataset added!"});
         }
         this.insightFacade = new InsightFacade();
         try {
             let reply = this.insightFacade.performQuery(query);
-            res.send(200, reply);
+            res.send(200, {result: reply});
         } catch (err) {
-            res.send(400, err.message);
+            res.send(400, {error: err.message});
         }
         return next();
     }
@@ -73,9 +73,9 @@ export default class Handlers {
     public async getDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
         try {
             let reply = this.insightFacade.listDatasets();
-            res.send(200, reply);
+            res.send(200, {result: reply});
         } catch (err) {
-            res.send(400, err.message);
+            res.send(400, {error: err.message});
         }
         return next();
     }
