@@ -3,6 +3,7 @@ import * as fs from "fs-extra";
 import restify = require("restify");
 import {InsightError, NotFoundError, InsightDatasetKind} from "../controller/IInsightFacade";
 import InsightFacade from "../controller/InsightFacade";
+import Log from "../Util";
 
 // // 1====submit a zip file that will be parsed and used for future queries
 // that.rest.put("/dataset/:id/:kind", );
@@ -17,24 +18,28 @@ import InsightFacade from "../controller/InsightFacade";
 // that.rest.get("/datasets", );
 
 export default class Handlers {
-    private insightFacade: InsightFacade = new InsightFacade();
+    private insightFacade: InsightFacade;
 
     // // 1====submit a zip file that will be parsed and used for future queries
     public async putDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
         let id: string = req.params.id;
         let kind: InsightDatasetKind = req.params.kind;
         let body = new Buffer(req.params.body).toString("base64");
+        Log.info(id + " " + kind);
+        // Log.info(body);
+        this.insightFacade = new InsightFacade();
         try {
-            let reply = await this.insightFacade.addDataset(id, body, kind);
-            res.send(200, reply);
+            let value = await this.insightFacade.addDataset(id, body, kind);
+            res.send(200, {result: value});
         } catch (err) {
-            res.send(400, err.message);
+            res.send(400, {error: err.message});
         }
-        next();
+        return next();
     }
     // // 2====deletes the existing dataset stored.
     public async delDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
         let id = req.params.id;
+        this.insightFacade = new InsightFacade();
         try {
             let reply = await this.insightFacade.removeDataset(id);
             res.send(200, reply);
@@ -45,7 +50,7 @@ export default class Handlers {
                 res.send(404, err.message);
             }
         }
-        next();
+        return next();
     }
 
     // // 3====sends the query to the application. The query will be in JSON format in the post body.
@@ -54,13 +59,14 @@ export default class Handlers {
         if (!this.insightFacade.datasetsHash) {
             res.send(400, "No dataset added!");
         }
+        this.insightFacade = new InsightFacade();
         try {
             let reply = this.insightFacade.performQuery(query);
             res.send(200, reply);
         } catch (err) {
             res.send(400, err.message);
         }
-        next();
+        return next();
     }
 
     // // 4====returns a list of datasets that were added.
@@ -71,7 +77,7 @@ export default class Handlers {
         } catch (err) {
             res.send(400, err.message);
         }
-        next();
+        return next();
     }
 
 }
