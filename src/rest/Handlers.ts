@@ -24,7 +24,7 @@ export default class Handlers {
     public async putDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
         let id: string = req.params.id;
         let kind: InsightDatasetKind = req.params.kind;
-        let body = new Buffer(req.params.body).toString("base64");
+        let body = Buffer.from(req.params.body).toString("base64");
         Log.info(id + " " + kind);
         // Log.info(body);
         this.insightFacade = new InsightFacade();
@@ -46,7 +46,7 @@ export default class Handlers {
         } catch (err) {
             if (err instanceof InsightError) {
                 res.send(400, {error: err.message});
-            } else {
+            } else if (err instanceof NotFoundError) {
                 res.send(404, {error: err.message});
             }
         }
@@ -55,11 +55,11 @@ export default class Handlers {
 
     // // 3====sends the query to the application. The query will be in JSON format in the post body.
     public async postQuery(req: restify.Request, res: restify.Response, next: restify.Next) {
-        let query = req.params.query;
+        let query = req.body;
+        this.insightFacade = new InsightFacade();
         if (!this.insightFacade.datasetsHash) {
             res.send(400, {error: "No dataset added!"});
         }
-        this.insightFacade = new InsightFacade();
         try {
             let reply = this.insightFacade.performQuery(query);
             res.send(200, {result: reply});
