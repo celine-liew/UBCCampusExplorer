@@ -49,7 +49,8 @@
     },
 
     "d3roomsquery1": {
-        "WHERE": {
+        "WHERE":
+         {
           "AND": [
             { "IS": { "rooms_furniture": "*Tables*" }
             },

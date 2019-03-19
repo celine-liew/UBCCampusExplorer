@@ -211,12 +211,12 @@ function idStringCoursesOrRooms(idString, COURSES, formToBuild, ROOMS) {
     const coursesDataset = document.querySelectorAll("form[data-type= 'courses'] option[selected]");
     const roomsDataset = document.querySelectorAll("form[data-type= 'rooms'] option[selected]");
     console.log(coursesDataset);
-    if (coursesDataset.length > 0) {
+    if (coursesDataset.length > roomsDataset.length) {
         idString = COURSES;
         formToBuild = document.querySelectorAll("form[data-type= 'courses']")[0];
     }
     else {
-        if (roomsDataset.length > 0) {
+        if (roomsDataset.length > coursesDataset.length) {
             console.log("rooms here");
             idString = ROOMS;
             formToBuild = document.querySelectorAll("form[data-type= 'rooms']")[0];
