@@ -10,7 +10,6 @@
 CampusExplorer.buildQuery = function() {
     let query = {};
     let formToBuild = document.forms;
-    //courseOrRoomQuery
     let idString = "";
     const COURSES = "courses";
     const ROOMS = "rooms";
@@ -19,60 +18,126 @@ CampusExplorer.buildQuery = function() {
 
     ({ idString, formToBuild } = idStringCoursesOrRooms(idString, COURSES, formToBuild, ROOMS));
 
-    let keysForWhere;
-    let arrayToAddtoWhere;
-    ({ keysForWhere, arrayToAddtoWhere, IsLtGtEQ, mOrSKey } = getWhereBodyObjects(formToBuild, IsLtGtEQ, mOrSKey, idString));
-
-    let allOrNot = getAllOrNotFirstCondition(formToBuild, keysForWhere);
-    // console.log(allOrNot);
-    // TODO:if allOrNot not empty string, add to arrayToAddtoWhere. TODO
-    // WHERE BODY:
-    let objectToAddtoWhere = {};
-    if (allOrNot.length>0){
-        objectToAddtoWhere[allOrNot] = arrayToAddtoWhere;
-        console.log("all or not: " + JSON.stringify(objectToAddtoWhere));
-    } else {
-        objectToAddtoWhere = convertArrayToObject(arrayToAddtoWhere);
-    }
-    query["WHERE"] = objectToAddtoWhere;
-
-    // parseOptionsNow
-    let arraytoAddtoColumns = [];
-    const fieldsForCOLUMNS = formToBuild.querySelectorAll("div[class = 'form-group columns'] input[checked= 'checked']");
-    for (let i = 0; i < fieldsForCOLUMNS.length; i++){
-        const keyForColumn = idString + '_' + fieldsForCOLUMNS[i].value;
-        arraytoAddtoColumns.push(keyForColumn);
-    }
-    // query["COLUMNS"] = arraytoAddtoColumns;
+    query = buildQueryWHERE(IsLtGtEQ, mOrSKey, formToBuild, idString, query);
+    query = buildQueryOPTIONS(formToBuild, idString, query);
     // console.log(query);
+    let arrayForGroup = buildGroupArray(formToBuild, idString);
+    let applyArrayToAdd = buildAPPLYarray(formToBuild, idString);
+    query = buildQueryTRANSFORM(applyArrayToAdd, arrayForGroup, query);
+    return query;
 
-    //parseOrder
-    // let OrderObject = {};
-    let ORDER = [];
-    const fieldsForOrder = formToBuild.querySelectorAll("div[class = 'form-group order'] option[selected= 'selected']");
-    for (let i = 0; i < fieldsForOrder.length; i++){
-        const keyForOrder = idString + '_' + fieldsForOrder[i].value;
-        ORDER.push(keyForOrder);
-        // console.log(ORDER);
-    }
-    let OptionsObject = {};
-    OptionsObject["COLUMNS"] = arraytoAddtoColumns;
-    console.log( "order order: "+ ORDER);
-    if (ORDER.length == 1){
-        OptionsObject["ORDER"] = ORDER[0];
-    } else if (ORDER.length > 1) {
-        OptionsObject["ORDER"] = ORDER;
-    }
-    // console.log(OptionsObject);
-    query.OPTIONS = OptionsObject;
-    console.log(query);
-    // TO CONTINUE... TRANSFROM AND APPLY.
+}
 
-    // // TODO: implement
-    // console.log("CampusExplorer.buildQuery not implemented yet.");
+// TODO: to make the GROUP 1 object.
+function buildQueryTRANSFORM(applyArrayToAdd, arrayForGroup, query) {
+    if (arrayForGroup.length > 0) {
+        let tranObject = {};
+        tranObject.GROUP = arrayForGroup;
+        tranObject.APPLY = applyArrayToAdd;
+        console.log(JSON.stringify(tranObject));
+        query.TRANSFORMATIONS = tranObject
+        // query["APPLY"] = applyArrayToAdd;
+        }
     return query;
 }
 
+function buildAPPLYarray(formToBuild, idString) {
+    let applyArrayToAdd = [];
+    let applyInnerBracket = {};
+    let applyInnerBracketwithLabel = {};
+    const fieldsforApply = formToBuild.querySelectorAll("div[class = 'form-group transformations']");
+    for (let i = 0; i < fieldsforApply.length; i++) {
+        const customisedLabel = fieldsforApply[i].querySelectorAll("input[type='text']");
+        const keyAndFieldtoApply = fieldsforApply[i].querySelectorAll("option[selected='selected']");
+        if (customisedLabel.length > 0 && keyAndFieldtoApply.length > 0) {
+            const Label = customisedLabel[0].value;
+            const applyKey = keyAndFieldtoApply[0].value;
+            const applyField = keyAndFieldtoApply[1].value;
+            applyInnerBracket[applyKey] = idString + '_' + applyField;
+            applyInnerBracketwithLabel[Label] = applyInnerBracket;
+            applyArrayToAdd.push(applyInnerBracketwithLabel);
+        }
+    }
+    return applyArrayToAdd;
+}
+
+function buildGroupArray(formToBuild, idString) {
+    let arrayForGroup = [];
+    const fieldsForGroup = formToBuild.querySelectorAll("div[class = 'form-group groups'] input[checked= 'checked']");
+    if (fieldsForGroup.length > 0) {
+        for (let i = 0; i < fieldsForGroup.length; i++) {
+            const keyForGroup = idString + '_' + fieldsForGroup[i].value;
+            arrayForGroup.push(keyForGroup);
+        }
+        // console.log("array for Group: " + arrayForGroup);
+    }
+    return arrayForGroup;
+}
+
+function buildQueryOPTIONS(formToBuild, idString, query) {
+    let OptionsObject = getColumnANDOrderInOptions(formToBuild, idString);
+    query["OPTIONS"] = OptionsObject;
+    return query;
+}
+
+function buildQueryWHERE(IsLtGtEQ, mOrSKey, formToBuild, idString, query) {
+    let keysForWhere;
+    let arrayToAddtoWhere;
+    ({ keysForWhere, arrayToAddtoWhere, IsLtGtEQ, mOrSKey } = getKeysForWhereFunction(formToBuild, IsLtGtEQ, mOrSKey, idString));
+    let allOrNot = getAllOrNotFirstCondition(formToBuild, keysForWhere);
+    let objectToAddtoWhere = getWhereObjectContent(allOrNot, arrayToAddtoWhere);
+    query["WHERE"] = objectToAddtoWhere;
+    return query;
+}
+
+function getWhereObjectContent(allOrNot, arrayToAddtoWhere) {
+    let objectToAddtoWhere = {};
+    if (allOrNot.length > 0) {
+        objectToAddtoWhere[allOrNot] = arrayToAddtoWhere;
+    }
+    else {
+        objectToAddtoWhere = convertArrayToObject(arrayToAddtoWhere);
+    }
+    return objectToAddtoWhere;
+}
+
+function getColumnANDOrderInOptions(formToBuild, idString) {
+    let arraytoAddtoColumns = [];
+    const fieldsForCOLUMNS = formToBuild.querySelectorAll("div[class = 'form-group columns'] input[checked= 'checked']");
+    for (let i = 0; i < fieldsForCOLUMNS.length; i++) {
+        let keyForColumn = "";
+        if (fieldsForCOLUMNS[i].id){
+            keyForColumn = idString + '_' + fieldsForCOLUMNS[i].value;
+        } else {
+            keyForColumn = fieldsForCOLUMNS[i].value;
+        }
+        arraytoAddtoColumns.push(keyForColumn);
+    }
+    let ORDER = [];
+    const fieldsForOrder = formToBuild.querySelectorAll("div[class = 'form-group order'] option[selected= 'selected']");
+    for (let i = 0; i < fieldsForOrder.length; i++) {
+        let keyForOrder = "";
+
+        //addIdStringtoFields
+        if (fieldsForOrder[i].class){
+            keyForOrder = fieldsForOrder[i].value;
+        } else {
+            keyForOrder = idString + '_' + fieldsForOrder[i].value;
+        }
+
+        ORDER.push(keyForOrder);
+    }
+    let OptionsObject = {};
+    OptionsObject["COLUMNS"] = arraytoAddtoColumns;
+    // console.log("order order: " + ORDER);
+    if (ORDER.length == 1) {
+        OptionsObject["ORDER"] = ORDER[0];
+    }
+    else if (ORDER.length > 1) {
+        OptionsObject["ORDER"] = ORDER;
+    }
+    return OptionsObject;
+}
 
 function convertArrayToObject(arrayconvert) {
     return arrayconvert.reduce((a, b) => Object.assign(a, b), {});
@@ -108,15 +173,18 @@ function getAllOrNotFirstCondition(formToBuild, keysForWhere) {
     return allOrNot;
 }
 
-function getWhereBodyObjects(formToBuild, IsLtGtEQ, mOrSKey, idString) {
+function getKeysForWhereFunction(formToBuild, IsLtGtEQ, mOrSKey, idString) {
     const operatorsWhere = formToBuild.querySelectorAll("div[class = 'control-group condition'] option[selected]"); // this shows IS and dept
     const keysForWhere = formToBuild.querySelectorAll("div[class = 'control-group condition'] div[class = 'control term']");
+    const keyNotpresent = formToBuild.querySelectorAll("div[class = 'control-group condition'] div[class = 'control not']");
+
+    console.log(keyNotpresent);
     let arrayToAddtoWhere = [];
     for (let i = 0; i < keysForWhere.length; i++) {
         let selectedWhereKeys = {};
+        let selectedWhereKeysAfterNot = {};
         let innerCompareBracket = {};
         let toConverttoNum = false;
-        //keysForWhere should be the same
         IsLtGtEQ = operatorsWhere[i * 2 + 1].value;
         mOrSKey = operatorsWhere[i * 2].value;
         if (mOrSKey == 'avg' || mOrSKey == 'pass' || mOrSKey == 'fail' || mOrSKey == 'audit' || mOrSKey == 'year') {
@@ -127,10 +195,19 @@ function getWhereBodyObjects(formToBuild, IsLtGtEQ, mOrSKey, idString) {
         if (toConverttoNum) {
             innerCompare = Number(innerCompare);
         }
+
         innerCompareBracket[fullmOrSKey] = innerCompare;
         selectedWhereKeys[IsLtGtEQ] = innerCompareBracket;
-        arrayToAddtoWhere.push(selectedWhereKeys);
-        // console.log(JSON.stringify(arrayToAddtoWhere));
+        if (keyNotpresent[i].querySelectorAll("input[checked='checked']").length > 0){
+            const NOT = "NOT"
+            console.log(NOT);
+            selectedWhereKeysAfterNot[NOT] = selectedWhereKeys;
+        } else {
+            selectedWhereKeysAfterNot = selectedWhereKeys;
+        }
+        console.log("selectedWhere: " + JSON.stringify(selectedWhereKeysAfterNot));
+        arrayToAddtoWhere.push(selectedWhereKeysAfterNot);
+        console.log("array for Where" + JSON.stringify(arrayToAddtoWhere));
     }
     return { keysForWhere, arrayToAddtoWhere, IsLtGtEQ, mOrSKey };
 }
