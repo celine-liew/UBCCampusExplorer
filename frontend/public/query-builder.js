@@ -15,7 +15,6 @@ CampusExplorer.buildQuery = function() {
     const ROOMS = "rooms";
     let IsLtGtEQ = "";
     let mOrSKey = "";
-
     ({ idString, formToBuild } = idStringCoursesOrRooms(idString, COURSES, formToBuild, ROOMS));
 
     query = buildQueryWHERE(IsLtGtEQ, mOrSKey, formToBuild, idString, query);
@@ -25,7 +24,6 @@ CampusExplorer.buildQuery = function() {
     let applyArrayToAdd = buildAPPLYarray(formToBuild, idString);
     query = buildQueryTRANSFORM(applyArrayToAdd, arrayForGroup, query);
     return query;
-
 }
 
 // TODO: to make the GROUP 1 object.
@@ -34,7 +32,6 @@ function buildQueryTRANSFORM(applyArrayToAdd, arrayForGroup, query) {
         let tranObject = {};
         tranObject.GROUP = arrayForGroup;
         tranObject.APPLY = applyArrayToAdd;
-        console.log(JSON.stringify(tranObject));
         query.TRANSFORMATIONS = tranObject
         // query["APPLY"] = applyArrayToAdd;
         }
@@ -177,8 +174,6 @@ function getKeysForWhereFunction(formToBuild, IsLtGtEQ, mOrSKey, idString) {
     const operatorsWhere = formToBuild.querySelectorAll("div[class = 'control-group condition'] option[selected]"); // this shows IS and dept
     const keysForWhere = formToBuild.querySelectorAll("div[class = 'control-group condition'] div[class = 'control term']");
     const keyNotpresent = formToBuild.querySelectorAll("div[class = 'control-group condition'] div[class = 'control not']");
-
-    console.log(keyNotpresent);
     let arrayToAddtoWhere = [];
     for (let i = 0; i < keysForWhere.length; i++) {
         let selectedWhereKeys = {};
@@ -200,27 +195,29 @@ function getKeysForWhereFunction(formToBuild, IsLtGtEQ, mOrSKey, idString) {
         selectedWhereKeys[IsLtGtEQ] = innerCompareBracket;
         if (keyNotpresent[i].querySelectorAll("input[checked='checked']").length > 0){
             const NOT = "NOT"
-            console.log(NOT);
             selectedWhereKeysAfterNot[NOT] = selectedWhereKeys;
         } else {
             selectedWhereKeysAfterNot = selectedWhereKeys;
         }
-        console.log("selectedWhere: " + JSON.stringify(selectedWhereKeysAfterNot));
+        // console.log("selectedWhere: " + JSON.stringify(selectedWhereKeysAfterNot));
         arrayToAddtoWhere.push(selectedWhereKeysAfterNot);
-        console.log("array for Where" + JSON.stringify(arrayToAddtoWhere));
+        // console.log("array for Where" + JSON.stringify(arrayToAddtoWhere));
     }
     return { keysForWhere, arrayToAddtoWhere, IsLtGtEQ, mOrSKey };
 }
 
 function idStringCoursesOrRooms(idString, COURSES, formToBuild, ROOMS) {
+    debugger;
     const coursesDataset = document.querySelectorAll("form[data-type= 'courses'] option[selected]");
+    const roomsDataset = document.querySelectorAll("form[data-type= 'rooms'] option[selected]");
+    console.log(coursesDataset);
     if (coursesDataset.length > 0) {
         idString = COURSES;
         formToBuild = document.querySelectorAll("form[data-type= 'courses']")[0];
     }
     else {
-        const roomsDataset = document.querySelectorAll("form[data-type= 'rooms'] option[selected]");
         if (roomsDataset.length > 0) {
+            console.log("rooms here");
             idString = ROOMS;
             formToBuild = document.querySelectorAll("form[data-type= 'rooms']")[0];
         }

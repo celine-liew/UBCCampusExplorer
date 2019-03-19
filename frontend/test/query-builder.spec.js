@@ -8,10 +8,12 @@ describe("buildQuery test suite", function() {
         // console.log(queryName);
         if (queryFixtures.hasOwnProperty(queryName)) {
             // console.log("here?");
+            debugger;
             if (TTT.hasHtmlFixture(queryName)) {
-                console.log("here as well?");
+                console.log(queryName);
                 it(`~Bee${queryName}~Should be able to build a ${queryDescriptions[queryName]}`, function() {
                     TTT.insertHtmlFixture(queryName);
+                    debugger;
                     let actualQuery = CampusExplorer.buildQuery(document);
                     let expectedQuery = queryFixtures[queryName];
                     expect(actualQuery).to.equalQuery(expectedQuery);

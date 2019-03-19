@@ -19,6 +19,18 @@
             "preLaunchTask": "npmbuild",
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen"
+        },
+        {
+            "type": "chrome",
+            "request": "attach",
+            "name": "Attach Karma Chrome",
+            "address": "localhost",
+            "port": 9333,
+            "webRoot": "${workspaceRoot}",
+            "pathMapping": {
+                "/": "${workspaceRoot}",
+                "/base/": "${workspaceRoot}/"
+            }
         }
     ]
 }
