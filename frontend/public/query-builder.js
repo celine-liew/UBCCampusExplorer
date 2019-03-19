@@ -28,15 +28,16 @@ CampusExplorer.buildQuery = function() {
 
 }
 
-
+// TODO: to make the GROUP 1 object.
 function buildQueryTRANSFORM(applyArrayToAdd, arrayForGroup, query) {
-    if (applyArrayToAdd.length > 0) {
+    if (arrayForGroup.length > 0) {
         let tranObject = {};
         tranObject.GROUP = arrayForGroup;
         tranObject.APPLY = applyArrayToAdd;
         console.log(JSON.stringify(tranObject));
-        query["TRANSFORMATIONS"] = tranObject;
-    }
+        query.TRANSFORMATIONS = tranObject
+        // query["APPLY"] = applyArrayToAdd;
+        }
     return query;
 }
 
@@ -79,7 +80,7 @@ function buildQueryOPTIONS(formToBuild, idString, query) {
     return query;
 }
 
-function queryWHERE(IsLtGtEQ, mOrSKey, formToBuild, idString, query) {
+function buildQueryWHERE(IsLtGtEQ, mOrSKey, formToBuild, idString, query) {
     let keysForWhere;
     let arrayToAddtoWhere;
     ({ keysForWhere, arrayToAddtoWhere, IsLtGtEQ, mOrSKey } = getKeysForWhereFunction(formToBuild, IsLtGtEQ, mOrSKey, idString));
@@ -175,9 +176,13 @@ function getAllOrNotFirstCondition(formToBuild, keysForWhere) {
 function getKeysForWhereFunction(formToBuild, IsLtGtEQ, mOrSKey, idString) {
     const operatorsWhere = formToBuild.querySelectorAll("div[class = 'control-group condition'] option[selected]"); // this shows IS and dept
     const keysForWhere = formToBuild.querySelectorAll("div[class = 'control-group condition'] div[class = 'control term']");
+    const keyNotpresent = formToBuild.querySelectorAll("div[class = 'control-group condition'] div[class = 'control not']");
+
+    console.log(keyNotpresent);
     let arrayToAddtoWhere = [];
     for (let i = 0; i < keysForWhere.length; i++) {
         let selectedWhereKeys = {};
+        let selectedWhereKeysAfterNot = {};
         let innerCompareBracket = {};
         let toConverttoNum = false;
         IsLtGtEQ = operatorsWhere[i * 2 + 1].value;
@@ -190,11 +195,19 @@ function getKeysForWhereFunction(formToBuild, IsLtGtEQ, mOrSKey, idString) {
         if (toConverttoNum) {
             innerCompare = Number(innerCompare);
         }
+
         innerCompareBracket[fullmOrSKey] = innerCompare;
         selectedWhereKeys[IsLtGtEQ] = innerCompareBracket;
-        // console.log("selectedWhere: " + JSON.stringify(selectedWhereKeys));
-        arrayToAddtoWhere.push(selectedWhereKeys);
-        // console.log("array for Where" + JSON.stringify(arrayToAddtoWhere));
+        if (keyNotpresent[i].querySelectorAll("input[checked='checked']").length > 0){
+            const NOT = "NOT"
+            console.log(NOT);
+            selectedWhereKeysAfterNot[NOT] = selectedWhereKeys;
+        } else {
+            selectedWhereKeysAfterNot = selectedWhereKeys;
+        }
+        console.log("selectedWhere: " + JSON.stringify(selectedWhereKeysAfterNot));
+        arrayToAddtoWhere.push(selectedWhereKeysAfterNot);
+        console.log("array for Where" + JSON.stringify(arrayToAddtoWhere));
     }
     return { keysForWhere, arrayToAddtoWhere, IsLtGtEQ, mOrSKey };
 }
