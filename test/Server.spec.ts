@@ -1,16 +1,11 @@
 import Server from "../src/rest/Server";
-
-
 import TestUtil from "./TestUtil";
 import Log from "../src/Util";
-
 import InsightFacade from "../src/controller/InsightFacade";
 import chai = require("chai");
 import { expect } from "chai";
-
 import chaiHttp = require("chai-http");
 import { InsightDatasetKind } from "../src/controller/IInsightFacade";
-
 
 describe("Facade D3", function () {
 
