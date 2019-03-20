@@ -32,15 +32,8 @@ module.exports = function(config) {
         colors: true,
         logLevel: config.LOG_ERROR,
         autoWatch: false,
-        browsers: ["ChromeDebugging"],
+        browsers: ["ChromeHeadless"],
         singleRun: true,
-        browserNoActivityTimeout: 50000000,
-        customLaunchers: {
-            ChromeDebugging: {
-              base: 'Chrome',
-              flags: [ '--remote-debugging-port=9333' ],
-              debug: true
-            }
-        }
+        browserNoActivityTimeout: 5000
     });
 };
