@@ -101,6 +101,8 @@ describe("Facade D3", function () {
                 .catch(function (err: any) {
                     // some logging here please!
                     Log.info(err);
+                    expect(err.status).to.be.equal(400);
+
                     expect.fail("Put dataset should not fail if the implementation is correct");
                 });
         } catch (err) {

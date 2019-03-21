@@ -1,3 +1,4 @@
+/* tslint:disable:no-console */
 import * as JSZip from "jszip";
 import * as fs from "fs-extra";
 import restify = require("restify");
@@ -27,12 +28,10 @@ export default class Handlers {
 
     // // 1====submit a zip file that will be parsed and used for future queries
     public async putDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
+        Log.info(req.method + " " + req.url);
         let id: string = req.params.id;
         let kind: InsightDatasetKind = req.params.kind;
-        let body = Buffer.from(req.params.body).toString("base64");
-        Log.info(id + " " + kind);
-        // Log.info(body);
-        this.insightFacade = new InsightFacade();
+        let body = Buffer.from(JSON.stringify(req.body)).toString("base64");
         try {
             let value = await this.insightFacade.addDataset(id, body, kind);
             res.json(200, {result: value});
@@ -43,8 +42,8 @@ export default class Handlers {
     }
     // // 2====deletes the existing dataset stored.
     public async delDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
+        Log.info(req.method + " " + req.url);
         let id = req.params.id;
-        this.insightFacade = new InsightFacade();
         try {
             let reply = await this.insightFacade.removeDataset(id);
             res.json(200, {result: reply});
@@ -60,18 +59,13 @@ export default class Handlers {
 
     // // 3====sends the query to the application. The query will be in JSON format in the post body.
     public async postQuery(req: restify.Request, res: restify.Response, next: restify.Next) {
-        let query;
-        if (typeof req.body === "object") {
-            query = req.body;
-        } else if (typeof req.body === "string") {
-            query = JSON.parse(req.body);
-        }
-        this.insightFacade = new InsightFacade();
+        Log.info(req.method + " " + req.url);
+        let query = req.body;
         if (!this.insightFacade.datasetsHash) {
             res.json(400, {error: "No dataset added!"});
         }
         try {
-            let reply = this.insightFacade.performQuery(query);
+            let reply = await this.insightFacade.performQuery(query);
             res.json(200, {result: reply});
         } catch (err) {
             res.json(400, {error: err.message});
@@ -81,9 +75,9 @@ export default class Handlers {
 
     // // 4====returns a list of datasets that were added.
     public async getDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
+        Log.info(req.method + " " + req.url);
         try {
-            this.insightFacade = new InsightFacade();
-            let reply = this.insightFacade.listDatasets();
+            let reply = await this.insightFacade.listDatasets();
             res.json(200, {result: reply});
         } catch (err) {
             res.json(400, {error: err.message});

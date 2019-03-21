@@ -63,9 +63,9 @@ public addedDatabase: InsightDataset[] = [];
             if (!(err instanceof InsightError)) {
                 throw new InsightError(err);
             }
-            return err;
+            throw err;
         }).catch( (err) => {
-            return err;
+            throw err;
         });
     }
 
@@ -101,7 +101,7 @@ public addedDatabase: InsightDataset[] = [];
                 } catch (err) {
                         if (err instanceof Error) {
                             throw new InsightError(err);
-                        } return err;
+                        } throw err;
                 }
         }
     }
