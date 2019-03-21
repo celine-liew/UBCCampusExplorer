@@ -7,6 +7,7 @@
  * 3) Represent that as part of your query object.
  * @returns query object adhering to the query EBNF
  */
+
 CampusExplorer.buildQuery = function() {
     let query = {};
     let formToBuild = document.forms;
@@ -26,9 +27,8 @@ CampusExplorer.buildQuery = function() {
     let applyArrayToAdd = buildAPPLYarray(formToBuild, idString);
     query = buildQueryTRANSFORM(applyArrayToAdd, arrayForGroup, query);
     return query;
-}
+};
 
-// TODO: to make the GROUP 1 object.
 function buildQueryTRANSFORM(applyArrayToAdd, arrayForGroup, query) {
     if (arrayForGroup.length > 0) {
         let tranObject = {};
@@ -74,8 +74,7 @@ function buildGroupArray(formToBuild, idString) {
 }
 
 function buildQueryOPTIONS(formToBuild, idString, query) {
-    let OptionsObject = getColumnANDOrderInOptions(formToBuild, idString);
-    query["OPTIONS"] = OptionsObject;
+    query["OPTIONS"] = getColumnANDOrderInOptions(formToBuild, idString);
     return query;
 }
 
@@ -84,8 +83,7 @@ function buildQueryWHERE(IsLtGtEQ, mOrSKey, formToBuild, idString, query) {
     let arrayToAddtoWhere;
     ({ keysForWhere, arrayToAddtoWhere, IsLtGtEQ, mOrSKey } = getKeysForWhereFunction(formToBuild, IsLtGtEQ, mOrSKey, idString));
     let allOrNot = getAllOrNotFirstCondition(formToBuild, keysForWhere);
-    let objectToAddtoWhere = getWhereObjectContent(allOrNot, arrayToAddtoWhere);
-    query["WHERE"] = objectToAddtoWhere;
+    query["WHERE"] = getWhereObjectContent(allOrNot, arrayToAddtoWhere);
     return query;
 }
 
@@ -132,10 +130,10 @@ function getColumnANDOrderInOptions(formToBuild, idString) {
     OptionsObject["COLUMNS"] = arraytoAddtoColumns;
     console.log("options object: " + JSON.stringify(OptionsObject));
 
-    let OrderKeysObject = {}
+    let OrderKeysObject = {};
     // ifTransformationPresent
     if (ORDER.length > 0 && formToBuild.querySelectorAll("div[class = 'form-group transformations'] option[selected='selected']").length > 0){
-        const dirChecked = formToBuild.querySelectorAll("div[class = 'control descending'] input[checked= 'checked']")
+        const dirChecked = formToBuild.querySelectorAll("div[class = 'control descending'] input[checked= 'checked']");
         if (dirChecked.length > 0){
             OrderKeysObject.dir = "DOWN";
         } else {
@@ -146,7 +144,7 @@ function getColumnANDOrderInOptions(formToBuild, idString) {
         // console.log(OptionsObject);
         return OptionsObject;
     } else {
-        if (ORDER.length == 1) { //D1 order
+        if (ORDER.length === 1) { //D1 order
             OptionsObject["ORDER"] = ORDER[0];
         }
         else if (ORDER.length > 1) {
@@ -171,26 +169,27 @@ function getAllOrNotFirstCondition(formToBuild, keysForWhere) {
         if (conditionsChecked[i].checked) {
             const allOrNotValue = conditionsChecked[i].value;
             console.log(allOrNotValue);
-            switch (allOrNotValue) {
-                case ALL:
-                    if (keysForWhere.length <= 1) {
-                        allOrNot = "";
-                    }
-                    else {
-                        allOrNot = 'AND';
-                    }
-                    break;
-                case OR:
-                    allOrNot = 'OR';
-                    break;
-                case NOT:
-                    allOrNot = 'NOT';
-                    break;
-                default: allOrNot = "";
+            if (keysForWhere.length <= 1) {
+                allOrNot = "";
             }
+            else {
+                switch (allOrNotValue) {
+                    case ALL:
+                        allOrNot = 'AND';
+                        break;
+                    case OR:
+                        allOrNot = 'OR';
+                        break;
+                    case NOT:
+                        allOrNot = 'NOT';
+                        break;
+                    default: allOrNot = "";
+                }
+            }
+            return allOrNot;
         }
     }
-    return allOrNot;
+    return "";
 }
 
 
@@ -210,18 +209,18 @@ function getKeysForWhereFunction(formToBuild, IsLtGtEQ, mOrSKey, idString) {
         if (mfields.includes(mOrSKey)) {
             toConverttoNum = true;
         }
-        fullmOrSKey = idString + '_' + mOrSKey;
+        let fullmOrSKey = idString + '_' + mOrSKey;
         let innerCompare = keysForWhere[i].querySelectorAll('input')[0].value;
         if (toConverttoNum) {
-            if(!isNaN(innerCompare)) {
-                innerCompare = Number(innerCompare);
+            if(!isNaN(parseFloat(innerCompare))) {
+                innerCompare = parseFloat(innerCompare);
             }
         }
 
         innerCompareBracket[fullmOrSKey] = innerCompare;
         selectedWhereKeys[IsLtGtEQ] = innerCompareBracket;
         if (keyNotpresent[i].querySelectorAll("input[checked='checked']").length > 0){
-            const NOT = "NOT"
+            const NOT = "NOT";
             selectedWhereKeysAfterNot[NOT] = selectedWhereKeys;
         } else {
             selectedWhereKeysAfterNot = selectedWhereKeys;
