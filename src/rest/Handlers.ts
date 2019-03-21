@@ -60,7 +60,12 @@ export default class Handlers {
 
     // // 3====sends the query to the application. The query will be in JSON format in the post body.
     public async postQuery(req: restify.Request, res: restify.Response, next: restify.Next) {
-        let query = req.body;
+        let query;
+        if (typeof req.body === "object") {
+            query = req.body;
+        } else if (typeof req.body === "string") {
+            query = JSON.parse(req.body);
+        }
         this.insightFacade = new InsightFacade();
         if (!this.insightFacade.datasetsHash) {
             res.json(400, {error: "No dataset added!"});
