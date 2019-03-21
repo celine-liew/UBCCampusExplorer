@@ -56,13 +56,14 @@ describe("Facade D3", function () {
         try {
             let file = "./test/data/courses.zip";
             Log.info(file);
-            // let content: string;
-            // TestUtil.readFileAsync(file).then((buf) => {
-            //     content = buf.toString("base64");
-            // });
+            let buffer = await TestUtil.readFileAsync(file);
+            Log.info(`=====================`);
+            console.log(Buffer.isBuffer(buffer));
+            Log.info(`=====================`);
+            // let buffer: Buffer = new Buffer(fs.readFileSync(file));
             return chai.request("http://localhost:4321")
                 .put("/dataset/courses/courses")
-                .attach("body", fs.readFileSync(file), "courses.zip")
+                .attach("body", buffer, "courses.zip")
                 .then(
                     (res) => {
                     Log.test(`PUT test for courses dataset OK`);
@@ -71,6 +72,8 @@ describe("Facade D3", function () {
                 )
                 .catch(function (err: any) {
                     // some logging here please!
+                    Log.info(err.status);
+                    Log.info(err.body);
                     Log.info(err);
                     expect.fail("Put dataset should not fail if the implementation is correct");
                 });
@@ -82,15 +85,12 @@ describe("Facade D3", function () {
 
     it("PUT test for room dataset", async function () {
         try {
-            let file = "./test/data/courses.zip";
+            let file = "./test/data/rooms.zip";
             Log.info(file);
-            // let content: string;
-            // TestUtil.readFileAsync(file).then((buf) => {
-            //     content = buf.toString("base64");
-            // });
+            let buffer = await TestUtil.readFileAsync(file);
             return chai.request("http://localhost:4321")
                 .put("/dataset/rooms/rooms")
-                .attach("body", fs.readFileSync(file), "rooms.zip")
+                .attach("body", buffer, "rooms.zip")
                 .then(
                     (res) => {
                     Log.test(`PUT test for rooms dataset OK`);
@@ -101,8 +101,7 @@ describe("Facade D3", function () {
                 .catch(function (err: any) {
                     // some logging here please!
                     Log.info(err);
-                    expect(err.status).to.be.equal(400);
-
+                    // expect(err.status).to.be.equal(400);
                     expect.fail("Put dataset should not fail if the implementation is correct");
                 });
         } catch (err) {

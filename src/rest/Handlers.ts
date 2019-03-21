@@ -28,10 +28,18 @@ export default class Handlers {
 
     // // 1====submit a zip file that will be parsed and used for future queries
     public async putDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
-        Log.info(req.method + " " + req.url);
+        // Log.info(req.method + " " + req.url);
+        // Log.info(req.params);
         let id: string = req.params.id;
         let kind: InsightDatasetKind = req.params.kind;
-        let body = Buffer.from(JSON.stringify(req.body)).toString("base64");
+        let buffer = req.params.body;
+        // Log.info(`===========!!!!!==========`);
+        // console.log(Buffer.isBuffer(buffer));
+        // Log.info(`============!!!!!!=========`);
+        // let toBuff = JSON.stringify(req.body);
+        // Log.info(toBuff);
+        // let bodybuffer = Buffer.from(toBuff);
+        let body = buffer.toString("base64");
         try {
             let value = await this.insightFacade.addDataset(id, body, kind);
             res.json(200, {result: value});

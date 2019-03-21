@@ -16,7 +16,6 @@ const chai = require("chai");
 const chai_1 = require("chai");
 const chaiHttp = require("chai-http");
 const IInsightFacade_1 = require("../src/controller/IInsightFacade");
-const fs = require("fs");
 describe("Facade D3", function () {
     let facade = null;
     let server = null;
@@ -55,14 +54,20 @@ describe("Facade D3", function () {
             try {
                 let file = "./test/data/courses.zip";
                 Util_1.default.info(file);
+                let buffer = yield TestUtil_1.default.readFileAsync(file);
+                Util_1.default.info(`=====================`);
+                console.log(Buffer.isBuffer(buffer));
+                Util_1.default.info(`=====================`);
                 return chai.request("http://localhost:4321")
                     .put("/dataset/courses/courses")
-                    .attach("body", fs.readFileSync(file), "courses.zip")
+                    .attach("body", buffer, "courses.zip")
                     .then((res) => {
                     Util_1.default.test(`PUT test for courses dataset OK`);
                     chai_1.expect(res.status).to.be.equal(200);
                 })
                     .catch(function (err) {
+                    Util_1.default.info(err.status);
+                    Util_1.default.info(err.body);
                     Util_1.default.info(err);
                     chai_1.expect.fail("Put dataset should not fail if the implementation is correct");
                 });
@@ -75,11 +80,12 @@ describe("Facade D3", function () {
     it("PUT test for room dataset", function () {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let file = "./test/data/courses.zip";
+                let file = "./test/data/rooms.zip";
                 Util_1.default.info(file);
+                let buffer = yield TestUtil_1.default.readFileAsync(file);
                 return chai.request("http://localhost:4321")
                     .put("/dataset/rooms/rooms")
-                    .attach("body", fs.readFileSync(file), "rooms.zip")
+                    .attach("body", buffer, "rooms.zip")
                     .then((res) => {
                     Util_1.default.test(`PUT test for rooms dataset OK`);
                     chai_1.expect(res.status).to.be.equal(200);

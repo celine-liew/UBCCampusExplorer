@@ -46,7 +46,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
 
     before(async function () {
         Log.test(`Before: ${this.test.parent.title}`);
-
+        await ServerSpec;
         try {
             const loadDatasetPromises: Array<Promise<Buffer>> = [];
             for (const [id, path] of Object.entries(datasetsToLoad)) {
