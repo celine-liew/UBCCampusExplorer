@@ -70,10 +70,10 @@ export default class Server {
                 // NOTE: your endpoints should go here
 
                 // buf.toString("base64");
-                that.rest.put("/dataset/:id/:kind", that.handlers.putDataset);
-                that.rest.del("/dataset/:id/:kind", that.handlers.delDataset);
-                that.rest.post("/query", that.handlers.postQuery);
-                that.rest.get("/datasets", that.handlers.getDataset);
+                that.rest.put("/dataset/:id/:kind", that.handlers.putDataset.bind(that.handlers));
+                that.rest.del("/dataset/:id/:kind", that.handlers.delDataset.bind(that.handlers));
+                that.rest.post("/query", that.handlers.postQuery.bind(that.handlers));
+                that.rest.get("/datasets", that.handlers.getDataset.bind(that.handlers));
                 // This must be the last endpoint!
                 that.rest.get("/.*", Server.getStatic);
 
