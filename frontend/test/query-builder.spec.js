@@ -10,7 +10,7 @@ describe("buildQuery test suite", function() {
             // console.log("here?");
             debugger;
             if (TTT.hasHtmlFixture(queryName)) {
-                console.log(queryName);
+                // console.log(queryName);
                 it(`~Bee${queryName}~Should be able to build a ${queryDescriptions[queryName]}`, function() {
                     TTT.insertHtmlFixture(queryName);
                     debugger;

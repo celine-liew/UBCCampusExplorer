@@ -15,6 +15,8 @@ CampusExplorer.buildQuery = function() {
     const ROOMS = "rooms";
     let IsLtGtEQ = "";
     let mOrSKey = "";
+
+
     ({ idString, formToBuild } = idStringCoursesOrRooms(idString, COURSES, formToBuild, ROOMS));
 
     query = buildQueryWHERE(IsLtGtEQ, mOrSKey, formToBuild, idString, query);
@@ -99,6 +101,8 @@ function getWhereObjectContent(allOrNot, arrayToAddtoWhere) {
 }
 
 function getColumnANDOrderInOptions(formToBuild, idString) {
+    const coursesKeys = ['dept', 'id', 'avg', 'instructor', 'title', 'pass', 'fail','audit','uuid','year'];
+    const roomsKeys = ['fullname', 'furniture', 'href', 'lat', 'lon', 'name', 'number', 'seats', 'shortname', 'type'];
     let arraytoAddtoColumns = [];
     const fieldsForCOLUMNS = formToBuild.querySelectorAll("div[class = 'form-group columns'] input[checked= 'checked']");
     for (let i = 0; i < fieldsForCOLUMNS.length; i++) {
@@ -116,24 +120,40 @@ function getColumnANDOrderInOptions(formToBuild, idString) {
         let keyForOrder = "";
 
         //addIdStringtoFields
-        if (fieldsForOrder[i].class){
+        keyForOrder = fieldsForOrder[i].value;
+        if (!coursesKeys.includes(keyForOrder) && !roomsKeys.includes(keyForOrder)){
             keyForOrder = fieldsForOrder[i].value;
         } else {
             keyForOrder = idString + '_' + fieldsForOrder[i].value;
         }
-
         ORDER.push(keyForOrder);
     }
     let OptionsObject = {};
     OptionsObject["COLUMNS"] = arraytoAddtoColumns;
-    // console.log("order order: " + ORDER);
-    if (ORDER.length == 1) {
-        OptionsObject["ORDER"] = ORDER[0];
+    console.log("options object: " + JSON.stringify(OptionsObject));
+
+    let OrderKeysObject = {}
+    // ifTransformationPresent
+    if (ORDER.length > 0 && formToBuild.querySelectorAll("div[class = 'form-group transformations'] option[selected='selected']").length > 0){
+        const dirChecked = formToBuild.querySelectorAll("div[class = 'control descending'] input[checked= 'checked']")
+        if (dirChecked.length > 0){
+            OrderKeysObject.dir = "DOWN";
+        } else {
+            OrderKeysObject.dir = "UP";
+        }
+        OrderKeysObject.keys = ORDER;
+        OptionsObject["ORDER"] = OrderKeysObject;
+        // console.log(OptionsObject);
+        return OptionsObject;
+    } else {
+        if (ORDER.length == 1) { //D1 order
+            OptionsObject["ORDER"] = ORDER[0];
+        }
+        else if (ORDER.length > 1) {
+            OptionsObject["ORDER"] = ORDER;
+        }
+        return OptionsObject;
     }
-    else if (ORDER.length > 1) {
-        OptionsObject["ORDER"] = ORDER;
-    }
-    return OptionsObject;
 }
 
 function convertArrayToObject(arrayconvert) {
@@ -141,40 +161,45 @@ function convertArrayToObject(arrayconvert) {
 }
 
 function getAllOrNotFirstCondition(formToBuild, keysForWhere) {
-    const conditionsChecked = formToBuild.querySelectorAll('input[name= "conditionType"]');
-    // console.log("key length: " + keysForWhere.length);
+    const conditionsChecked = formToBuild.querySelectorAll("input[name= 'conditionType']");
+    console.log(conditionsChecked[0]);
     let allOrNot = "";
     const ALL = 'all';
     const OR = 'any';
     const NOT = 'none';
-    if (conditionsChecked[0].checked) {
-        const allOrNotValue = conditionsChecked[0].value;
-        switch (allOrNotValue) {
-            case ALL:
-                if (keysForWhere.length <= 1) {
-                    allOrNot = "";
-                }
-                else {
-                    allOrNot = 'AND';
-                }
-                break;
-            case OR:
-                allOrNot = 'OR';
-                break;
-            case NOT:
-                allOrNot = 'NOT';
-                break;
-            default: allOrNot = "";
+    for (let i = 0; i < conditionsChecked.length; i++){
+        if (conditionsChecked[i].checked) {
+            const allOrNotValue = conditionsChecked[i].value;
+            console.log(allOrNotValue);
+            switch (allOrNotValue) {
+                case ALL:
+                    if (keysForWhere.length <= 1) {
+                        allOrNot = "";
+                    }
+                    else {
+                        allOrNot = 'AND';
+                    }
+                    break;
+                case OR:
+                    allOrNot = 'OR';
+                    break;
+                case NOT:
+                    allOrNot = 'NOT';
+                    break;
+                default: allOrNot = "";
+            }
         }
     }
     return allOrNot;
 }
+
 
 function getKeysForWhereFunction(formToBuild, IsLtGtEQ, mOrSKey, idString) {
     const operatorsWhere = formToBuild.querySelectorAll("div[class = 'control-group condition'] option[selected]"); // this shows IS and dept
     const keysForWhere = formToBuild.querySelectorAll("div[class = 'control-group condition'] div[class = 'control term']");
     const keyNotpresent = formToBuild.querySelectorAll("div[class = 'control-group condition'] div[class = 'control not']");
     let arrayToAddtoWhere = [];
+    const mfields = ['avg','pass','fail','audit', 'year', 'lat', 'lon','seats'];
     for (let i = 0; i < keysForWhere.length; i++) {
         let selectedWhereKeys = {};
         let selectedWhereKeysAfterNot = {};
@@ -182,7 +207,7 @@ function getKeysForWhereFunction(formToBuild, IsLtGtEQ, mOrSKey, idString) {
         let toConverttoNum = false;
         IsLtGtEQ = operatorsWhere[i * 2 + 1].value;
         mOrSKey = operatorsWhere[i * 2].value;
-        if (mOrSKey == 'avg' || mOrSKey == 'pass' || mOrSKey == 'fail' || mOrSKey == 'audit' || mOrSKey == 'year') {
+        if (mfields.includes(mOrSKey)) {
             toConverttoNum = true;
         }
         fullmOrSKey = idString + '_' + mOrSKey;
@@ -224,3 +249,5 @@ function idStringCoursesOrRooms(idString, COURSES, formToBuild, ROOMS) {
     }
     return { idString, formToBuild };
 }
+
+
