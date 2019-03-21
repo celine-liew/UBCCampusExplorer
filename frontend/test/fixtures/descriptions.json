@@ -1,8 +1,13 @@
 {
+    "NaN": "NaN",
+    "emptyWhere": "emptyWhere",
     "query1": "simple query IS comparison for department with two columns and old order syntax",
     "complexquery": "AND (GT avg 98) IS (dept adhe), OPTIONS (3 in columns) and old order syntax",
     "d2courseQuerySimple": "GT avg 98, OPTIONS (2 in column with 1 applied), TRANS (GROUP 1) APPLY overallavg on avg)",
     "coursewithNOT": "NOT average LT 98, OPTIONS (2 in columns), GROUP 2, no order",
     "d3roomsquery1": "AND (IS furniture *tables*) (GT seats 300) OPTIONS (2 in column) ORDER (dir down with 1 key)",
+    "d3roomsquery_withWildCard**": "withWildCard**",
+    "d3roomsquery1_withWildCard*Tab*es*":"withWildCard*Tab*es*",
+    "d3roomsquery1_withWildCard*Tab*e": "withWildCard*Tab*e",
     "d3roomquerywithOR": "same as d3query1 except OR at beginning and UP order"
 }

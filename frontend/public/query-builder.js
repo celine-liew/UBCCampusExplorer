@@ -213,7 +213,9 @@ function getKeysForWhereFunction(formToBuild, IsLtGtEQ, mOrSKey, idString) {
         fullmOrSKey = idString + '_' + mOrSKey;
         let innerCompare = keysForWhere[i].querySelectorAll('input')[0].value;
         if (toConverttoNum) {
-            innerCompare = Number(innerCompare);
+            if(!isNaN(innerCompare)) {
+                innerCompare = Number(innerCompare);
+            }
         }
 
         innerCompareBracket[fullmOrSKey] = innerCompare;

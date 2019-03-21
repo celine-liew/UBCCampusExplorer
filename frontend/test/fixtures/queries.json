@@ -1,4 +1,59 @@
 {
+    "NaN": {
+        "WHERE":
+        {
+            "AND": [
+                { "IS": { "rooms_furniture": "**" }
+                },
+                { "GT": { "rooms_seats": "ret" }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": ["rooms_shortname", "maxSeats"],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": [
+                    "maxSeats"
+                ]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "rooms_shortname"
+            ],
+            "APPLY": [
+                {
+                    "maxSeats": {
+                        "MAX": "rooms_seats"
+                    }
+                }
+            ]
+        }
+    },
+
+    "emptyWhere": {
+        "WHERE": {},
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "year"
+            ]
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "courses_dept"
+            ],
+            "APPLY": [
+                {
+                    "year": {
+                        "COUNT": "courses_dept"
+                    }
+                }
+            ]
+        }
+    },
+
     "query1":{
         "WHERE": {"IS": {"courses_dept": "cpsc"} },
         "OPTIONS": {"COLUMNS": ["courses_dept", "courses_id"],
@@ -80,8 +135,107 @@
           ]
         }
       },
+    "d3roomsquery_withWildCard**": {
+        "WHERE":
+        {
+            "AND": [
+                { "IS": { "rooms_furniture": "**" }
+                },
+                { "GT": { "rooms_seats": 300 }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": ["rooms_shortname", "maxSeats"],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": [
+                    "maxSeats"
+                ]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "rooms_shortname"
+            ],
+            "APPLY": [
+                {
+                    "maxSeats": {
+                        "MAX": "rooms_seats"
+                    }
+                }
+            ]
+        }
+    },
 
-      "d3roomquerywithOR": {
+    "d3roomsquery1_withWildCard*Tab*es*": {
+        "WHERE":
+        {
+            "AND": [
+                { "IS": { "rooms_furniture": "*Tab*es*" }
+                },
+                { "GT": { "rooms_seats": 300 }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": ["rooms_shortname", "maxSeats"],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": [
+                    "maxSeats"
+                ]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "rooms_shortname"
+            ],
+            "APPLY": [
+                {
+                    "maxSeats": {
+                        "MAX": "rooms_seats"
+                    }
+                }
+            ]
+        }
+    },
+
+    "d3roomsquery1_withWildCard*Tab*e": {
+        "WHERE":
+        {
+            "AND": [
+                { "IS": { "rooms_furniture": "*Tab*e" }
+                },
+                { "GT": { "rooms_seats": 300 }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": ["rooms_shortname", "maxSeats"],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": [
+                    "maxSeats"
+                ]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "rooms_shortname"
+            ],
+            "APPLY": [
+                {
+                    "maxSeats": {
+                        "MAX": "rooms_seats"
+                    }
+                }
+            ]
+        }
+    },
+
+
+    "d3roomquerywithOR": {
         "WHERE":
          {
           "OR": [

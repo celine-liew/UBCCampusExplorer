@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="Encoding" addBOMForNewFiles="with NO BOM" />
+  <component name="Encoding" addBOMForNewFiles="with NO BOM">
+    <file url="file://$PROJECT_DIR$/frontend/test/fixtures/html/query2_testWildCard_**.html" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/frontend/test/fixtures/html/query2_testWildCard_*.html" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/frontend/test/fixtures/html/query2_testWildCard_*cpsc*.html" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/frontend/test/fixtures/html/query2_testWildCard_*ps*.html" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/frontend/test/fixtures/html/query2_testWildCard_*psc.html" charset="UTF-8" />
+  </component>
 </project>
