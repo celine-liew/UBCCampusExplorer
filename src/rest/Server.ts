@@ -15,10 +15,12 @@ export default class Server {
 
     private port: number;
     private rest: restify.Server;
+    private handlers: Handlers;
 
     constructor(port: number) {
         Log.info("Server::<init>( " + port + " )");
         this.port = port;
+        this.handlers = new Handlers();
     }
 
     /**
@@ -68,11 +70,10 @@ export default class Server {
                 // NOTE: your endpoints should go here
 
                 // buf.toString("base64");
-                let handlers: Handlers = new Handlers();
-                that.rest.put("/dataset/:id/:kind", handlers.putDataset);
-                that.rest.del("/dataset/:id/:kind", handlers.delDataset);
-                that.rest.post("/query", handlers.postQuery);
-                that.rest.get("/datasets", handlers.getDataset);
+                that.rest.put("/dataset/:id/:kind", that.handlers.putDataset);
+                that.rest.del("/dataset/:id/:kind", that.handlers.delDataset);
+                that.rest.post("/query", that.handlers.postQuery);
+                that.rest.get("/datasets", that.handlers.getDataset);
                 // This must be the last endpoint!
                 that.rest.get("/.*", Server.getStatic);
 

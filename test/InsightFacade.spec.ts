@@ -1,7 +1,7 @@
 // tslint:disable
 import { expect } from "chai";
 import * as fs from "fs-extra";
-
+import ServerSpec = require("./Server.spec");
 import {
     InsightError,
     InsightDatasetKind,
