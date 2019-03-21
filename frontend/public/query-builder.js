@@ -143,7 +143,7 @@ function getColumnANDOrderInOptions(formToBuild, idString) {
         }
         OrderKeysObject.keys = ORDER;
         OptionsObject["ORDER"] = OrderKeysObject;
-        console.log(OptionsObject);
+        // console.log(OptionsObject);
         return OptionsObject;
     } else {
         if (ORDER.length == 1) { //D1 order
@@ -161,34 +161,38 @@ function convertArrayToObject(arrayconvert) {
 }
 
 function getAllOrNotFirstCondition(formToBuild, keysForWhere) {
-    const conditionsChecked = formToBuild.querySelectorAll('input[name= "conditionType"]');
-    // console.log("key length: " + keysForWhere.length);
+    const conditionsChecked = formToBuild.querySelectorAll("input[name= 'conditionType']");
+    console.log(conditionsChecked[0]);
     let allOrNot = "";
     const ALL = 'all';
     const OR = 'any';
     const NOT = 'none';
-    if (conditionsChecked[0].checked) {
-        const allOrNotValue = conditionsChecked[0].value;
-        switch (allOrNotValue) {
-            case ALL:
-                if (keysForWhere.length <= 1) {
-                    allOrNot = "";
-                }
-                else {
-                    allOrNot = 'AND';
-                }
-                break;
-            case OR:
-                allOrNot = 'OR';
-                break;
-            case NOT:
-                allOrNot = 'NOT';
-                break;
-            default: allOrNot = "";
+    for (let i = 0; i < conditionsChecked.length; i++){
+        if (conditionsChecked[i].checked) {
+            const allOrNotValue = conditionsChecked[i].value;
+            console.log(allOrNotValue);
+            switch (allOrNotValue) {
+                case ALL:
+                    if (keysForWhere.length <= 1) {
+                        allOrNot = "";
+                    }
+                    else {
+                        allOrNot = 'AND';
+                    }
+                    break;
+                case OR:
+                    allOrNot = 'OR';
+                    break;
+                case NOT:
+                    allOrNot = 'NOT';
+                    break;
+                default: allOrNot = "";
+            }
         }
     }
     return allOrNot;
 }
+
 
 function getKeysForWhereFunction(formToBuild, IsLtGtEQ, mOrSKey, idString) {
     const operatorsWhere = formToBuild.querySelectorAll("div[class = 'control-group condition'] option[selected]"); // this shows IS and dept
