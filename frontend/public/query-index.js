@@ -9,3 +9,8 @@
  */
 
 // TODO: implement!
+CampusExplorer.postQuery = async function() {
+    let query = CampusExplorer.buildQuery();
+    let result = await CampusExplorer.sendQuery(query);
+    CampusExplorer.renderResult(result);
+}
