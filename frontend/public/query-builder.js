@@ -30,7 +30,7 @@ CampusExplorer.buildQuery = function() {
 };
 
 function buildQueryTRANSFORM(applyArrayToAdd, arrayForGroup, query) {
-    if (arrayForGroup.length > 0) {
+    if (arrayForGroup.length > 0 || applyArrayToAdd.length > 0) {
         let tranObject = {};
         tranObject.GROUP = arrayForGroup;
         tranObject.APPLY = applyArrayToAdd;
