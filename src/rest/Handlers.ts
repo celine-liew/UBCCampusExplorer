@@ -32,7 +32,7 @@ export default class Handlers {
         let body = Buffer.from(req.params.body).toString("base64");
         Log.info(id + " " + kind);
         // Log.info(body);
-        // this.insightFacade = new InsightFacade();
+        this.insightFacade = new InsightFacade();
         try {
             let value = await this.insightFacade.addDataset(id, body, kind);
             res.json(200, {result: value});
@@ -44,7 +44,7 @@ export default class Handlers {
     // // 2====deletes the existing dataset stored.
     public async delDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
         let id = req.params.id;
-        // this.insightFacade = new InsightFacade();
+        this.insightFacade = new InsightFacade();
         try {
             let reply = await this.insightFacade.removeDataset(id);
             res.json(200, {result: reply});
@@ -66,7 +66,7 @@ export default class Handlers {
         } else if (typeof req.body === "string") {
             query = JSON.parse(req.body);
         }
-        // this.insightFacade = new InsightFacade();
+        this.insightFacade = new InsightFacade();
         if (!this.insightFacade.datasetsHash) {
             res.json(400, {error: "No dataset added!"});
         }
@@ -82,7 +82,7 @@ export default class Handlers {
     // // 4====returns a list of datasets that were added.
     public async getDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
         try {
-            // this.insightFacade = new InsightFacade();
+            this.insightFacade = new InsightFacade();
             let reply = this.insightFacade.listDatasets();
             res.json(200, {result: reply});
         } catch (err) {
