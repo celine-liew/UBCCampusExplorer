@@ -34,28 +34,40 @@ function buildQueryTRANSFORM(applyArrayToAdd, arrayForGroup, query) {
         let tranObject = {};
         tranObject.GROUP = arrayForGroup;
         tranObject.APPLY = applyArrayToAdd;
-        query.TRANSFORMATIONS = tranObject
+        query.TRANSFORMATIONS = tranObject;
         // query["APPLY"] = applyArrayToAdd;
-        }
+    }
     return query;
 }
 
 function buildAPPLYarray(formToBuild, idString) {
     let applyArrayToAdd = [];
-    let applyInnerBracket = {};
-    let applyInnerBracketwithLabel = {};
-    const fieldsforApply = formToBuild.querySelectorAll("div[class = 'form-group transformations']");
+    // const fieldsforApply = formToBuild.querySelectorAll("div[class = 'form-group transformations']");
+    // for (let i = 0; i < fieldsforApply.length; i++) {
+    //     const customisedLabel = fieldsforApply[i].querySelectorAll("input[type='text']");
+    //     const keyAndFieldtoApply = fieldsforApply[i].querySelectorAll("option[selected='selected']");
+    //     if (customisedLabel.length > 0 && keyAndFieldtoApply.length > 0) {
+    //         const Label = customisedLabel[0].value;
+    //         const applyKey = keyAndFieldtoApply[0].value;
+    //         const applyField = keyAndFieldtoApply[1].value;
+    //         applyInnerBracket[applyKey] = idString + '_' + applyField;
+    //         applyInnerBracketwithLabel[Label] = applyInnerBracket;
+    //         applyArrayToAdd.push(applyInnerBracketwithLabel);
+    //     }
+    // }
+    const fieldsforApply = formToBuild.querySelectorAll("div[class = 'control-group transformation']");
     for (let i = 0; i < fieldsforApply.length; i++) {
         const customisedLabel = fieldsforApply[i].querySelectorAll("input[type='text']");
         const keyAndFieldtoApply = fieldsforApply[i].querySelectorAll("option[selected='selected']");
-        if (customisedLabel.length > 0 && keyAndFieldtoApply.length > 0) {
-            const Label = customisedLabel[0].value;
-            const applyKey = keyAndFieldtoApply[0].value;
-            const applyField = keyAndFieldtoApply[1].value;
-            applyInnerBracket[applyKey] = idString + '_' + applyField;
-            applyInnerBracketwithLabel[Label] = applyInnerBracket;
-            applyArrayToAdd.push(applyInnerBracketwithLabel);
-        }
+        // if (customisedLabel.length > 0 && keyAndFieldtoApply.length > 0) {
+        const Label = customisedLabel[0].value;
+        const applyKey = keyAndFieldtoApply[0].value;
+        const applyField = keyAndFieldtoApply[1].value;
+        let applyInnerBracket = {};
+        let applyInnerBracketwithLabel = {};
+        applyInnerBracket[applyKey] = idString + '_' + applyField;
+        applyInnerBracketwithLabel[Label] = applyInnerBracket;
+        applyArrayToAdd.push(applyInnerBracketwithLabel);
     }
     return applyArrayToAdd;
 }
@@ -119,38 +131,81 @@ function getColumnANDOrderInOptions(formToBuild, idString) {
 
         //addIdStringtoFields
         keyForOrder = fieldsForOrder[i].value;
-        if (!coursesKeys.includes(keyForOrder) && !roomsKeys.includes(keyForOrder)){
-            keyForOrder = fieldsForOrder[i].value;
-        } else {
+        // if (!coursesKeys.includes(keyForOrder) && !roomsKeys.includes(keyForOrder)){
+        //     keyForOrder = fieldsForOrder[i].value;
+        // } else {
+        //     keyForOrder = idString + '_' + fieldsForOrder[i].value;
+        // }
+        if(!fieldsForOrder[i].className){
             keyForOrder = idString + '_' + fieldsForOrder[i].value;
+        }
+        else if(fieldsForOrder[i].className === "transformation"){
+            keyForOrder = fieldsForOrder[i].value;
         }
         ORDER.push(keyForOrder);
     }
     let OptionsObject = {};
     OptionsObject["COLUMNS"] = arraytoAddtoColumns;
     console.log("options object: " + JSON.stringify(OptionsObject));
-
+    if (ORDER.length === 0){
+        return OptionsObject;
+    }
     let OrderKeysObject = {};
     // ifTransformationPresent
-    if (ORDER.length > 0 && formToBuild.querySelectorAll("div[class = 'form-group transformations'] option[selected='selected']").length > 0){
-        const dirChecked = formToBuild.querySelectorAll("div[class = 'control descending'] input[checked= 'checked']");
-        if (dirChecked.length > 0){
-            OrderKeysObject.dir = "DOWN";
-        } else {
-            OrderKeysObject.dir = "UP";
-        }
-        OrderKeysObject.keys = ORDER;
+    // if (ORDER.length > 0 && formToBuild.querySelectorAll("div[class = 'form-group transformations'] option[selected='selected']").length > 0){
+    //     const dirChecked = formToBuild.querySelectorAll("div[class = 'control descending'] input[checked= 'checked']");
+    //     if (dirChecked.length > 0){
+    //         OrderKeysObject.dir = "DOWN";
+    //     } else {
+    //         OrderKeysObject.dir = "UP";
+    //     }
+    //     OrderKeysObject.keys = ORDER;
+    //     OptionsObject["ORDER"] = OrderKeysObject;
+    //     // console.log(OptionsObject);
+    //     return OptionsObject;
+    // } else {
+    //     if (ORDER.length === 1) { //D1 order
+    //         OptionsObject["ORDER"] = ORDER[0];
+    //     }
+    //     else if (ORDER.length > 1) {
+    //         OptionsObject["ORDER"] = ORDER;
+    //     }
+    //     return OptionsObject;
+    // }
+    // if (ORDER.length > 1){
+    //     const dirChecked = formToBuild.querySelectorAll("div[class = 'control descending'] input[checked= 'checked']");
+    //     if (dirChecked.length > 0){
+    //         OrderKeysObject["dir"] = "DOWN";
+    //     } else {
+    //         OrderKeysObject["dir"] = "UP";
+    //     }
+    //     OrderKeysObject["keys"] = ORDER;
+    //     OptionsObject["ORDER"] = OrderKeysObject;
+    //     // console.log(OptionsObject);
+    //     return OptionsObject;
+    // } else {
+    //     OptionsObject["ORDER"] = ORDER[0];
+    //     return OptionsObject;
+    // }
+    const dirChecked = formToBuild.querySelectorAll("div[class = 'control descending'] input[checked= 'checked']");
+    if (dirChecked.length > 0){
+        OrderKeysObject["dir"] = "DOWN";
+        OrderKeysObject["keys"] = ORDER;
         OptionsObject["ORDER"] = OrderKeysObject;
         // console.log(OptionsObject);
         return OptionsObject;
     } else {
-        if (ORDER.length === 1) { //D1 order
+        if(ORDER.length > 1){
+            OrderKeysObject["dir"] = "UP";
+            OrderKeysObject["keys"] = ORDER;
+            OptionsObject["ORDER"] = OrderKeysObject;
+            // console.log(OptionsObject);
+            return OptionsObject;
+        }
+        else{
             OptionsObject["ORDER"] = ORDER[0];
+            return OptionsObject;
         }
-        else if (ORDER.length > 1) {
-            OptionsObject["ORDER"] = ORDER;
-        }
-        return OptionsObject;
     }
 }
 

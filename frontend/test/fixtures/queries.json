@@ -1,4 +1,48 @@
 {
+    "Complex_with_apply": {
+        "WHERE": {
+            "GT": { "courses_avg": 95 }
+        },
+        "OPTIONS": {
+            "COLUMNS": ["courses_dept","courses_pass", "fsd","Pass","pass","                 pass"],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": [
+                    "courses_dept","courses_pass", "fsd","Pass","pass","                 pass"
+                ]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["courses_dept","courses_pass"],
+            "APPLY": [{
+                "fsd": {
+                    "COUNT": "courses_audit"
+                }
+            }
+            ,{
+                    "Pass": {
+                        "AVG": "courses_audit"
+                    }
+                }
+            ,{
+                    "pass": {
+                        "COUNT": "courses_dept"
+                    }
+                }
+            ,{
+                    "                 pass": {
+                        "COUNT": "courses_audit"
+                    }
+                }
+            ,{
+                    "  pass     ": {
+                        "COUNT": "courses_avg"
+                    }
+                }
+            ]
+        }
+    },
+
     "query1":{
         "WHERE": {"IS": {"courses_dept": "cpsc"} },
         "OPTIONS": {"COLUMNS": ["courses_dept", "courses_id"],
