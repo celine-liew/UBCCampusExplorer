@@ -96,6 +96,111 @@ describe("Facade D3", function () {
             }
         });
     });
+    it("PUT invalid courses dataset should reject - wrong content", function () {
+        try {
+            let file = "./test/data/rooms.zip";
+            return chai.request("http://localhost:4321")
+                .put("/dataset/courses/courses")
+                .attach("body", fs.readFileSync(file), "./test/data/courses.zip")
+                .then((res) => {
+                Util_1.default.test(`PUT test for wrong content in courses dataset should be rejected`);
+                chai_1.expect(res.status).to.be.equal(400);
+            });
+        }
+        catch (err) {
+            chai_1.expect.fail("should not be here");
+        }
+    });
+    it("PUT invalid courses dataset should reject - wrong path", function () {
+        try {
+            let file = "./test/data/courses.zip";
+            return chai.request("http://localhost:4321")
+                .put("/dataset/courses/courses")
+                .attach("body", fs.readFileSync(file), "./test/data/rooms.zip")
+                .then((res) => {
+                Util_1.default.test(`PUT test for wrong path in courses dataset should be rejected`);
+                chai_1.expect(res.status).to.be.equal(400);
+            })
+                .catch(function (err) {
+                chai_1.expect(err.status).to.be.equal(400);
+            });
+        }
+        catch (err) {
+            chai_1.expect.fail("PUT test for courses dataset should be OK");
+        }
+    });
+    it("PUT invalid courses dataset should reject - wrong URI", function () {
+        try {
+            let file = "./test/data/courses.zip";
+            return chai.request("http://localhost:4321")
+                .put("/dataset/courses/rooms")
+                .attach("body", fs.readFileSync(file), "./test/data/courses.zip")
+                .then((res) => {
+                Util_1.default.test(`PUT test for wrong URI in courses dataset should be rejected`);
+                chai_1.expect(res.status).to.be.equal(400);
+            })
+                .catch(function (err) {
+                chai_1.expect(err.status).to.be.equal(400);
+            });
+        }
+        catch (err) {
+            chai_1.expect.fail("PUT test for courses dataset should be OK");
+        }
+    });
+    it("PUT invalid courses dataset should reject - Not zip", function () {
+        try {
+            let file = "./test/data/notZIP.txt";
+            return chai.request("http://localhost:4321")
+                .put("/dataset/notZIP/courses")
+                .attach("body", fs.readFileSync(file), "./test/data/notZIP.txt")
+                .then((res) => {
+                Util_1.default.test(`PUT test for Not zip in courses dataset should be rejected`);
+                chai_1.expect(res.status).to.be.equal(400);
+            })
+                .catch(function (err) {
+                chai_1.expect(err.status).to.be.equal(400);
+            });
+        }
+        catch (err) {
+            chai_1.expect.fail("PUT test for courses dataset should be OK");
+        }
+    });
+    it("PUT invalid courses dataset should reject - Zero section", function () {
+        try {
+            let file = "./test/data/zerosectionsdataset.zip";
+            return chai.request("http://localhost:4321")
+                .put("/dataset/zerosection/courses")
+                .attach("body", fs.readFileSync(file), "./test/data/zerosectionsdataset.zip")
+                .then((res) => {
+                Util_1.default.test(`PUT test for Zero section in courses dataset should be rejected`);
+                chai_1.expect(res.status).to.be.equal(400);
+            })
+                .catch(function (err) {
+                chai_1.expect(err.status).to.be.equal(400);
+            });
+        }
+        catch (err) {
+            chai_1.expect.fail("PUT test for courses dataset should be OK");
+        }
+    });
+    it("PUT invalid courses dataset should reject - Bad json", function () {
+        try {
+            let file = "./test/data/invalidjson2.zip";
+            return chai.request("http://localhost:4321")
+                .put("/dataset/invalidjson2/courses")
+                .attach("body", fs.readFileSync(file), "./test/data/invalidjson2.zip")
+                .then((res) => {
+                Util_1.default.test(`PUT test for bad json in courses dataset should be rejected`);
+                chai_1.expect(res.status).to.be.equal(400);
+            })
+                .catch(function (err) {
+                chai_1.expect(err.status).to.be.equal(400);
+            });
+        }
+        catch (err) {
+            chai_1.expect.fail("PUT test for courses dataset should be OK");
+        }
+    });
     it("get test for dataset", function () {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -193,7 +298,7 @@ describe("Facade D3", function () {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const res = yield chai.request("http://localhost:4321")
-                    .del("/dataset/courses/courses")
+                    .del("/dataset/courses")
                     .then((res) => {
                     Util_1.default.test(`DEL test for courses should be OK`);
                     chai_1.expect(res.status).to.be.equal(200);
@@ -233,7 +338,7 @@ describe("Facade D3", function () {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 return chai.request("http://localhost:4321")
-                    .del("/dataset/courses/courses")
+                    .del("/dataset/courses")
                     .then((res) => {
                     Util_1.default.test(`DEL test for courses twice should not be OK`);
                     chai_1.expect(res.status).to.be.equal(404);
@@ -251,7 +356,7 @@ describe("Facade D3", function () {
             try {
                 try {
                     const res = yield chai.request("http://localhost:4321")
-                        .del("/dataset/notadded/courses");
+                        .del("/dataset/notadded");
                     Util_1.default.test(`DEL test for not added set should be rejected`);
                     chai_1.expect(res.status).to.be.equal(404);
                 }
