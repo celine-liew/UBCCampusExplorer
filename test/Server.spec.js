@@ -207,34 +207,15 @@ describe("Facade D3", function () {
             }
         });
     });
-    it("POST query 400", function () {
+    it("POST query 400 after delete the database", function () {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let query = {
-                    WHERE: {
-                        OR: [
-                            {
-                                GT: {
-                                    courses_avg: 75
-                                }
-                            },
-                            {
-                                IS: {
-                                    courses_dept: "adhe"
-                                }
-                            }
-                        ]
-                    },
-                    OPTIONS: {
-                        COLUMNS: [
-                            "courses_uuid",
-                        ]
-                    }
-                };
+                let jsonfile = './test/queries/and_one_repeat.2.json';
+                var obj = JSON.parse(fs.readFileSync(jsonfile, 'utf8'));
                 try {
                     const res = yield chai.request("http://localhost:4321")
                         .post("/query")
-                        .send(query);
+                        .send(obj["query"]);
                     Util_1.default.test(`POST test should be NOT OK`);
                     chai_1.expect(res.status).to.be.equal(400);
                 }

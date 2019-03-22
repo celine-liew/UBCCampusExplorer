@@ -70,7 +70,8 @@ export default class Server {
                 // NOTE: your endpoints should go here
 
                 that.rest.put("/dataset/:id/:kind", that.handlers.putDataset.bind(that.handlers));
-                that.rest.del("/dataset/:id/:kind", that.handlers.delDataset.bind(that.handlers));
+                // that.rest.del("/dataset/:id/:kind", that.handlers.delDataset.bind(that.handlers));
+                that.rest.del("/dataset/:id", that.handlers.delDataset.bind(that.handlers));
                 that.rest.post("/query", that.handlers.postQuery.bind(that.handlers));
                 that.rest.get("/datasets", that.handlers.getDataset.bind(that.handlers));
                 // This must be the last endpoint!
