@@ -68,12 +68,13 @@ describe("Facade D3", function () {
                     (res) => {
                     Log.test(`PUT test for courses dataset OK`);
                     expect(res.status).to.be.equal(200);
+                    expect(res.body["result"]).to.deep.include("courses");
                     }
                 )
                 .catch(function (err: any) {
                     // some logging here please!
-                    // Log.info(err.status);
-                    // Log.info(err.body);
+                    Log.info(err.status);
+                    Log.info(err.body);
                     // Log.info(err);
                     expect.fail("Put dataset should not fail if the implementation is correct");
                 });
@@ -95,7 +96,8 @@ describe("Facade D3", function () {
                     (res) => {
                     Log.test(`PUT test for rooms dataset OK`);
                     expect(res.status).to.be.equal(200);
-                    // Expect length of list of datasets to be three?????
+                    expect(res.body["result"]).to.deep.include("rooms");
+                        // Expect length of list of datasets to be three?????
                     }
                 )
                 .catch(function (err: any) {
@@ -254,34 +256,19 @@ describe("Facade D3", function () {
     });
     it("POST query 200", async function () {
         try {
-            let query = {
-                WHERE: {
-                    OR: [
-                        {
-                            GT: {
-                                courses_avg: 85
-                            }
-                        },
-                        {
-                            IS: {
-                                courses_dept: "adhe"
-                            }
-                        }
-                    ]
-                },
-                OPTIONS: {
-                  COLUMNS: [
-                    "courses_uuid",
-                  ]
-                }
-            };
+            let jsonfile ='./test/queries/RoomValidGivenExample15.json';
+            var obj = JSON.parse(fs.readFileSync(jsonfile, 'utf8'));
+            // Log.info(`=====================`);
+            // Log.info(obj["result"]);
+            // Log.info(`=====================`);
             return chai.request("http://localhost:4321")
             .post("/query")
-            .send(query)
+            .send(obj["query"])
             .then(
                 (res) => {
                 Log.test(`POST query test should be OK`);
                 expect(res.status).to.be.equal(200);
+                expect(res.body["result"]).to.be.deep.equal(obj["result"]);
                 }
             )
             .catch(function (err: any) {
@@ -291,33 +278,15 @@ describe("Facade D3", function () {
                 // expect.fail("Post 200 should not be here");
             });
         } catch (err) {
+            Log.info(err.status);
             expect.fail("Post 200 should not be here");
             // and some more logging here!
         }
     });
     it("POST query 200 when stop the server but has on disk", async function () {
         try {
-            let query = {
-                WHERE: {
-                    OR: [
-                        {
-                            GT: {
-                                courses_avg: 85
-                            }
-                        },
-                        {
-                            IS: {
-                                courses_dept: "adhe"
-                            }
-                        }
-                    ]
-                },
-                OPTIONS: {
-                    COLUMNS: [
-                        "courses_uuid",
-                    ]
-                }
-            };
+            let jsonfile ='./test/queries/RoomValidGivenExample15.json';
+            var obj = JSON.parse(fs.readFileSync(jsonfile, 'utf8'));
             server.stop().then(() => {
                 Log.test(`Has stopped the Server!!`);
             });
@@ -330,11 +299,12 @@ describe("Facade D3", function () {
             });
             return chai.request("http://localhost:4321")
                 .post("/query")
-                .send(query)
+                .send(obj["query"])
                 .then(
                     (res) => {
                         Log.test(`POST query test should be OK`);
                         expect(res.status).to.be.equal(200);
+                        expect(res.body["result"]).to.be.deep.equal(obj["result"]);
                     }
                 )
                 .catch(function (err: any) {
@@ -350,31 +320,12 @@ describe("Facade D3", function () {
     });
     it("POST query 400", async function () {
         try {
-            let query = {
-                WHERE: {
-                    OR: [
-                        {
-                            GT: {
-                                courses_avg: 75
-                            }
-                        },
-                        {
-                            IS: {
-                                courses_dept: "adhe"
-                            }
-                        }
-                    ]
-                },
-                OPTIONS: {
-                  COLUMNS: [
-                    "courses_uu3id",
-                  ]
-                }
-            };
+            let jsonfile ='./test/queries/groupEmpty.json';
+            var obj = JSON.parse(fs.readFileSync(jsonfile, 'utf8'));
             try {
                 const res = await chai.request("http://localhost:4321")
                     .post("/query")
-                    .send(query);
+                    .send(obj["query"]);
                 Log.test(`POST test should be NOT OK`);
                 expect(res.status).to.be.equal(400);
             }

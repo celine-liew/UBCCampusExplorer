@@ -15,6 +15,7 @@ const InsightFacade_1 = require("../src/controller/InsightFacade");
 const chai = require("chai");
 const chai_1 = require("chai");
 const chaiHttp = require("chai-http");
+const fs = require("fs");
 describe("Facade D3", function () {
     let facade = null;
     let server = null;
@@ -59,8 +60,11 @@ describe("Facade D3", function () {
                     .then((res) => {
                     Util_1.default.test(`PUT test for courses dataset OK`);
                     chai_1.expect(res.status).to.be.equal(200);
+                    chai_1.expect(res.body["result"]).to.deep.include("courses");
                 })
                     .catch(function (err) {
+                    Util_1.default.info(err.status);
+                    Util_1.default.info(err.body);
                     chai_1.expect.fail("Put dataset should not fail if the implementation is correct");
                 });
             }
@@ -81,6 +85,7 @@ describe("Facade D3", function () {
                     .then((res) => {
                     Util_1.default.test(`PUT test for rooms dataset OK`);
                     chai_1.expect(res.status).to.be.equal(200);
+                    chai_1.expect(res.body["result"]).to.deep.include("rooms");
                 })
                     .catch(function (err) {
                     chai_1.expect.fail("Put dataset should not fail if the implementation is correct");
@@ -107,33 +112,15 @@ describe("Facade D3", function () {
     it("POST query 200", function () {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let query = {
-                    WHERE: {
-                        OR: [
-                            {
-                                GT: {
-                                    courses_avg: 85
-                                }
-                            },
-                            {
-                                IS: {
-                                    courses_dept: "adhe"
-                                }
-                            }
-                        ]
-                    },
-                    OPTIONS: {
-                        COLUMNS: [
-                            "courses_uuid",
-                        ]
-                    }
-                };
+                let jsonfile = './test/queries/RoomValidGivenExample15.json';
+                var obj = JSON.parse(fs.readFileSync(jsonfile, 'utf8'));
                 return chai.request("http://localhost:4321")
                     .post("/query")
-                    .send(query)
+                    .send(obj["query"])
                     .then((res) => {
                     Util_1.default.test(`POST query test should be OK`);
                     chai_1.expect(res.status).to.be.equal(200);
+                    chai_1.expect(res.body["result"]).to.be.deep.equal(obj["result"]);
                 })
                     .catch(function (err) {
                     Util_1.default.info(err.status);
@@ -141,6 +128,7 @@ describe("Facade D3", function () {
                 });
             }
             catch (err) {
+                Util_1.default.info(err.status);
                 chai_1.expect.fail("Post 200 should not be here");
             }
         });
@@ -148,27 +136,8 @@ describe("Facade D3", function () {
     it("POST query 200 when stop the server but has on disk", function () {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let query = {
-                    WHERE: {
-                        OR: [
-                            {
-                                GT: {
-                                    courses_avg: 85
-                                }
-                            },
-                            {
-                                IS: {
-                                    courses_dept: "adhe"
-                                }
-                            }
-                        ]
-                    },
-                    OPTIONS: {
-                        COLUMNS: [
-                            "courses_uuid",
-                        ]
-                    }
-                };
+                let jsonfile = './test/queries/RoomValidGivenExample15.json';
+                var obj = JSON.parse(fs.readFileSync(jsonfile, 'utf8'));
                 server.stop().then(() => {
                     Util_1.default.test(`Has stopped the Server!!`);
                 });
@@ -182,10 +151,11 @@ describe("Facade D3", function () {
                 });
                 return chai.request("http://localhost:4321")
                     .post("/query")
-                    .send(query)
+                    .send(obj["query"])
                     .then((res) => {
                     Util_1.default.test(`POST query test should be OK`);
                     chai_1.expect(res.status).to.be.equal(200);
+                    chai_1.expect(res.body["result"]).to.be.deep.equal(obj["result"]);
                 })
                     .catch(function (err) {
                     Util_1.default.info(err.status);
@@ -200,31 +170,12 @@ describe("Facade D3", function () {
     it("POST query 400", function () {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let query = {
-                    WHERE: {
-                        OR: [
-                            {
-                                GT: {
-                                    courses_avg: 75
-                                }
-                            },
-                            {
-                                IS: {
-                                    courses_dept: "adhe"
-                                }
-                            }
-                        ]
-                    },
-                    OPTIONS: {
-                        COLUMNS: [
-                            "courses_uu3id",
-                        ]
-                    }
-                };
+                let jsonfile = './test/queries/groupEmpty.json';
+                var obj = JSON.parse(fs.readFileSync(jsonfile, 'utf8'));
                 try {
                     const res = yield chai.request("http://localhost:4321")
                         .post("/query")
-                        .send(query);
+                        .send(obj["query"]);
                     Util_1.default.test(`POST test should be NOT OK`);
                     chai_1.expect(res.status).to.be.equal(400);
                 }
