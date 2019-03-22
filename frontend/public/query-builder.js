@@ -22,10 +22,10 @@ CampusExplorer.buildQuery = function() {
 
     query = buildQueryWHERE(IsLtGtEQ, mOrSKey, formToBuild, idString, query);
     query = buildQueryOPTIONS(formToBuild, idString, query);
-    // console.log(query);
     let arrayForGroup = buildGroupArray(formToBuild, idString);
     let applyArrayToAdd = buildAPPLYarray(formToBuild, idString);
     query = buildQueryTRANSFORM(applyArrayToAdd, arrayForGroup, query);
+    console.log(query);
     return query;
 };
 
@@ -288,7 +288,7 @@ function getKeysForWhereFunction(formToBuild, IsLtGtEQ, mOrSKey, idString) {
 }
 
 function idStringCoursesOrRooms(idString, COURSES, formToBuild, ROOMS) {
-    debugger;
+    // debugger;
     const coursesDataset = document.querySelectorAll("form[data-type= 'courses'] option[selected]");
     const roomsDataset = document.querySelectorAll("form[data-type= 'rooms'] option[selected]");
     console.log(coursesDataset);

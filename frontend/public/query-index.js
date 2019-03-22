@@ -9,12 +9,11 @@
  */
 
 // TODO: implement!
-CampusExplorer.submitOnClick = function() {
-    const submitButton = document.getElementById('submit-button');
-    submitButton.onclick = CampusExplorer.postQuery;
-};
 
-CampusExplorer.postQuery = async function() {
+
+const submitButton = document.getElementById('submit-button');
+submitButton.onclick = async function() {
+    console.log("clicking");
     let query = CampusExplorer.buildQuery(document);
     let result = await CampusExplorer.sendQuery(query);
     CampusExplorer.renderResult(result);
