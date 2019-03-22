@@ -147,7 +147,7 @@ function getColumnANDOrderInOptions(formToBuild, idString) {
     }
     let OptionsObject = {};
     OptionsObject["COLUMNS"] = arraytoAddtoColumns;
-    console.log("options object: " + JSON.stringify(OptionsObject));
+    // console.log("options object: " + JSON.stringify(OptionsObject));
     if (ORDER.length === 0){
         return OptionsObject;
     }
@@ -216,7 +216,7 @@ function convertArrayToObject(arrayconvert) {
 
 function getAllOrNotFirstCondition(formToBuild, keysForWhere) {
     const conditionsChecked = formToBuild.querySelectorAll("input[name= 'conditionType']");
-    console.log(conditionsChecked[0]);
+    // console.log(conditionsChecked[0]);
     let allOrNot = "";
     const ALL = 'all';
     const OR = 'any';
@@ -292,14 +292,14 @@ function idStringCoursesOrRooms(idString, COURSES, formToBuild, ROOMS) {
     debugger;
     const coursesDataset = formToBuild.querySelectorAll("form[data-type= 'courses'] option[selected]");
     const roomsDataset = formToBuild.querySelectorAll("form[data-type= 'rooms'] option[selected]");
-    console.log("here here " + JSON.stringify(coursesDataset));
+    // console.log("here here " + JSON.stringify(coursesDataset));
     if (coursesDataset.length >= roomsDataset.length) {
         idString = COURSES;
         formToBuild = document.querySelectorAll("form[data-type= 'courses']")[0];
     }
     else {
         if (roomsDataset.length > coursesDataset.length) {
-            console.log("rooms here");
+            // console.log("rooms here");
             idString = ROOMS;
             formToBuild = document.querySelectorAll("form[data-type= 'rooms']")[0];
         }
