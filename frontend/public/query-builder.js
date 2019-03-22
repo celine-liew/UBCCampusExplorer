@@ -10,7 +10,8 @@
 
 CampusExplorer.buildQuery = function() {
     let query = {};
-    let formToBuild = document.forms;
+    // let formToBuild = document.forms;
+    let formToBuild = document;
     let idString = "";
     const COURSES = "courses";
     const ROOMS = "rooms";
@@ -289,9 +290,9 @@ function getKeysForWhereFunction(formToBuild, IsLtGtEQ, mOrSKey, idString) {
 
 function idStringCoursesOrRooms(idString, COURSES, formToBuild, ROOMS) {
     debugger;
-    const coursesDataset = document.querySelectorAll("form[data-type= 'courses'] option[selected]");
-    const roomsDataset = document.querySelectorAll("form[data-type= 'rooms'] option[selected]");
-    console.log(coursesDataset);
+    const coursesDataset = formToBuild.querySelectorAll("form[data-type= 'courses'] option[selected]");
+    const roomsDataset = formToBuild.querySelectorAll("form[data-type= 'rooms'] option[selected]");
+    console.log("here here " + JSON.stringify(coursesDataset));
     if (coursesDataset.length > roomsDataset.length) {
         idString = COURSES;
         formToBuild = document.querySelectorAll("form[data-type= 'courses']")[0];
