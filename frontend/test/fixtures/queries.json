@@ -240,8 +240,30 @@
             }
           ]
         }
-      }
+      },
 
+      "SimpleOneRoom": {
+            "WHERE": {
+                "IS": { "rooms_shortname": "PHRM" }
+            },
+            "OPTIONS": {
+                "COLUMNS": ["22"]
+            },
+            "TRANSFORMATIONS": {
+                "GROUP": [
+                    "rooms_number"
+
+                ],
+                "APPLY": [
+                    {
+                        "22": {
+                            "COUNT": "rooms_address"
+                        }
+                    }
+                ]
+
+            }
+        }
 
 }
 
