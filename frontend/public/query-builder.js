@@ -189,15 +189,15 @@ function getColumnANDOrderInOptions(formToBuild, idString) {
     // }
     const dirChecked = formToBuild.querySelectorAll("div[class = 'control descending'] input[checked= 'checked']");
     if (dirChecked.length > 0){
-        OrderKeysObject["dir"] = "DOWN";
-        OrderKeysObject["keys"] = ORDER;
+        OrderKeysObject.dir = "DOWN";
+        OrderKeysObject.keys = ORDER;
         OptionsObject["ORDER"] = OrderKeysObject;
         // console.log(OptionsObject);
         return OptionsObject;
     } else {
         if(ORDER.length > 1){
-            OrderKeysObject["dir"] = "UP";
-            OrderKeysObject["keys"] = ORDER;
+            OrderKeysObject.dir = "UP";
+            OrderKeysObject.keys = ORDER;
             OptionsObject["ORDER"] = OrderKeysObject;
             // console.log(OptionsObject);
             return OptionsObject;
