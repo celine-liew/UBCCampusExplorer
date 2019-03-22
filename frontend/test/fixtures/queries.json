@@ -240,8 +240,54 @@
             }
           ]
         }
-      }
+      },
 
+      "SimpleOneRoom": {
+        "WHERE": {
+            "IS": { "rooms_shortname": "PHRM" }
+        },
+        "OPTIONS": {
+            "COLUMNS": ["22"]
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "rooms_number"
 
+            ],
+            "APPLY": [
+                {
+                    "22": {
+                        "COUNT": "rooms_address"
+                    }
+                }
+            ]
+
+        }
+    },
+
+    "cpscNotAnthony": {
+        "WHERE": {
+            "AND": [
+                {
+                    "NOT": {
+                        "IS": {
+                            "courses_instructor": "anthony"
+                        }
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_dept": "cpsc"
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_title",
+                "courses_id"
+            ]
+        }
+    }
 }
 
