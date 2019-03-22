@@ -293,7 +293,7 @@ function idStringCoursesOrRooms(idString, COURSES, formToBuild, ROOMS) {
     const coursesDataset = formToBuild.querySelectorAll("form[data-type= 'courses'] option[selected]");
     const roomsDataset = formToBuild.querySelectorAll("form[data-type= 'rooms'] option[selected]");
     console.log("here here " + JSON.stringify(coursesDataset));
-    if (coursesDataset.length > roomsDataset.length) {
+    if (coursesDataset.length >= roomsDataset.length) {
         idString = COURSES;
         formToBuild = document.querySelectorAll("form[data-type= 'courses']")[0];
     }
