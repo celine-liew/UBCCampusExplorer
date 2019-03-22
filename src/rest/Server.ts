@@ -69,7 +69,6 @@ export default class Server {
 
                 // NOTE: your endpoints should go here
 
-                // buf.toString("base64");
                 that.rest.put("/dataset/:id/:kind", that.handlers.putDataset.bind(that.handlers));
                 that.rest.del("/dataset/:id/:kind", that.handlers.delDataset.bind(that.handlers));
                 that.rest.post("/query", that.handlers.postQuery.bind(that.handlers));

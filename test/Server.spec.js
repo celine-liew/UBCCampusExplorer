@@ -15,7 +15,6 @@ const InsightFacade_1 = require("../src/controller/InsightFacade");
 const chai = require("chai");
 const chai_1 = require("chai");
 const chaiHttp = require("chai-http");
-const IInsightFacade_1 = require("../src/controller/IInsightFacade");
 describe("Facade D3", function () {
     let facade = null;
     let server = null;
@@ -53,11 +52,7 @@ describe("Facade D3", function () {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let file = "./test/data/courses.zip";
-                Util_1.default.info(file);
                 let buffer = yield TestUtil_1.default.readFileAsync(file);
-                Util_1.default.info(`=====================`);
-                console.log(Buffer.isBuffer(buffer));
-                Util_1.default.info(`=====================`);
                 return chai.request("http://localhost:4321")
                     .put("/dataset/courses/courses")
                     .attach("body", buffer, "courses.zip")
@@ -66,9 +61,6 @@ describe("Facade D3", function () {
                     chai_1.expect(res.status).to.be.equal(200);
                 })
                     .catch(function (err) {
-                    Util_1.default.info(err.status);
-                    Util_1.default.info(err.body);
-                    Util_1.default.info(err);
                     chai_1.expect.fail("Put dataset should not fail if the implementation is correct");
                 });
             }
@@ -91,7 +83,6 @@ describe("Facade D3", function () {
                     chai_1.expect(res.status).to.be.equal(200);
                 })
                     .catch(function (err) {
-                    Util_1.default.info(err);
                     chai_1.expect.fail("Put dataset should not fail if the implementation is correct");
                 });
             }
@@ -145,11 +136,64 @@ describe("Facade D3", function () {
                     chai_1.expect(res.status).to.be.equal(200);
                 })
                     .catch(function (err) {
+                    Util_1.default.info(err.status);
                     chai_1.expect(err.status).to.be.equal(400);
                 });
             }
             catch (err) {
-                chai_1.expect.fail("GET test for courses dataset should be OK");
+                chai_1.expect.fail("Post 200 should not be here");
+            }
+        });
+    });
+    it("POST query 200 when stop the server but has on disk", function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let query = {
+                    WHERE: {
+                        OR: [
+                            {
+                                GT: {
+                                    courses_avg: 85
+                                }
+                            },
+                            {
+                                IS: {
+                                    courses_dept: "adhe"
+                                }
+                            }
+                        ]
+                    },
+                    OPTIONS: {
+                        COLUMNS: [
+                            "courses_uuid",
+                        ]
+                    }
+                };
+                server.stop().then(() => {
+                    Util_1.default.test(`Has stopped the Server!!`);
+                });
+                server.start().then((success) => {
+                    if (success) {
+                        Util_1.default.test(`Has Started the Server!!`);
+                    }
+                    else {
+                        Util_1.default.test(`Has not Started the Server!!`);
+                    }
+                });
+                return chai.request("http://localhost:4321")
+                    .post("/query")
+                    .send(query)
+                    .then((res) => {
+                    Util_1.default.test(`POST query test should be OK`);
+                    chai_1.expect(res.status).to.be.equal(200);
+                })
+                    .catch(function (err) {
+                    Util_1.default.info(err.status);
+                    chai_1.expect(err.status).to.be.equal(400);
+                });
+            }
+            catch (err) {
+                chai_1.expect.fail("Post 200 should not be here");
             }
         });
     });
@@ -197,26 +241,76 @@ describe("Facade D3", function () {
     it("del test for dataset", function () {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let file = "./test/data/courses.zip";
-                let content;
-                TestUtil_1.default.readFileAsync(file).then((buf) => {
-                    content = buf.toString("base64");
-                })
-                    .then(() => {
-                    facade.addDataset("courses", content, IInsightFacade_1.InsightDatasetKind.Courses);
-                })
-                    .then(() => __awaiter(this, void 0, void 0, function* () {
-                    const res = yield chai.request("http://localhost:4321")
-                        .del("/dataset/courses/courses");
+                const res = yield chai.request("http://localhost:4321")
+                    .del("/dataset/courses/courses")
+                    .then((res) => {
                     Util_1.default.test(`DEL test for courses should be OK`);
                     chai_1.expect(res.status).to.be.equal(200);
-                }))
-                    .catch(function (err) {
+                    chai_1.expect(res.body["result"]).to.be.equal("courses");
+                }).catch(function (err) {
                     chai_1.expect.fail("Put dataset should not fail if the implementation is correct");
                 });
             }
             catch (err) {
                 chai_1.expect.fail("DEL test for courses dataset should be OK");
+            }
+        });
+    });
+    it("POST query 400", function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let query = {
+                    WHERE: {
+                        OR: [
+                            {
+                                GT: {
+                                    courses_avg: 75
+                                }
+                            },
+                            {
+                                IS: {
+                                    courses_dept: "adhe"
+                                }
+                            }
+                        ]
+                    },
+                    OPTIONS: {
+                        COLUMNS: [
+                            "courses_uuid",
+                        ]
+                    }
+                };
+                try {
+                    const res = yield chai.request("http://localhost:4321")
+                        .post("/query")
+                        .send(query);
+                    Util_1.default.test(`POST test should be NOT OK`);
+                    chai_1.expect(res.status).to.be.equal(400);
+                }
+                catch (err) {
+                    Util_1.default.info(err);
+                    chai_1.expect(err.status).to.be.equal(400);
+                }
+            }
+            catch (err) {
+                chai_1.expect.fail("POST test should be NOT OK");
+            }
+        });
+    });
+    it("del test for dataset - deletetwice", function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return chai.request("http://localhost:4321")
+                    .del("/dataset/courses/courses")
+                    .then((res) => {
+                    Util_1.default.test(`DEL test for courses twice should not be OK`);
+                    chai_1.expect(res.status).to.be.equal(404);
+                }).catch((err) => {
+                    chai_1.expect(err.status).to.be.equal(404);
+                });
+            }
+            catch (err) {
+                Util_1.default.info(err.status);
             }
         });
     });

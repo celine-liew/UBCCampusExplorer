@@ -69,7 +69,10 @@ export default class Handlers {
     public async postQuery(req: restify.Request, res: restify.Response, next: restify.Next) {
         Log.info(req.method + " " + req.url);
         let query = req.body;
-        if (!this.insightFacade.datasetsHash) {
+        let hasInDisk = this.insightFacade.addedDatabase.find( (ele) => {
+            return ele["id"] === req.params.id;
+        });
+        if (!this.insightFacade.datasetsHash && !hasInDisk) {
             res.json(400, {error: "No dataset added!"});
         }
         try {

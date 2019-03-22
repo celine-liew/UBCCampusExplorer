@@ -55,11 +55,11 @@ describe("Facade D3", function () {
     it("PUT test for courses dataset", async function () {
         try {
             let file = "./test/data/courses.zip";
-            Log.info(file);
+            // Log.info(file);
             let buffer = await TestUtil.readFileAsync(file);
-            Log.info(`=====================`);
-            console.log(Buffer.isBuffer(buffer));
-            Log.info(`=====================`);
+            // Log.info(`=====================`);
+            // console.log(Buffer.isBuffer(buffer));
+            // Log.info(`=====================`);
             // let buffer: Buffer = new Buffer(fs.readFileSync(file));
             return chai.request("http://localhost:4321")
                 .put("/dataset/courses/courses")
@@ -72,9 +72,9 @@ describe("Facade D3", function () {
                 )
                 .catch(function (err: any) {
                     // some logging here please!
-                    Log.info(err.status);
-                    Log.info(err.body);
-                    Log.info(err);
+                    // Log.info(err.status);
+                    // Log.info(err.body);
+                    // Log.info(err);
                     expect.fail("Put dataset should not fail if the implementation is correct");
                 });
         } catch (err) {
@@ -100,7 +100,7 @@ describe("Facade D3", function () {
                 )
                 .catch(function (err: any) {
                     // some logging here please!
-                    Log.info(err);
+                    // Log.info(err);
                     // expect(err.status).to.be.equal(400);
                     expect.fail("Put dataset should not fail if the implementation is correct");
                 });
@@ -286,10 +286,65 @@ describe("Facade D3", function () {
             )
             .catch(function (err: any) {
                 // some logging here please!
+                Log.info(err.status);
                 expect(err.status).to.be.equal(400);
+                // expect.fail("Post 200 should not be here");
             });
         } catch (err) {
-            expect.fail("GET test for courses dataset should be OK");
+            expect.fail("Post 200 should not be here");
+            // and some more logging here!
+        }
+    });
+    it("POST query 200 when stop the server but has on disk", async function () {
+        try {
+            let query = {
+                WHERE: {
+                    OR: [
+                        {
+                            GT: {
+                                courses_avg: 85
+                            }
+                        },
+                        {
+                            IS: {
+                                courses_dept: "adhe"
+                            }
+                        }
+                    ]
+                },
+                OPTIONS: {
+                    COLUMNS: [
+                        "courses_uuid",
+                    ]
+                }
+            };
+            server.stop().then(() => {
+                Log.test(`Has stopped the Server!!`);
+            });
+            server.start().then((success) => {
+                if (success) {
+                    Log.test(`Has Started the Server!!`);
+                } else {
+                    Log.test(`Has not Started the Server!!`);
+                }
+            });
+            return chai.request("http://localhost:4321")
+                .post("/query")
+                .send(query)
+                .then(
+                    (res) => {
+                        Log.test(`POST query test should be OK`);
+                        expect(res.status).to.be.equal(200);
+                    }
+                )
+                .catch(function (err: any) {
+                    // some logging here please!
+                    Log.info(err.status);
+                    expect(err.status).to.be.equal(400);
+                    // expect.fail("Post 200 should not be here");
+                });
+        } catch (err) {
+            expect.fail("Post 200 should not be here");
             // and some more logging here!
         }
     });
@@ -335,21 +390,15 @@ describe("Facade D3", function () {
     });
     it("del test for dataset", async function () {
         try {
-            let file = "./test/data/courses.zip";
-            let content: string;
-            TestUtil.readFileAsync(file).then((buf) => {
-                content = buf.toString("base64");
-            })
-            .then(() => {
-                facade.addDataset("courses", content, InsightDatasetKind.Courses);
-            })
-            .then(async () => {
-                const res = await chai.request("http://localhost:4321")
-                    .del("/dataset/courses/courses");
-                Log.test(`DEL test for courses should be OK`);
-                expect(res.status).to.be.equal(200);
-            })
-            .catch(function (err: any) {
+            const res = await chai.request("http://localhost:4321")
+                .del("/dataset/courses/courses")
+                .then(
+                    (res) => {
+                        Log.test(`DEL test for courses should be OK`);
+                        expect(res.status).to.be.equal(200);
+                        expect(res.body["result"]).to.be.equal("courses");
+                    }
+                ).catch(function (err: any) {
                 expect. fail("Put dataset should not fail if the implementation is correct");
             });
         } catch (err) {
@@ -357,22 +406,65 @@ describe("Facade D3", function () {
             // and some more logging here!
         }
     });
-    // it("del test for dataset - deletetwice", async function () {
-    //     try {
-    //         return chai.request("http://localhost:4321")
-    //         .del("/dataset/courses/courses")
-    //         .then(
-    //             (res) => {
-    //             Log.test(`DEL test for courses should be OK`);
-    //             expect(res.status).to.be.equal(404);
-    //             }
-    //         );
-    //     } catch (err) {
-    //         Log.info(err);
-    //         // expect(err).to.be.instanceOf(NotFoundError);
-    //         // and some more logging here!
-    //     }
-    // });
+    it("POST query 400", async function () {
+        try {
+            let query = {
+                WHERE: {
+                    OR: [
+                        {
+                            GT: {
+                                courses_avg: 75
+                            }
+                        },
+                        {
+                            IS: {
+                                courses_dept: "adhe"
+                            }
+                        }
+                    ]
+                },
+                OPTIONS: {
+                    COLUMNS: [
+                        "courses_uuid",
+                    ]
+                }
+            };
+            try {
+                const res = await chai.request("http://localhost:4321")
+                    .post("/query")
+                    .send(query);
+                Log.test(`POST test should be NOT OK`);
+                expect(res.status).to.be.equal(400);
+            }
+            catch (err) {
+                // some logging here please!
+                Log.info(err);
+                expect(err.status).to.be.equal(400);
+            }
+        } catch (err) {
+            expect.fail("POST test should be NOT OK");
+            // and some more logging here!
+        }
+    });
+    it("del test for dataset - deletetwice", async function () {
+        try {
+            return chai.request("http://localhost:4321")
+            .del("/dataset/courses/courses")
+            .then(
+                (res) => {
+                Log.test(`DEL test for courses twice should not be OK`);
+                expect(res.status).to.be.equal(404);
+                }
+            ).catch( (err) => {
+                // some logging here please!
+                expect(err.status).to.be.equal(404);
+            });
+        } catch (err) {
+            Log.info(err.status);
+            // expect(err).to.be.instanceOf(NotFoundError);
+            // and some more logging here!
+        }
+    });
     it("del test for dataset - delete not added", async function () {
         try {
             try {

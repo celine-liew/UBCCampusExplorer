@@ -111,8 +111,8 @@ function getWhereObjectContent(allOrNot, arrayToAddtoWhere) {
 }
 
 function getColumnANDOrderInOptions(formToBuild, idString) {
-    const coursesKeys = ['dept', 'id', 'avg', 'instructor', 'title', 'pass', 'fail','audit','uuid','year'];
-    const roomsKeys = ['fullname', 'furniture', 'href', 'lat', 'lon', 'name', 'number', 'seats', 'shortname', 'type'];
+    // const coursesKeys = ['dept', 'id', 'avg', 'instructor', 'title', 'pass', 'fail','audit','uuid','year'];
+    // const roomsKeys = ['fullname', 'furniture', 'href', 'lat', 'lon', 'name', 'number', 'seats', 'shortname', 'type'];
     let arraytoAddtoColumns = [];
     const fieldsForCOLUMNS = formToBuild.querySelectorAll("div[class = 'form-group columns'] input[checked= 'checked']");
     for (let i = 0; i < fieldsForCOLUMNS.length; i++) {
