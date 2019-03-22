@@ -103,7 +103,6 @@ describe("Facade D3", function () {
                 .catch(function (err: any) {
                     // some logging here please!
                     // Log.info(err);
-                    // expect(err.status).to.be.equal(400);
                     expect.fail("Put dataset should not fail if the implementation is correct");
                 });
         } catch (err) {
@@ -112,57 +111,96 @@ describe("Facade D3", function () {
         }
     });
 
-    it.only("PUT invalid courses dataset should reject - wrong content", function () {
+    it("PUT test for courses dataset", async function () {
         try {
-            let file = "./test/data/rooms.zip";
+            let file = "./test/data/courses.zip";
+            // Log.info(file);
+            let buffer = await TestUtil.readFileAsync(file);
+            // Log.info(`=====================`);
+            // console.log(Buffer.isBuffer(buffer));
+            // Log.info(`=====================`);
+            // let buffer: Buffer = new Buffer(fs.readFileSync(file));
             return chai.request("http://localhost:4321")
                 .put("/dataset/courses/courses")
-                .attach("body", fs.readFileSync(file), "./test/data/courses.zip")
+                .attach("body", buffer, "courses.zip")
+                .then(
+                    (res) => {
+                        Log.test(`PUT test for courses dataset OK`);
+                        // expect(res.status).to.be.equal(200);
+                        // expect(res.body["result"]).to.deep.include("courses");
+                        expect.fail("Put dataset should not be here");
+                    }
+                )
+                .catch(function (err: any) {
+                    // some logging here please!
+                    Log.info(err.status);
+                    Log.info(err.body);
+                    // Log.info(err);
+                    expect(err.status).to.be.equal(400);
+                    // expect.fail("Put dataset should not fail if the implementation is correct");
+                });
+        } catch (err) {
+            expect.fail("PUT test for courses dataset should be OK");
+            // and some more logging here!
+        }
+    });
+
+    it("PUT invalid courses dataset should reject - wrong content", async function () {
+        try {
+            let file = "./test/data/rooms.zip";
+            let buffer = await TestUtil.readFileAsync(file);
+            return chai.request("http://localhost:4321")
+                .put("/dataset/courses/courses")
+                .attach("body", buffer, "./test/data/courses.zip")
                 .then(
                     (res) => {
                     Log.test(`PUT test for wrong content in courses dataset should be rejected`);
-                    expect(res.status).to.be.equal(400);
+                        expect.fail("should not be here");
                     }
-                );
+                )
+                .catch(function (err: any) {
+                    // some logging here please!
+                    expect(err.status).to.be.equal(400);
+                });
         } catch (err) {
             expect.fail("should not be here");
             // and some more logging here!
         }
     });
 
-    it("PUT invalid courses dataset should reject - wrong path", function () {
+    it("PUT invalid courses dataset should reject - wrong path", async function () {
         try {
             let file = "./test/data/courses.zip";
+            let buffer = await TestUtil.readFileAsync(file);
             return chai.request("http://localhost:4321")
                 .put("/dataset/courses/courses")
-                .attach("body", fs.readFileSync(file), "./test/data/rooms.zip")
+                .attach("body", buffer, "./test/data/rooms.zip")
                 .then(
                     (res) => {
                     Log.test(`PUT test for wrong path in courses dataset should be rejected`);
-                    expect(res.status).to.be.equal(400);
-                    // Expect length of list of datasets to be three?????
+                        expect.fail("should not be here");
                     }
                 )
                 .catch(function (err: any) {
                     // some logging here please!
                     expect(err.status).to.be.equal(400);
-                    // expect.fail("Put dataset should not fail if the implementation is correct");
                 });
         } catch (err) {
             expect.fail("PUT test for courses dataset should be OK");
             // and some more logging here!
         }
     });
-    it("PUT invalid courses dataset should reject - wrong URI", function () {
+    it("PUT invalid courses dataset should reject - wrong URI", async function () {
         try {
             let file = "./test/data/courses.zip";
+            let buffer = await TestUtil.readFileAsync(file);
             return chai.request("http://localhost:4321")
                 .put("/dataset/courses/rooms")
-                .attach("body", fs.readFileSync(file), "./test/data/courses.zip")
+                .attach("body", buffer, "./test/data/courses.zip")
                 .then(
                     (res) => {
                     Log.test(`PUT test for wrong URI in courses dataset should be rejected`);
-                    expect(res.status).to.be.equal(400);
+                        expect.fail("should not be here");
                     }
                 )
                 .catch(function (err: any) {
@@ -175,67 +213,67 @@ describe("Facade D3", function () {
             // and some more logging here!
         }
     });
-    it("PUT invalid courses dataset should reject - Not zip", function () {
+    it("PUT invalid courses dataset should reject - Not zip", async function () {
         try {
             let file = "./test/data/notZIP.txt";
+            let buffer = await TestUtil.readFileAsync(file);
             return chai.request("http://localhost:4321")
                 .put("/dataset/notZIP/courses")
-                .attach("body", fs.readFileSync(file), "./test/data/notZIP.txt")
+                .attach("body", buffer, "./test/data/notZIP.txt")
                 .then(
                     (res) => {
                     Log.test(`PUT test for Not zip in courses dataset should be rejected`);
-                    expect(res.status).to.be.equal(400);
+                        expect.fail("should not be here");
                     }
                 )
                 .catch(function (err: any) {
                     // some logging here please!
                     expect(err.status).to.be.equal(400);
-                    // expect.fail("Put dataset should not fail if the implementation is correct");
                 });
         } catch (err) {
             expect.fail("PUT test for courses dataset should be OK");
             // and some more logging here!
         }
     });
-    it("PUT invalid courses dataset should reject - Zero section", function () {
+    it("PUT invalid courses dataset should reject - Zero section", async function () {
         try {
             let file = "./test/data/zerosectionsdataset.zip";
+            let buffer = await TestUtil.readFileAsync(file);
             return chai.request("http://localhost:4321")
                 .put("/dataset/zerosection/courses")
-                .attach("body", fs.readFileSync(file), "./test/data/zerosectionsdataset.zip")
+                .attach("body", buffer, "./test/data/zerosectionsdataset.zip")
                 .then(
                     (res) => {
                     Log.test(`PUT test for Zero section in courses dataset should be rejected`);
-                    expect(res.status).to.be.equal(400);
+                        expect.fail("should not be here");
                     }
                 )
                 .catch(function (err: any) {
                     // some logging here please!
                     expect(err.status).to.be.equal(400);
-                    // expect.fail("Put dataset should not fail if the implementation is correct");
                 });
         } catch (err) {
             expect.fail("PUT test for courses dataset should be OK");
             // and some more logging here!
         }
     });
-    it("PUT invalid courses dataset should reject - Bad json", function () {
+    it("PUT invalid courses dataset should reject - Bad json", async function () {
         try {
             let file = "./test/data/invalidjson2.zip";
+            let buffer = await TestUtil.readFileAsync(file);
             return chai.request("http://localhost:4321")
                 .put("/dataset/invalidjson2/courses")
-                .attach("body", fs.readFileSync(file), "./test/data/invalidjson2.zip")
+                .attach("body", buffer, "./test/data/invalidjson2.zip")
                 .then(
                     (res) => {
                     Log.test(`PUT test for bad json in courses dataset should be rejected`);
-                    expect(res.status).to.be.equal(400);
-                    // Expect length of list of datasets to be three?????
+                        expect.fail("should not be here");
+                        // Expect length of list of datasets to be three?????
                     }
                 )
                 .catch(function (err: any) {
                     // some logging here please!
                     expect(err.status).to.be.equal(400);
-                    // expect.fail("Put dataset should not fail if the implementation is correct");
                 });
         } catch (err) {
             expect.fail("PUT test for courses dataset should be OK");
@@ -245,15 +283,29 @@ describe("Facade D3", function () {
     it("get test for dataset", async function () {
         try {
             const res = await chai.request("http://localhost:4321")
-                .get("/dataset");
+                .get("/datasets");
             Log.test(`GET test should be OK`);
             expect(res.status).to.be.equal(200);
         } catch (err) {
             Log.info(err);
-            // expect.fail("GET test for courses dataset should be OK");
+            expect.fail("GET test for courses dataset should be OK");
             // and some more logging here!
         }
     });
+
+    it("get test for dataset but a wrong url", async function () {
+        try {
+            const res = await chai.request("http://localhost:4321")
+                .get("/dataset");
+            Log.test(`GET test should be OK`);
+            expect.fail("GET test for courses dataset should be OK");
+        } catch (err) {
+            Log.info(err);
+            expect(err.status).to.be.equal(500);
+            // and some more logging here!
+        }
+    });
+
     it("POST query 200", async function () {
         try {
             let jsonfile ='./test/queries/RoomValidGivenExample15.json';
@@ -274,8 +326,8 @@ describe("Facade D3", function () {
             .catch(function (err: any) {
                 // some logging here please!
                 Log.info(err.status);
-                expect(err.status).to.be.equal(400);
-                // expect.fail("Post 200 should not be here");
+                // expect(err.status).to.be.equal(400);
+                expect.fail("Post 200 should not be here");
             });
         } catch (err) {
             Log.info(err.status);
@@ -310,8 +362,8 @@ describe("Facade D3", function () {
                 .catch(function (err: any) {
                     // some logging here please!
                     Log.info(err.status);
-                    expect(err.status).to.be.equal(400);
-                    // expect.fail("Post 200 should not be here");
+                    // expect(err.status).to.be.equal(400);
+                    expect.fail("Post 200 should not be here");
                 });
         } catch (err) {
             expect.fail("Post 200 should not be here");
@@ -327,7 +379,8 @@ describe("Facade D3", function () {
                     .post("/query")
                     .send(obj["query"]);
                 Log.test(`POST test should be NOT OK`);
-                expect(res.status).to.be.equal(400);
+                expect.fail("Post 400 should not be here");
+               // expect(res.status).to.be.equal(400);
             }
             catch (err) {
                 // some logging here please!
@@ -351,7 +404,7 @@ describe("Facade D3", function () {
                     }
                 ).catch(function (err: any) {
                 expect. fail("Put dataset should not fail if the implementation is correct");
-            });
+                });
         } catch (err) {
             expect.fail("DEL test for courses dataset should be OK");
             // and some more logging here!
@@ -366,7 +419,8 @@ describe("Facade D3", function () {
                     .post("/query")
                     .send(obj["query"]);
                 Log.test(`POST test should be NOT OK`);
-                expect(res.status).to.be.equal(400);
+                expect. fail("Put dataset should not run here");
+                // expect(res.status).to.be.equal(400);
             }
             catch (err) {
                 // some logging here please!
@@ -385,7 +439,8 @@ describe("Facade D3", function () {
             .then(
                 (res) => {
                 Log.test(`DEL test for courses twice should not be OK`);
-                expect(res.status).to.be.equal(404);
+                    expect. fail("del should not be here");
+                   // expect(res.status).to.be.equal(404);
                 }
             ).catch( (err) => {
                 // some logging here please!
@@ -403,7 +458,8 @@ describe("Facade D3", function () {
                 const res = await chai.request("http://localhost:4321")
                     .del("/dataset/notadded");
                 Log.test(`DEL test for not added set should be rejected`);
-                expect(res.status).to.be.equal(404);
+                expect. fail("del should not be here");
+               //  expect(res.status).to.be.equal(404);
             }
             catch (err) {
                 // some logging here please!

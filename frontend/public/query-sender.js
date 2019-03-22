@@ -8,6 +8,7 @@
 CampusExplorer.sendQuery = function(query) {
     return new Promise(function(fulfill, reject) {
         const ajaxReq = new XMLHttpRequest();
+        console.log("call sendQuery");
         ajaxReq.open('POST', '/query'); // TODO to confirm what is the link to post to.
         ajaxReq.send(JSON.stringify(query));
         ajaxReq.onload = function() {
