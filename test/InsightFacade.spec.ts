@@ -84,6 +84,18 @@ describe("InsightFacade Add/Remove Dataset", function () {
     });
 
     // TEST TEST
+    it("TEST Should add a courses dataset", async function () {
+        const id: string = "courses";
+        let response: string[];
+
+        try {
+            response = await insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        } catch (err) {
+            response = err;
+        } finally {
+            expect(response).to.deep.equal([id]);
+        }
+    });
     it("TEST Should add a room dataset", async function () {
         const id: string = "rooms";
         let response: string[];

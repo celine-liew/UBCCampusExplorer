@@ -127,11 +127,30 @@ public addedDatabase: InsightDataset[] = [];
     public performQuery(query: any): Promise <any[]> {
         const self = this;
         let finalresult: any[] = [];
+        console.log("start performing");
         return new Promise(function (resolve, reject) {
             try {
                 let queryvalidator: QueryValidator = new QueryValidator();
                 let isCourse = queryvalidator.validatequery(query);
                 let parser: Queryparser = new Queryparser(queryvalidator.queryinfo);
+                let DATATYPE = "";
+                if (isCourse) {
+                    DATATYPE = "courses";
+                } else {
+                    DATATYPE = "rooms";
+                }
+                if (!self.datasetsHash[DATATYPE]){
+                    console.log("start performing but has no data!!");
+                    const path = './data/savedDatasets.json';
+                    let fs = require('fs');
+                    if(fs.existsSync(path)) {
+                        let jsonString = fs.readFileSync(path);
+                        let diskDataSetHash = JSON.parse(jsonString);
+                        console.log(Object.keys(diskDataSetHash).length);
+                        self.datasetsHash[DATATYPE] = diskDataSetHash[DATATYPE];
+                    }
+                    console.log(!self.datasetsHash[DATATYPE]);
+                }
                 if (isCourse) {
                     finalresult = parser.executeQuery(query, self.datasetsHash['courses']);
                 } else {
