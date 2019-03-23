@@ -290,19 +290,13 @@ function getKeysForWhereFunction(formToBuild, IsLtGtEQ, mOrSKey, idString) {
 
 function idStringCoursesOrRooms(idString, COURSES, formToBuild, ROOMS) {
     debugger;
-    const coursesDataset = formToBuild.querySelectorAll("form[data-type= 'courses'] option[selected]");
-    const roomsDataset = formToBuild.querySelectorAll("form[data-type= 'rooms'] option[selected]");
-    // console.log("here here " + JSON.stringify(coursesDataset));
-    if (coursesDataset.length >= roomsDataset.length) {
+    const active = document.querySelectorAll("div[class = 'tab-panel active']");
+    if(active[0].id === "tab-courses"){
         idString = COURSES;
         formToBuild = document.querySelectorAll("form[data-type= 'courses']")[0];
-    }
-    else {
-        if (roomsDataset.length > coursesDataset.length) {
-            // console.log("rooms here");
-            idString = ROOMS;
-            formToBuild = document.querySelectorAll("form[data-type= 'rooms']")[0];
-        }
+    }else if(active[0].id === "tab-rooms"){
+        idString = ROOMS;
+        formToBuild = document.querySelectorAll("form[data-type= 'rooms']")[0];
     }
     return { idString, formToBuild };
 }
