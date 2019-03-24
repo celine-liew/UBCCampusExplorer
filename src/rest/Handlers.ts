@@ -1,8 +1,10 @@
+/* tslint:disable:no-console */
 import * as JSZip from "jszip";
 import * as fs from "fs-extra";
 import restify = require("restify");
 import {InsightError, NotFoundError, InsightDatasetKind} from "../controller/IInsightFacade";
 import InsightFacade from "../controller/InsightFacade";
+import Log from "../Util";
 
 // // 1====submit a zip file that will be parsed and used for future queries
 // that.rest.put("/dataset/:id/:kind", );
@@ -17,60 +19,81 @@ import InsightFacade from "../controller/InsightFacade";
 // that.rest.get("/datasets", );
 
 export default class Handlers {
-    private insightFacade: InsightFacade = new InsightFacade();
+    private insightFacade: InsightFacade;
+
+    constructor() {
+        Log.info("Initializing Handler Instance!!!");
+        this.insightFacade = new InsightFacade();
+    }
 
     // // 1====submit a zip file that will be parsed and used for future queries
     public async putDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
+        // Log.info(req.method + " " + req.url);
+        // Log.info(req.params);
         let id: string = req.params.id;
         let kind: InsightDatasetKind = req.params.kind;
-        let body = new Buffer(req.params.body).toString("base64");
+        let buffer = req.params.body;
+        // Log.info(`===========!!!!!==========`);
+        // console.log(Buffer.isBuffer(buffer));
+        // Log.info(`============!!!!!!=========`);
+        // let toBuff = JSON.stringify(req.body);
+        // Log.info(toBuff);
+        // let bodybuffer = Buffer.from(toBuff);
+        let body = buffer.toString("base64");
         try {
-            let reply = await this.insightFacade.addDataset(id, body, kind);
-            res.send(200, reply);
+            let value = await this.insightFacade.addDataset(id, body, kind);
+            res.json(200, {result: value});
         } catch (err) {
-            res.send(400, err.message);
+            res.json(400, {error: err.message});
         }
-        next();
+        return next();
     }
     // // 2====deletes the existing dataset stored.
     public async delDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
+        Log.info(req.method + " " + req.url);
         let id = req.params.id;
         try {
             let reply = await this.insightFacade.removeDataset(id);
-            res.send(200, reply);
+            res.json(200, {result: reply});
         } catch (err) {
             if (err instanceof InsightError) {
-                res.send(400, err.message);
-            } else {
-                res.send(404, err.message);
+                res.json(400, {error: err.message});
+            } else if (err instanceof NotFoundError) {
+                res.json(404, {error: err.message});
             }
         }
-        next();
+        return next();
     }
 
     // // 3====sends the query to the application. The query will be in JSON format in the post body.
     public async postQuery(req: restify.Request, res: restify.Response, next: restify.Next) {
-        let query = req.params.query;
-        if (!this.insightFacade.datasetsHash) {
-            res.send(400, "No dataset added!");
+        Log.info(req.method + " " + req.url);
+        let query = req.body;
+        let hasInDisk = this.insightFacade.addedDatabase.find( (ele) => {
+            return ele["id"] === req.params.id;
+        });
+        if (!this.insightFacade.datasetsHash && !hasInDisk) {
+            res.json(400, {error: "No dataset added!"});
         }
         try {
-            let reply = this.insightFacade.performQuery(query);
-            res.send(200, reply);
+            let reply = await this.insightFacade.performQuery(query);
+            res.json(200, {result: reply});
         } catch (err) {
-            res.send(400, err.message);
+            res.json(400, {error: err.message});
         }
-        next();
+        return next();
     }
 
     // // 4====returns a list of datasets that were added.
     public async getDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
+        Log.info(req.method + " " + req.url);
         try {
-            let reply = this.insightFacade.listDatasets();
-            res.send(200, reply);
+            let reply = await this.insightFacade.listDatasets();
+            res.json(200, {result: reply});
         } catch (err) {
-            res.send(400, err.message);
+            res.json(400, {error: err.message});
         }
+        return next();
     }
 
 }

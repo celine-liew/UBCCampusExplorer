@@ -15,37 +15,24 @@
         },
         "OPTIONS": {
             "COLUMNS": [
-                "rooms_shortname",
-                "maxSeats",
+                "max_Seats",
                 "sumSeats"
             ],
-            "ORDER": {
-                "dir": "DOWN",
-                "keys": ["maxSeats","sumSeats"]
-            }
+            "ORDER": "max_Seats"
         },
         "TRANSFORMATIONS": {
             "GROUP": ["rooms_shortname","rooms_href"],
             "APPLY": [{
-                "maxSeats": {
+                "max_Seats": {
                     "COUNT": "rooms_seats"
                 }
             },{
                 "sumSeats": {
-<<<<<<< HEAD
-                    "SUM": "rooms_shortname"
-=======
                     "SUM": "rooms_seats"
->>>>>>> fcfccc7facc211541e4c8549b1a2251fc2682501
                 }
             }]
         }
     },
-<<<<<<< HEAD
     "isQueryValid": false,
     "result":"InsightError"
-=======
-    "isQueryValid": true,
-    "result":[{"rooms_shortname":"OSBO","maxSeats":1,"sumSeats":442},{"rooms_shortname":"HEBB","maxSeats":1,"sumSeats":375},{"rooms_shortname":"LSC","maxSeats":1,"sumSeats":350},{"rooms_shortname":"LSC","maxSeats":1,"sumSeats":350}]
->>>>>>> fcfccc7facc211541e4c8549b1a2251fc2682501
 }

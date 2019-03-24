@@ -15,25 +15,27 @@
         },
         "OPTIONS": {
             "COLUMNS": [
-                "max_Seats",
-                "sumSeats"
+                "rooms_shortname",
+                "maxSeats",
+                "sumSeats",
+                "room_shortname"
             ],
-            "ORDER": "max_Seats"
-<<<<<<< HEAD
-=======
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": ["maxSeats","sumSeats"]
+            }
         },
         "TRANSFORMATIONS": {
             "GROUP": ["rooms_shortname","rooms_href"],
             "APPLY": [{
-                "max_Seats": {
+                "maxSeats": {
                     "COUNT": "rooms_seats"
                 }
             },{
                 "sumSeats": {
-                    "SUM": "rooms_seats"
+                    "SUM": "rooms_shortname"
                 }
             }]
->>>>>>> fcfccc7facc211541e4c8549b1a2251fc2682501
         }
     },
     "isQueryValid": false,

@@ -1,0 +1,32 @@
+{
+    "title": "room given example",
+
+    "query": {
+        "WHERE": {
+            "AND": [{
+                "IS": {
+                    "rooms_furniture": "*Tables*"
+                }
+            }, {
+                "GT": {
+                    "rooms_seats": 100
+                }
+            }]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+              "rooms_href"
+            ]
+          },
+          "TRANSFORMATIONS": {
+            "GROUP": [
+              "rooms_shortname",
+              "rooms_href"
+            ],
+            "APPLY": [
+
+            ]
+          }
+    },
+    "isQueryValid": true,
+    "result":[{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/BUCH-A202"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/BUCH-A203"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/CHBE-101"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/FRDM-153"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/HEBB-100"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/ANGU-098"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/DMP-110"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/DMP-310"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/IBLC-182"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/IBLC-261"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/LSK-200"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/LSK-201"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/LSC-1001"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/LSC-1002"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/LSC-1003"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/MCLD-202"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/MCLD-228"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/PHRM-1101"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/PHRM-1201"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/OSBO-A"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/SRC-220A"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/SRC-220B"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/SRC-220C"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/SWNG-121"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/SWNG-122"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/SWNG-221"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/SWNG-222"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/WOOD-1"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/WOOD-4"},{"rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/WOOD-5"}]}

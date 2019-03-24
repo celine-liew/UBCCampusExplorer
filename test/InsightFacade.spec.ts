@@ -1,7 +1,7 @@
 // tslint:disable
 import { expect } from "chai";
 import * as fs from "fs-extra";
-
+import ServerSpec = require("./Server.spec");
 import {
     InsightError,
     InsightDatasetKind,
@@ -46,7 +46,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
 
     before(async function () {
         Log.test(`Before: ${this.test.parent.title}`);
-
+        await ServerSpec;
         try {
             const loadDatasetPromises: Array<Promise<Buffer>> = [];
             for (const [id, path] of Object.entries(datasetsToLoad)) {
@@ -84,6 +84,18 @@ describe("InsightFacade Add/Remove Dataset", function () {
     });
 
     // TEST TEST
+    it("TEST Should add a courses dataset", async function () {
+        const id: string = "courses";
+        let response: string[];
+
+        try {
+            response = await insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+        } catch (err) {
+            response = err;
+        } finally {
+            expect(response).to.deep.equal([id]);
+        }
+    });
     it("TEST Should add a room dataset", async function () {
         const id: string = "rooms";
         let response: string[];
@@ -94,6 +106,20 @@ describe("InsightFacade Add/Remove Dataset", function () {
             response = err;
         } finally {
             expect(response).to.deep.equal([id]);
+        }
+    });
+    it.only("TEST Should add a room then course dataset", async function () {
+        const id: string = "rooms";
+        const id2: string = "cpsccourses2";
+        let response: string[];
+
+        try {
+            await insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms);
+            response = await insightFacade.addDataset(id2, datasets[id2], InsightDatasetKind.Courses);
+        } catch (err) {
+            response = err;
+        } finally {
+            expect(response).to.deep.equal([id,id2]);
         }
     });
     // 1

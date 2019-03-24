@@ -57,15 +57,22 @@ public addedDatabase: InsightDataset[] = [];
             return this.addValidFilesonly(files, fileNames, coursesKeys, validSectionsOrRooms, kind, id);
 
         }).then ( () => {
-            return Object.keys(this.datasetsHash[kind]);
+            if (this.datasetsHash["courses"] && this.datasetsHash["rooms"]){
+                let toReturn;
+                if (kind == "rooms"){
+                    toReturn= Object.assign((this.datasetsHash["courses"]), (this.datasetsHash["rooms"]));
+                } else toReturn= Object.assign((this.datasetsHash["rooms"]), (this.datasetsHash["courses"]));
+                return Object.keys(toReturn);
+            }
+             else return Object.keys(this.datasetsHash[kind]);
         })
         .catch( (err) => {
             if (!(err instanceof InsightError)) {
                 throw new InsightError(err);
             }
-            return err;
+            throw err;
         }).catch( (err) => {
-            return err;
+            throw err;
         });
     }
 
@@ -101,7 +108,7 @@ public addedDatabase: InsightDataset[] = [];
                 } catch (err) {
                         if (err instanceof Error) {
                             throw new InsightError(err);
-                        } return err;
+                        } throw err;
                 }
         }
     }
@@ -131,6 +138,21 @@ public addedDatabase: InsightDataset[] = [];
                 let queryvalidator: QueryValidator = new QueryValidator();
                 let isCourse = queryvalidator.validatequery(query);
                 let parser: Queryparser = new Queryparser(queryvalidator.queryinfo);
+                let DATATYPE = "";
+                if (isCourse) {
+                    DATATYPE = "courses";
+                } else {
+                    DATATYPE = "rooms";
+                }
+                if (!self.datasetsHash[DATATYPE]){
+                    const path = './data/savedDatasets.json';
+                    let fs = require('fs');
+                    if(fs.existsSync(path)) {
+                        let jsonString = fs.readFileSync(path);
+                        let diskDataSetHash = JSON.parse(jsonString);
+                        self.datasetsHash[DATATYPE] = diskDataSetHash[DATATYPE];
+                    }
+                }
                 if (isCourse) {
                     finalresult = parser.executeQuery(query, self.datasetsHash['courses']);
                 } else {

@@ -1,0 +1,26 @@
+{
+    "title": "room given example",
+
+    "query":{
+        "WHERE": {
+            "IS": { "rooms_shortname": "PHRM" }
+        },
+        "OPTIONS": {
+            "COLUMNS": ["22"]
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "rooms_number"
+
+            ],
+            "APPLY": [
+                {
+                    "22": {
+                        "COUNT": "rooms_address"
+                    }
+                }
+            ]
+        }
+    },
+    "isQueryValid": true,
+    "result":[{"22":1},{"22":1},{"22":1},{"22":1},{"22":1},{"22":1},{"22":1},{"22":1},{"22":1},{"22":1},{"22":1}]}

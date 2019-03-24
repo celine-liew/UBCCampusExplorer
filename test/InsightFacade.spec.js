@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const chai_1 = require("chai");
 const fs = require("fs-extra");
+const ServerSpec = require("./Server.spec");
 const IInsightFacade_1 = require("../src/controller/IInsightFacade");
 const InsightFacade_1 = require("../src/controller/InsightFacade");
 const Util_1 = require("../src/Util");
@@ -34,6 +35,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
     before(function () {
         return __awaiter(this, void 0, void 0, function* () {
             Util_1.default.test(`Before: ${this.test.parent.title}`);
+            yield ServerSpec;
             try {
                 const loadDatasetPromises = [];
                 for (const [id, path] of Object.entries(datasetsToLoad)) {
@@ -69,6 +71,21 @@ describe("InsightFacade Add/Remove Dataset", function () {
     afterEach(function () {
         Util_1.default.test(`AfterTest: ${this.currentTest.title}`);
     });
+    it("TEST Should add a courses dataset", function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            const id = "courses";
+            let response;
+            try {
+                response = yield insightFacade.addDataset(id, datasets[id], IInsightFacade_1.InsightDatasetKind.Courses);
+            }
+            catch (err) {
+                response = err;
+            }
+            finally {
+                chai_1.expect(response).to.deep.equal([id]);
+            }
+        });
+    });
     it("TEST Should add a room dataset", function () {
         return __awaiter(this, void 0, void 0, function* () {
             const id = "rooms";
@@ -81,6 +98,23 @@ describe("InsightFacade Add/Remove Dataset", function () {
             }
             finally {
                 chai_1.expect(response).to.deep.equal([id]);
+            }
+        });
+    });
+    it("TEST Should add a room then course dataset", function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            const id = "rooms";
+            const id2 = "cpsccourses2";
+            let response;
+            try {
+                yield insightFacade.addDataset(id, datasets[id], IInsightFacade_1.InsightDatasetKind.Rooms);
+                response = yield insightFacade.addDataset(id2, datasets[id2], IInsightFacade_1.InsightDatasetKind.Courses);
+            }
+            catch (err) {
+                response = err;
+            }
+            finally {
+                chai_1.expect(response).to.deep.equal([id, id2]);
             }
         });
     });

@@ -123,15 +123,20 @@ export const processRoomsfiles = async (files: any[], fileNames: string[], build
 }
 
 export const saveDatasetList = async (data: EHash) => {
-    const outputFile = Object.keys(data).map((kind) => {
-        return {kind: kind, id: data[kind]};
-    });
+    // const outputFile = Object.keys(data).map((datasetKind) => {
+    //     return { datasetKind.toString():  data[kind]};
+    // });
+    let outputFile: any = {};
+    Object.keys(data).forEach((datasetKind) => {
+        outputFile[datasetKind] = data[datasetKind];
+        Object.keys(data[datasetKind]).forEach((id) => {
+            outputFile[datasetKind][id] = data[datasetKind][id];
+        })
+    })
     const dir = "./data";
     const filePath = "./data/savedDatasets.json";
     try {
         await fs.ensureDir(dir);
         await fs.writeJSON(filePath, outputFile);
-    } catch (err) {
-        throw err;
-    }
+    } catch (err) { throw err;  }
 };

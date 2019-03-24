@@ -1,3 +1,293 @@
 {
-    "query1":{"WHERE": {"IS": {"courses_dept": "cpsc"} }, "OPTIONS": {"COLUMNS": ["courses_dept", "courses_id"], "ORDER": "courses_id"} },
+    "requestALL": {
+        "WHERE": {
+            "GT": { "courses_avg": 95 }
+        },
+        "OPTIONS": {
+            "COLUMNS": ["courses_audit",
+                "courses_avg",
+                "courses_dept",
+                "courses_fail",
+                "courses_id",
+                "courses_instructor",
+                "courses_pass",
+                "courses_title",
+                "courses_uuid",
+                "courses_year",
+                "fsd",
+                "Pass",
+                "pass",
+                "                 pass",
+                "  pass     "
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": [
+                    "courses_audit",
+                    "courses_avg",
+                    "courses_dept",
+                    "courses_fail",
+                    "courses_id",
+                    "courses_instructor",
+                    "courses_pass",
+                    "courses_title",
+                    "courses_uuid",
+                    "courses_year",
+                    "fsd",
+                    "Pass",
+                    "pass",
+                    "                 pass",
+                    "  pass     "
+                ]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "courses_audit",
+                "courses_avg",
+                "courses_dept",
+                "courses_fail",
+                "courses_id",
+                "courses_instructor",
+                "courses_pass",
+                "courses_title",
+                "courses_uuid",
+                "courses_year"
+            ],
+            "APPLY": [{
+                "fsd": {
+                    "COUNT": "courses_audit"
+                }
+            }
+            ,{
+                    "Pass": {
+                        "AVG": "courses_audit"
+                    }
+                }
+            ,{
+                    "pass": {
+                        "COUNT": "courses_dept"
+                    }
+                }
+            ,{
+                    "                 pass": {
+                        "COUNT": "courses_audit"
+                    }
+                }
+            ,{
+                    "  pass     ": {
+                        "COUNT": "courses_avg"
+                    }
+                }
+            ]
+        }
+    },
+
+    "Complex_with_apply": {
+        "WHERE": {
+            "GT": { "courses_avg": 95 }
+        },
+        "OPTIONS": {
+            "COLUMNS": ["courses_dept","courses_pass", "fsd","Pass","pass","                 pass"],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": [
+                    "courses_dept","courses_pass", "fsd","Pass","pass","                 pass"
+                ]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["courses_dept","courses_pass"],
+            "APPLY": [{
+                "fsd": {
+                    "COUNT": "courses_audit"
+                }
+            }
+            ,{
+                    "Pass": {
+                        "AVG": "courses_audit"
+                    }
+                }
+            ,{
+                    "pass": {
+                        "COUNT": "courses_dept"
+                    }
+                }
+            ,{
+                    "                 pass": {
+                        "COUNT": "courses_audit"
+                    }
+                }
+            ,{
+                    "  pass     ": {
+                        "COUNT": "courses_avg"
+                    }
+                }
+            ]
+        }
+    },
+
+    "query1":{
+        "WHERE": {"IS": {"courses_dept": "cpsc"} },
+        "OPTIONS": {"COLUMNS": ["courses_dept", "courses_id"],
+        "ORDER": "courses_id"}
+    },
+
+    "complexquery": {
+        "WHERE": {
+                "AND":[
+                    {  "GT": { "courses_avg":90 } },
+                    { "IS":{ "courses_dept":"adhe"}}
+                ]
+        },
+        "OPTIONS": {
+            "COLUMNS":["courses_dept","courses_id", "courses_avg"],
+            "ORDER":"courses_avg"
+        }
+    },
+
+    "d2courseQuerySimple": {
+        "WHERE": {
+            "GT": { "courses_avg": 98 }
+        },
+        "OPTIONS": {
+            "COLUMNS": ["courses_title", "overallAvg"]
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["courses_title"],
+            "APPLY": [{
+                "overallAvg": {
+                    "AVG": "courses_avg"
+                }
+            }]
+        }
+    },
+
+    "coursewithNOT": {
+        "WHERE": {
+            "NOT" : {"LT": { "courses_avg": 98 }
+        }},
+        "OPTIONS": {
+            "COLUMNS": ["courses_avg", "courses_instructor"]
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["courses_avg", "courses_instructor"],
+            "APPLY": []
+        }
+    },
+
+    "d3roomsquery1": {
+        "WHERE":
+         {
+          "AND": [
+            { "IS": { "rooms_furniture": "*Tables*" }
+            },
+            { "GT": { "rooms_seats": 300 }
+            }
+          ]
+        },
+        "OPTIONS": {
+          "COLUMNS": ["rooms_shortname", "maxSeats"],
+          "ORDER": {
+            "dir": "DOWN",
+            "keys": [
+              "maxSeats"
+            ]
+          }
+        },
+        "TRANSFORMATIONS": {
+          "GROUP": [
+            "rooms_shortname"
+          ],
+          "APPLY": [
+            {
+              "maxSeats": {
+                "MAX": "rooms_seats"
+              }
+            }
+          ]
+        }
+      },
+
+      "d3roomquerywithOR": {
+        "WHERE":
+         {
+          "OR": [
+            { "IS": { "rooms_furniture": "*Tables*" }
+            },
+            { "GT": { "rooms_seats": 300 }
+            }
+          ]
+        },
+        "OPTIONS": {
+          "COLUMNS": ["rooms_shortname", "maxSeats"],
+          "ORDER": {
+            "dir": "UP",
+            "keys": [
+              "maxSeats"
+            ]
+          }
+        },
+        "TRANSFORMATIONS": {
+          "GROUP": [
+            "rooms_shortname"
+          ],
+          "APPLY": [
+            {
+              "maxSeats": {
+                "MAX": "rooms_seats"
+              }
+            }
+          ]
+        }
+      },
+
+      "SimpleOneRoom": {
+        "WHERE": {
+            "IS": { "rooms_shortname": "PHRM" }
+        },
+        "OPTIONS": {
+            "COLUMNS": ["22"]
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "rooms_number"
+
+            ],
+            "APPLY": [
+                {
+                    "22": {
+                        "COUNT": "rooms_address"
+                    }
+                }
+            ]
+
+        }
+    },
+
+    "cpscNotAnthony": {
+        "WHERE": {
+            "AND": [
+                {
+                    "NOT": {
+                        "IS": {
+                            "courses_instructor": "anthony"
+                        }
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_dept": "cpsc"
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_title",
+                "courses_id"
+            ]
+        }
+    }
 }
+

@@ -1,3 +1,4 @@
+// tslint:disable
 import {InsightError, ResultTooLargeError} from "./IInsightFacade";
 import {IHash} from "./InsightFacade";
 import {QueryInfo} from "./QueryInfo";
@@ -18,12 +19,9 @@ export default class Queryparser  {
                 throw new ResultTooLargeError();
             } else if (addHash[this.queryinfo.databasename].length < 5000 && !this.queryinfo.hasTransformation) {
                 return this.applyOptionswthotTrans(addHash[this.queryinfo.databasename]);
-            } else {
-                return this.applyOptionswthTrans(addHash[this.queryinfo.databasename]);
-            }
+            } else { return this.applyOptionswthTrans(addHash[this.queryinfo.databasename]); }
         }
-        if (Object.keys(query["WHERE"]).length >= 2) {
-            throw new InsightError("WHERE should only have 1 key, has 2");
+        if (Object.keys(query["WHERE"]).length >= 2) {  throw new InsightError("WHERE should only have 1 key, has 2");
         }
         this.whereparser = new QueryWhereParser(this.queryinfo);
         this.whereparser.AST = this.whereparser.traverseFilterGenAst(query["WHERE"], null);
@@ -77,8 +75,7 @@ export default class Queryparser  {
         } else {
             rowsafterapply = this.trimcolumn(rowsbeforeapply); }
         if (rowsafterapply.length >= 5000) { throw new ResultTooLargeError(); }
-        if (typeof this.queryinfo.order === "string") {
-            return this.sorter.sortRowsWithOneOrder(rowsafterapply, this.queryinfo.order);
+        if (typeof this.queryinfo.order === "string") { return this.sorter.sortRowsWithOneOrder(rowsafterapply, this.queryinfo.order);
         } else {
             if (Object.keys(this.queryinfo.order).length === 0 ) { return rowsafterapply; }
             return this.sorter.sortRowsWithObjOrder(rowsafterapply, this.queryinfo.order); }
