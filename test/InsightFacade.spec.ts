@@ -108,7 +108,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
             expect(response).to.deep.equal([id]);
         }
     });
-    it.only("TEST Should add a room then course dataset", async function () {
+    it("TEST Should add a room then course dataset", async function () {
         const id: string = "rooms";
         const id2: string = "cpsccourses2";
         let response: string[];
