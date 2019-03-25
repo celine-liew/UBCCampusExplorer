@@ -95,9 +95,11 @@ export default class QueryValidator  {
             throw new InsightError("ORDER key should have two dir and keys, have " + l);
         } else if (!order.hasOwnProperty("dir")) {
             throw new InsightError("invalid order key, missing dir");
-        } else if (!order.hasOwnProperty("keys")) {  throw new InsightError("invalid order key, missing keys");
+        } else if (!order.hasOwnProperty("keys")) {
+            throw new InsightError("invalid order key, missing keys");
         }
-        if (order["dir"] !== "UP" && order["dir"] !== "DOWN") { throw new InsightError("invalid order direction");
+        if (order["dir"] !== "UP" && order["dir"] !== "DOWN") {
+            throw new InsightError("invalid order direction");
         }
         if (!Array.isArray(order["keys"])) {
             throw new InsightError("invalid order, keys should be an array");
@@ -111,7 +113,8 @@ export default class QueryValidator  {
                         flag = true;
                     }
                 });
-                if (!flag) { throw new InsightError("ORDER key must be in COLUMNS");
+                if (!flag) {
+                    throw new InsightError("ORDER key must be in COLUMNS");
                 }
             });
         }

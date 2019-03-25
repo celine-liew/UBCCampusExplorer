@@ -108,9 +108,9 @@ public addedDatabase: InsightDataset[] = [];
         } else {
             try {
                 if (this.datasetsHash.courses && this.datasetsHash.courses[id]){
-                delete this.datasetsHash.courses[id];
+                    delete this.datasetsHash.courses[id];
                 } else if (this.datasetsHash.rooms && this.datasetsHash.rooms[id]){
-                delete this.datasetsHash.rooms[id];
+                    delete this.datasetsHash.rooms[id];
                 }
                 this.addedDatabase = this.addedDatabase.filter(name => id != id);
                 return Promise.resolve(id);
@@ -159,9 +159,9 @@ public addedDatabase: InsightDataset[] = [];
                     const path = './data/savedDatasets.json';
                     let fs = require('fs');
                     if(fs.existsSync(path)) {
-                        // let jsonString = fs.readFileSync(path);
-                        // let diskDataSetHash = JSON.parse(jsonString);
-                        // self.datasetsHash[DATATYPE] = diskDataSetHash[DATATYPE];
+                        let jsonString = fs.readFileSync(path);
+                        let diskDataSetHash = JSON.parse(jsonString);
+                        self.datasetsHash[DATATYPE] = diskDataSetHash[DATATYPE];
                     }
                 }
                 if (isCourse) {
