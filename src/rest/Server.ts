@@ -1,7 +1,7 @@
 /**
  * Created by rtholmes on 2016-06-19.
  */
-
+// tslint:disable
 import fs = require("fs");
 import restify = require("restify");
 import Log from "../Util";
@@ -113,10 +113,8 @@ export default class Server {
     }
 
     private static performEcho(msg: string): string {
-        if (typeof msg !== "undefined" && msg !== null) {
-            return `${msg}...${msg}`;
-        } else {
-            return "Message not provided";
+        if (typeof msg !== "undefined" && msg !== null) { return `${msg}...${msg}`;
+        } else { return "Message not provided";
         }
     }
 
@@ -128,15 +126,9 @@ export default class Server {
             path = publicDir + req.url.split("/").pop();
         }
         fs.readFile(path, function (err: Error, file: Buffer) {
-            if (err) {
-                res.send(500);
+            if (err) { res.send(500);
                 Log.error(JSON.stringify(err));
-                return next();
-            }
-            res.write(file);
-            res.end();
-            return next();
+                return next(); } else { res.write(file); res.end(); return next(); }
         });
     }
-
 }

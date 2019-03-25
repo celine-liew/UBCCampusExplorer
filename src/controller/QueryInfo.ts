@@ -240,8 +240,7 @@ export class QueryInfo {
                 } else if (rerooms.test(firstgroupkey)) {
                     this.isCourse = false;
                     return firstgroupkey;
-                } else { throw new InsightError("Invalid group key string");
-                }
+                } else { throw new InsightError("Invalid group key string");}
             }
         }
     }

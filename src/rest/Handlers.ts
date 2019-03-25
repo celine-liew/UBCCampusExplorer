@@ -49,15 +49,12 @@ export default class Handlers {
             let reply = await this.insightFacade.removeDataset(id);
             res.json(200, {result: reply});
         } catch (err) {
-            if (err instanceof InsightError) {
-                res.json(400, {error: err.message});
-            } else if (err instanceof NotFoundError) {
-                res.json(404, {error: err.message});
+            if (err instanceof InsightError) { res.json(400, {error: err.message});
+            } else if (err instanceof NotFoundError) { res.json(404, {error: err.message});
             }
         }
         return next();
     }
-
     // // 3====sends the query to the application. The query will be in JSON format in the post body.
     public async postQuery(req: restify.Request, res: restify.Response, next: restify.Next) {
         Log.info(req.method + " " + req.url);
@@ -88,5 +85,4 @@ export default class Handlers {
         }
         return next();
     }
-
 }
