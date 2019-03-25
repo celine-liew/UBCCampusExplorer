@@ -372,21 +372,24 @@ describe("InsightFacade Add/Remove Dataset", function () {
             }
         });
     });
-    it("Should remove the room dataset only", function () {
+    it("Should remove the cpsccourses2 dataset only", function () {
         return __awaiter(this, void 0, void 0, function* () {
             const id = "courses";
+            const id3 = "cpsccourses2";
             const id2 = "rooms";
             let response;
             try {
                 yield insightFacade.addDataset(id, datasets[id], IInsightFacade_1.InsightDatasetKind.Courses);
                 yield insightFacade.addDataset(id2, datasets[id2], IInsightFacade_1.InsightDatasetKind.Rooms);
-                response = yield insightFacade.removeDataset(id2);
+                yield insightFacade.addDataset(id3, datasets[id3], IInsightFacade_1.InsightDatasetKind.Courses);
+                response = yield insightFacade.removeDataset(id3);
             }
             catch (err) {
                 response = err;
             }
             finally {
-                chai_1.expect(response).to.deep.equal(id2);
+                insightFacade.listDatasets();
+                chai_1.expect(response).to.deep.equal(id3);
             }
         });
     });
@@ -425,11 +428,11 @@ describe("InsightFacade Add/Remove Dataset", function () {
     it("Should list 2 valid datasets and length be 2", function () {
         return __awaiter(this, void 0, void 0, function* () {
             const id = "courses";
-            const id2 = "cpsccourses2";
+            const id2 = "rooms";
             let response;
             try {
                 yield insightFacade.addDataset(id, datasets[id], IInsightFacade_1.InsightDatasetKind.Courses);
-                yield insightFacade.addDataset(id2, datasets[id2], IInsightFacade_1.InsightDatasetKind.Courses);
+                yield insightFacade.addDataset(id2, datasets[id2], IInsightFacade_1.InsightDatasetKind.Rooms);
                 response = yield insightFacade.listDatasets();
             }
             catch (err) {

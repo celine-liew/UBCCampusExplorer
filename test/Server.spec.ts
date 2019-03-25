@@ -52,12 +52,7 @@ describe("Facade D3", function () {
     it("PUT test for courses dataset", async function () {
         try {
             let file = "./test/data/courses.zip";
-            // Log.info(file);
             let buffer = await TestUtil.readFileAsync(file);
-            // Log.info(`=====================`);
-            // console.log(Buffer.isBuffer(buffer));
-            // Log.info(`=====================`);
-            // let buffer: Buffer = new Buffer(fs.readFileSync(file));
             return chai.request("http://localhost:4321")
                 .put("/dataset/courses/courses")
                 .attach("body", buffer, "courses.zip")
@@ -111,12 +106,7 @@ describe("Facade D3", function () {
     it("PUT test for courses dataset", async function () {
         try {
             let file = "./test/data/courses.zip";
-            // Log.info(file);
             let buffer = await TestUtil.readFileAsync(file);
-            // Log.info(`=====================`);
-            // console.log(Buffer.isBuffer(buffer));
-            // Log.info(`=====================`);
-            // let buffer: Buffer = new Buffer(fs.readFileSync(file));
             return chai.request("http://localhost:4321")
                 .put("/dataset/courses/courses")
                 .attach("body", buffer, "courses.zip")
@@ -132,7 +122,6 @@ describe("Facade D3", function () {
                     // some logging here please!
                     Log.info(err.status);
                     Log.info(err.body);
-                    // Log.info(err);
                     expect(err.status).to.be.equal(400);
                     // expect.fail("Put dataset should not fail if the implementation is correct");
                 });

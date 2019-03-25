@@ -35,12 +35,14 @@ public addedDatabase: InsightDataset[] = [];
     }
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
+        // console.log("here")
         const validSectionsOrRooms: any[] = [];
         const coursesKeys: string[] = ['Subject', 'Course', 'Avg', 'Professor', 'Title', 'Pass', 'Fail','Audit','id','Year'];
         // const coursesTranKeys: string[] = ['dept', 'id', 'avg', 'instructor', 'title', 'pass', 'fail','audit','uuid','year'];
         const fileNames: string[] = [];
         checkValidDatabase(id, content, kind);
-        if (this.datasetsHash && this.datasetsHash[kind] && this.datasetsHash[kind][id]) {
+        if ((this.datasetsHash) && (this.datasetsHash[InsightDatasetKind.Courses] && this.datasetsHash[InsightDatasetKind.Courses][id]) ||
+        (this.datasetsHash[InsightDatasetKind.Rooms] && this.datasetsHash[InsightDatasetKind.Rooms][id])) {
                 throw new InsightError("duplicate dataset id.");
             }
         return JSZip.loadAsync(content, {base64: true}).then((zip) => {
@@ -54,17 +56,24 @@ public addedDatabase: InsightDataset[] = [];
             return Promise.all(files);
         })
         .then( (files) => {
+            // console.log("finiahed")
             return this.addValidFilesonly(files, fileNames, coursesKeys, validSectionsOrRooms, kind, id);
 
         }).then ( () => {
+            // console.log("also");
             if (this.datasetsHash["courses"] && this.datasetsHash["rooms"]){
                 let toReturn;
+                let target: any = {};
                 if (kind == "rooms"){
-                    toReturn= Object.assign((this.datasetsHash["courses"]), (this.datasetsHash["rooms"]));
-                } else toReturn= Object.assign((this.datasetsHash["rooms"]), (this.datasetsHash["courses"]));
+                    toReturn = Object.assign(target, (this.datasetsHash["courses"]));
+                    toReturn = Object.assign(target, (this.datasetsHash["rooms"]) );
+                } else {
+                    toReturn = Object.assign(target, (this.datasetsHash["rooms"]));
+                    toReturn = Object.assign(target, (this.datasetsHash["courses"]));
+                }
                 return Object.keys(toReturn);
             }
-             else return Object.keys(this.datasetsHash[kind]);
+             else return Promise.resolve(Object.keys(this.datasetsHash[kind]));
         })
         .catch( (err) => {
             if (!(err instanceof InsightError)) {
@@ -119,15 +128,17 @@ public addedDatabase: InsightDataset[] = [];
             const setIds = Object.keys(this.datasetsHash[courseOrRm]);
             setIds.forEach ((id) => {
                 const num = this.datasetsHash[courseOrRm][id].length;
-                const dataset: InsightDataset = {
+                let dataset: InsightDataset = {
                     'id': id,
                     "kind": courseOrRm === 'courses' ? InsightDatasetKind.Courses : InsightDatasetKind.Rooms,
                    'numRows': num,
                 }
+                // console.log("data: "+ dataset);
                 outputList.push(dataset);
             })
 
         })
+        // console.log("listtt: " + outputList);
         return Promise.resolve(outputList);
     }
     public performQuery(query: any): Promise <any[]> {

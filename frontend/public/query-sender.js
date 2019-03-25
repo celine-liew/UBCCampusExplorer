@@ -8,7 +8,6 @@
 CampusExplorer.sendQuery = function(query) {
     return new Promise(function(fulfill, reject) {
         const ajaxReq = new XMLHttpRequest();
-        console.log("call sendQuery");
         ajaxReq.onload = function() {
             if (ajaxReq.status != 200) {
                 reject(JSON.parse(ajaxReq.responseText)); //e.g. 404 Not Found

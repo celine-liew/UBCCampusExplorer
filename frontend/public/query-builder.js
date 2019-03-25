@@ -26,7 +26,6 @@ CampusExplorer.buildQuery = function() {
     let arrayForGroup = buildGroupArray(formToBuild, idString);
     let applyArrayToAdd = buildAPPLYarray(formToBuild, idString);
     query = buildQueryTRANSFORM(applyArrayToAdd, arrayForGroup, query);
-    console.log(query);
     return query;
 };
 
@@ -43,24 +42,10 @@ function buildQueryTRANSFORM(applyArrayToAdd, arrayForGroup, query) {
 
 function buildAPPLYarray(formToBuild, idString) {
     let applyArrayToAdd = [];
-    // const fieldsforApply = formToBuild.querySelectorAll("div[class = 'form-group transformations']");
-    // for (let i = 0; i < fieldsforApply.length; i++) {
-    //     const customisedLabel = fieldsforApply[i].querySelectorAll("input[type='text']");
-    //     const keyAndFieldtoApply = fieldsforApply[i].querySelectorAll("option[selected='selected']");
-    //     if (customisedLabel.length > 0 && keyAndFieldtoApply.length > 0) {
-    //         const Label = customisedLabel[0].value;
-    //         const applyKey = keyAndFieldtoApply[0].value;
-    //         const applyField = keyAndFieldtoApply[1].value;
-    //         applyInnerBracket[applyKey] = idString + '_' + applyField;
-    //         applyInnerBracketwithLabel[Label] = applyInnerBracket;
-    //         applyArrayToAdd.push(applyInnerBracketwithLabel);
-    //     }
-    // }
     const fieldsforApply = formToBuild.querySelectorAll("div[class = 'control-group transformation']");
     for (let i = 0; i < fieldsforApply.length; i++) {
         const customisedLabel = fieldsforApply[i].querySelectorAll("input[type='text']");
         const keyAndFieldtoApply = fieldsforApply[i].querySelectorAll("option[selected='selected']");
-        // if (customisedLabel.length > 0 && keyAndFieldtoApply.length > 0) {
         const Label = customisedLabel[0].value;
         const applyKey = keyAndFieldtoApply[0].value;
         const applyField = keyAndFieldtoApply[1].value;
@@ -81,7 +66,6 @@ function buildGroupArray(formToBuild, idString) {
             const keyForGroup = idString + '_' + fieldsForGroup[i].value;
             arrayForGroup.push(keyForGroup);
         }
-        // console.log("array for Group: " + arrayForGroup);
     }
     return arrayForGroup;
 }
@@ -130,13 +114,7 @@ function getColumnANDOrderInOptions(formToBuild, idString) {
     for (let i = 0; i < fieldsForOrder.length; i++) {
         let keyForOrder = "";
 
-        //addIdStringtoFields
         keyForOrder = fieldsForOrder[i].value;
-        // if (!coursesKeys.includes(keyForOrder) && !roomsKeys.includes(keyForOrder)){
-        //     keyForOrder = fieldsForOrder[i].value;
-        // } else {
-        //     keyForOrder = idString + '_' + fieldsForOrder[i].value;
-        // }
         if(!fieldsForOrder[i].className){
             keyForOrder = idString + '_' + fieldsForOrder[i].value;
         }
@@ -147,60 +125,21 @@ function getColumnANDOrderInOptions(formToBuild, idString) {
     }
     let OptionsObject = {};
     OptionsObject["COLUMNS"] = arraytoAddtoColumns;
-    // console.log("options object: " + JSON.stringify(OptionsObject));
     if (ORDER.length === 0){
         return OptionsObject;
     }
     let OrderKeysObject = {};
-    // ifTransformationPresent
-    // if (ORDER.length > 0 && formToBuild.querySelectorAll("div[class = 'form-group transformations'] option[selected='selected']").length > 0){
-    //     const dirChecked = formToBuild.querySelectorAll("div[class = 'control descending'] input[checked= 'checked']");
-    //     if (dirChecked.length > 0){
-    //         OrderKeysObject.dir = "DOWN";
-    //     } else {
-    //         OrderKeysObject.dir = "UP";
-    //     }
-    //     OrderKeysObject.keys = ORDER;
-    //     OptionsObject["ORDER"] = OrderKeysObject;
-    //     // console.log(OptionsObject);
-    //     return OptionsObject;
-    // } else {
-    //     if (ORDER.length === 1) { //D1 order
-    //         OptionsObject["ORDER"] = ORDER[0];
-    //     }
-    //     else if (ORDER.length > 1) {
-    //         OptionsObject["ORDER"] = ORDER;
-    //     }
-    //     return OptionsObject;
-    // }
-    // if (ORDER.length > 1){
-    //     const dirChecked = formToBuild.querySelectorAll("div[class = 'control descending'] input[checked= 'checked']");
-    //     if (dirChecked.length > 0){
-    //         OrderKeysObject["dir"] = "DOWN";
-    //     } else {
-    //         OrderKeysObject["dir"] = "UP";
-    //     }
-    //     OrderKeysObject["keys"] = ORDER;
-    //     OptionsObject["ORDER"] = OrderKeysObject;
-    //     // console.log(OptionsObject);
-    //     return OptionsObject;
-    // } else {
-    //     OptionsObject["ORDER"] = ORDER[0];
-    //     return OptionsObject;
-    // }
     const dirChecked = formToBuild.querySelectorAll("div[class = 'control descending'] input[checked= 'checked']");
     if (dirChecked.length > 0){
         OrderKeysObject.dir = "DOWN";
         OrderKeysObject.keys = ORDER;
         OptionsObject["ORDER"] = OrderKeysObject;
-        // console.log(OptionsObject);
         return OptionsObject;
     } else {
         if(ORDER.length > 1){
             OrderKeysObject.dir = "UP";
             OrderKeysObject.keys = ORDER;
             OptionsObject["ORDER"] = OrderKeysObject;
-            // console.log(OptionsObject);
             return OptionsObject;
         }
         else{
@@ -216,7 +155,6 @@ function convertArrayToObject(arrayconvert) {
 
 function getAllOrNotFirstCondition(formToBuild, keysForWhere) {
     const conditionsChecked = formToBuild.querySelectorAll("input[name= 'conditionType']");
-    // console.log(conditionsChecked[0]);
     let allOrNot = "";
     const ALL = 'all';
     const OR = 'any';
@@ -224,7 +162,6 @@ function getAllOrNotFirstCondition(formToBuild, keysForWhere) {
     for (let i = 0; i < conditionsChecked.length; i++){
         if (conditionsChecked[i].checked) {
             const allOrNotValue = conditionsChecked[i].value;
-            console.log(allOrNotValue);
             if (keysForWhere.length <= 1) {
                 allOrNot = "";
             }
@@ -281,9 +218,7 @@ function getKeysForWhereFunction(formToBuild, IsLtGtEQ, mOrSKey, idString) {
         } else {
             selectedWhereKeysAfterNot = selectedWhereKeys;
         }
-        // console.log("selectedWhere: " + JSON.stringify(selectedWhereKeysAfterNot));
         arrayToAddtoWhere.push(selectedWhereKeysAfterNot);
-        // console.log("array for Where" + JSON.stringify(arrayToAddtoWhere));
     }
     return { keysForWhere, arrayToAddtoWhere, IsLtGtEQ, mOrSKey };
 }

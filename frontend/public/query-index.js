@@ -13,7 +13,6 @@
 
 const submitButton = document.getElementById('submit-button');
 submitButton.onclick = async function() {
-    console.log("clicking");
     let query = CampusExplorer.buildQuery(document);
     let result = await CampusExplorer.sendQuery(query);
     CampusExplorer.renderResult(result);

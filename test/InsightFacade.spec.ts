@@ -295,11 +295,14 @@ describe("InsightFacade Add/Remove Dataset", function () {
 
         try {
             await insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
+            // console.log(insightFacade.listDatasets());
             await insightFacade.addDataset(id2, datasets[id2], InsightDatasetKind.Rooms);
+            // console.log(insightFacade.listDatasets());
             response = await insightFacade.removeDataset(id2);
         } catch (err) {
             response = err;
         } finally {
+            // console.log(insightFacade.listDatasets());
             expect(response).to.deep.equal(id2);
         }
 
@@ -348,21 +351,25 @@ describe("InsightFacade Add/Remove Dataset", function () {
         }
 
     });
-    it("Should remove the room dataset only", async function () {
+    it("Should remove the cpsccourses2 dataset only", async function () {
         const id: string = "courses";
+        const id3 :string = "cpsccourses2"
         const id2: string = "rooms";
         let response: string;
 
         try {
             await insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
             await insightFacade.addDataset(id2, datasets[id2], InsightDatasetKind.Rooms);
-            response = await insightFacade.removeDataset(id2);
+            await insightFacade.addDataset(id3, datasets[id3], InsightDatasetKind.Courses);
+            response = await insightFacade.removeDataset(id3);
         } catch (err) {
             response = err;
         } finally {
-            expect(response).to.deep.equal(id2);
+            insightFacade.listDatasets();
+            expect(response).to.deep.equal(id3);
         }
     });
+
     it("Should expect an error with null input", async function () {
         const id: string = null;
         let response: string;
@@ -394,18 +401,22 @@ describe("InsightFacade Add/Remove Dataset", function () {
     });
     it("Should list 2 valid datasets and length be 2", async function () {
         const id: string = "courses";
-        const id2: string = "cpsccourses2";
+        const id2: string = "rooms";
         let response: InsightDataset[];
         try {
             await insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses);
-            await insightFacade.addDataset(id2, datasets[id2], InsightDatasetKind.Courses);
+            await insightFacade.addDataset(id2, datasets[id2], InsightDatasetKind.Rooms);
             response = await insightFacade.listDatasets();
+            // console.log(response);
             // length = Promise<InsightDataset[]>.length;
             // await  insightFacade.removeDataset(id);
         } catch (err) {
             response = err;
         } finally {
+            // console.log(response.length);
+            // console.log(response.keys.length);
             expect(response.length).to.be.equal(2);
+            // console.log()
             // expect(response).to.deep.equal([id]);
         }
     });

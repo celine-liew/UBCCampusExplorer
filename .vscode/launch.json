@@ -16,7 +16,7 @@
                 "--require",
                 "ts-node/register"
             ],
-            "preLaunchTask": "npmbuild",
+            // "preLaunchTask": "npmbuild",
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen"
         },
