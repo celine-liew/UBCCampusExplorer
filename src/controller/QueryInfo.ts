@@ -168,8 +168,7 @@ export class QueryInfo {
                 throw new InsightError("key to apply is mismatched"); }
         }
         let s3 = applyRule[applykey][applytoken].split("_");
-        if (s3[0] !== this.databasename) {
-            throw new InsightError("Cannot query more than one database");
+        if (s3[0] !== this.databasename) { throw new InsightError("Cannot query more than one database");
         }
     }
     public checkcolumnsWithoutTrans() {
@@ -181,8 +180,7 @@ export class QueryInfo {
                 flwstrings = element.match(this.recourses);
             } else {
                 flwstrings = element.match(this.rerooms);
-            }
-            if (flwstrings.length !== 1 || flwstrings[0] !== element) {
+            } if (flwstrings.length !== 1 || flwstrings[0] !== element) {
                 throw new InsightError("key doesn't match");
             } else {
                 let s3 = flwstrings[0].split("_");

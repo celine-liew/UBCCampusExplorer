@@ -76,12 +76,10 @@ export default class Server {
                 that.rest.get("/datasets", that.handlers.getDataset.bind(that.handlers));
                 // This must be the last endpoint!
                 that.rest.get("/.*", Server.getStatic);
-
                 that.rest.listen(that.port, function () {
                     Log.info("Server::start() - restify listening: " + that.rest.url);
                     fulfill(true);
                 });
-
                 that.rest.on("error", function (err: string) {
                     // catches errors in restify start; unusual syntax due to internal
                     // node not using normal exceptions here

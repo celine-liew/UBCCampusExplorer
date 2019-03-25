@@ -305,7 +305,6 @@ describe("InsightFacade Add/Remove Dataset", function () {
             // console.log(insightFacade.listDatasets());
             expect(response).to.deep.equal(id2);
         }
-
     });
 
     it("Shouldn't remove the same existing courses dataset more than once", async function () {
