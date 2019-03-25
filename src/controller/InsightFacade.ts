@@ -156,13 +156,13 @@ public addedDatabase: InsightDataset[] = [];
                     DATATYPE = "rooms";
                 }
                 if (!self.datasetsHash[DATATYPE]){
-                    // const path = './data/savedDatasets.json';
-                    // let fs = require('fs');
-                    // if(fs.existsSync(path)) {
-                    //     // let jsonString = fs.readFileSync(path);
-                    //     // let diskDataSetHash = JSON.parse(jsonString);
-                    //     // self.datasetsHash[DATATYPE] = diskDataSetHash[DATATYPE];
-                    // }
+                    const path = './data/savedDatasets.json';
+                    let fs = require('fs');
+                    if(fs.existsSync(path)) {
+                        // let jsonString = fs.readFileSync(path);
+                        // let diskDataSetHash = JSON.parse(jsonString);
+                        // self.datasetsHash[DATATYPE] = diskDataSetHash[DATATYPE];
+                    }
                 }
                 if (isCourse) {
                     finalresult = parser.executeQuery(query, self.datasetsHash['courses']);
