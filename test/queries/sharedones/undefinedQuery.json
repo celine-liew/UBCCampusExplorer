@@ -1,6 +1,0 @@
-{
-    "title": "SELECT dept, id, avg, pass WHERE pass < 1",
-    "query": null,
-    "isQueryValid": false,
-    "result" : "InsightError"
-}

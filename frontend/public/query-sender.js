@@ -9,15 +9,8 @@ CampusExplorer.sendQuery = function(query) {
     return new Promise(function(fulfill, reject) {
         const ajaxReq = new XMLHttpRequest();
         ajaxReq.onload = function() {
-            if (ajaxReq.status != 200) {
-                reject(JSON.parse(ajaxReq.responseText)); //e.g. 404 Not Found
-            }
-            else {
-                fulfill(JSON.parse(ajaxReq.responseText));
-            }
+          /** code removed to adhere to collaboration policy */
         };
-        ajaxReq.open('POST', '/query'); // TODO to confirm what is the link to post to.
-        ajaxReq.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-        ajaxReq.send(JSON.stringify(query));
+           /** code removed to adhere to collaboration policy */
     });
 };

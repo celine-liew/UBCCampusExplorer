@@ -10,7 +10,7 @@
 
 // TODO: implement!
 
-
+   /** code not removed as it was not graded */
 const submitButton = document.getElementById('submit-button');
 submitButton.onclick = async function() {
     let query = CampusExplorer.buildQuery(document);
