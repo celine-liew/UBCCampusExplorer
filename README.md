@@ -39,9 +39,3 @@ The project grade for this course was:
 ![](d1score.png)
 ![](d2score.png)
 ![](d3score.png)
-
-The exam grade for this course was:
-
-| Exam Component			| Grade 	|
-| :--			 			| :-- 		|
-| Midterm Exam	(15%)		| 89.33%    |
