@@ -38,4 +38,4 @@ The project grade for this course was:
 
 ![](d1score.png)
 ![](d2score.png)
-![](d3score.png)
+![](d3Score.png)
