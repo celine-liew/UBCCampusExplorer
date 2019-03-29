@@ -10,8 +10,7 @@ A full stack web development project split into four sprints, done as part of UB
 
 
 ## Visuals
-![] (310projectUI.gif)
-
+![](310projectUI.gif)
 
 ## Topics covered in the course project
 
