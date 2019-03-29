@@ -36,6 +36,10 @@ The project grade for this course was:
 | Project Sprint 3 (d3)			| 100 %	|
 | Project Quality Check	 (d4)	|  %	|
 
+![](d1score.png)
+![](d2score.png)
+![](d3score.png)
+
 The exam grade for this course was:
 
 | Exam Component			| Grade 	|
