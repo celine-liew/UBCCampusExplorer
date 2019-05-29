@@ -12,7 +12,7 @@ A full stack web development project split into four sprints, done as part of UB
 
 ```
 $ git clone https://github.com/fisharwoman/UBCCampusExplorer.git
-$ cd ubc-insights
+$ cd UBCCampusExplorer
 $ npm install
 $ npm start
 ```
