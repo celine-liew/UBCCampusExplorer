@@ -10,10 +10,12 @@ A full stack web development project split into four sprints, done as part of UB
 
 ## Development
 
+```
 $ git clone https://github.com/fisharwoman/UBCCampusExplorer.git
 $ cd ubc-insights
 $ npm install
 $ npm start
+```
 
 ## Visuals
 ![](310projectUI.gif)
